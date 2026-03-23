@@ -8,13 +8,13 @@ hide:
 ### Grupos
 
 <div class="grid cards" style="grid-template-columns: repeat(2, 1fr); background: var(--md-default-bg-color);" markdown>
--   :material-github:{ .lg .right } __PFE_25.1_8001_I__
+-   :material-github:{ .lg .right } __PECD1_26.1_8001_II__
 
     ---
 
     Nome, Nome, Nome, Nome
 
-    [:octicons-arrow-right-24: Repositório](https://github.com/Projetos-de-Extensao/PFE_25.1_8001_I)
+    [:octicons-arrow-right-24: Repositório](https://github.com/Projetos-de-Extensao/PECD1_26.1_8001_II)
 
 
 !!! warning "Projeto Front-End"
