@@ -12,7 +12,7 @@ hide:
 
     ---
 
-    Arthur Riess Cunha,	Bernardo Cicchelli,	Caique Rechuan Meirelles, Felipe Maia, João Vitor Rodrigues Donda
+    Nome, Nome, Nome, Nome
 
     [:octicons-arrow-right-24: Repositório](https://github.com/Projetos-de-Extensao/PFE_25.1_8001_I)
 
