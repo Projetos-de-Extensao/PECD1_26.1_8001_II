@@ -35,10 +35,6 @@ Foi levantado um ponto importante sobre o app e, assim, foi produzido o mapa men
 --- Coordenacao
 --- Secretaria
 ** Regras
-*** Eixos
-**** Ensino
-**** Pesquisa
-**** Extensao
 *** Estagio obrigatorio: nao conta
 *** Estagio nao obrigatorio: com limite
 *** Interna x Externa
@@ -46,7 +42,7 @@ Foi levantado um ponto importante sobre o app e, assim, foi produzido o mapa men
 **** Entidade emissora
 **** Carga horaria
 **** Data
-**** QR ou 
+**** Comprovante
 ** Limites
 *** Estagio nao obrigatorio: 100h
 *** Monitoria: 100h
