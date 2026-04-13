@@ -21,8 +21,49 @@ Foi levantado um ponto importante sobre o app e, assim, foi produzido o mapa men
  
 ### Mapa mental 1
  
-[![Mapa mental Entrevista]
- 
+```plantuml
+@startmindmap
+* AAC - Sistema
+-- Objetivo
+--- Controle
+--- Visibilidade
+--- Validacao
+--- Conclusao sem bloqueio
+-- Usuarios
+--- Aluno
+--- Avaliador
+--- Coordenacao
+--- Secretaria
+** Regras
+*** Estagio obrigatorio: nao conta
+*** Estagio nao obrigatorio: com limite
+*** Interna x Externa
+*** Externa exige
+**** Entidade emissora
+**** Carga horaria
+**** Data
+**** Comprovante
+** Limites
+*** Estagio nao obrigatorio: 100h
+*** Monitoria: 100h
+*** Idiomas: 30h
+*** Defesa TCC: 10h
+*** Outros: regulamento
+** Fluxo Aluno
+*** Escolhe tipo
+*** Envia comprovante
+*** Preenche dados
+*** Fila de analise
+*** Resultado
+**** Aprovado
+**** Indeferido
+*** Horas atualizadas
+** Fluxo Coordenacao
+*** Define regras
+*** Validação
+**** Aprovar
+**** Recusar
+@endmindmap
  
 ### Mapa mental 2
  
@@ -44,5 +85,5 @@ O mapa mental é uma ficha de estudos que ajuda a dar uma visão geral do tema, 
 ## Versionamento
 | Data | Versão | Descrição | Autor(es) |
 | -- | -- | -- | -- |
-| dd/mm/yy | 1.0 | Criação do documento | xxx xxxx |
-| dd/mm/yy | 2.0 | Adicionado Mapa mental 2 | xxxx xxxx |
+| 07/05/26 | 1.0 | Criação do documento | Gabriel Caruzo |
+| 07/05/26 | 2.0 | Adicionado Mapa mental 2 | Gabriel Caruzo |
