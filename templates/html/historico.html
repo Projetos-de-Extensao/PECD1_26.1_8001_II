@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Histórico de Solicitações - IBMEC AAC" />
+  <title>Histórico de Solicitações — IBMEC</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/historico.css" />
+</head>
+<body>
+
+  <nav class="navegacao" role="navigation" aria-label="Menu principal">
+    <div class="nav-container">
+      <a href="/" class="logo-nav" aria-label="IBMEC - Início">
+        <div class="caixa-logo">I</div>
+        <span>IBMEC</span>
+      </a>
+
+      <ul class="menu-principal">
+        <li><a href="/dashboard" class="menu-link">Dashboard</a></li>
+        <li class="menu-com-submenu">
+          <button class="menu-botao" aria-expanded="false" aria-haspopup="true">
+            Solicitação <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="submenu" role="menu">
+            <li role="none"><a href="/solicitacao/interna" role="menuitem">Interna</a></li>
+            <li role="none"><a href="/solicitacao/externa" role="menuitem">Externa</a></li>
+          </ul>
+        </li>
+        <li>
+          <button class="menu-botao menu-perfil-botao" aria-expanded="false" aria-haspopup="true">
+            Perfil <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="submenu-perfil" role="menu">
+            <li role="none"><a href="/perfil/editar" role="menuitem">Editar Perfil</a></li>
+            <li role="none"><a href="/perfil/config" role="menuitem">Configurações</a></li>
+            <li role="none"><hr aria-hidden="true" /></li>
+            <li role="none"><a href="/logout" role="menuitem">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container-principal">
+    <section class="historico-container">
+      <div class="header-historico">
+        <h1 class="titulo-historico">Histórico de Solicitações</h1>
+        <p class="subtitulo-historico">Acompanhe o status de todas as suas atividades</p>
+      </div>
+
+      <!-- Abas de Filtro -->
+      <div class="abas-filtro">
+        <button class="aba-btn aba-ativo" data-filtro="todos">
+          <span class="aba-label">Todas</span>
+          <span class="aba-count" id="countTodos">0</span>
+        </button>
+        <button class="aba-btn" data-filtro="aprovado">
+          <span class="aba-label">✓ Aprovadas</span>
+          <span class="aba-count" id="countAprovado">0</span>
+        </button>
+        <button class="aba-btn" data-filtro="progresso">
+          <span class="aba-label">⏳ Em Progresso</span>
+          <span class="aba-count" id="countProgresso">0</span>
+        </button>
+        <button class="aba-btn" data-filtro="recusado">
+          <span class="aba-label">✗ Recusadas</span>
+          <span class="aba-count" id="countRecusado">0</span>
+        </button>
+      </div>
+
+      <!-- Tabela de Solicitações -->
+      <div class="tabela-wrapper">
+        <table class="tabela-historico" role="table">
+          <thead>
+            <tr>
+              <th scope="col">Tipo</th>
+              <th scope="col">Atividade</th>
+              <th scope="col">Data</th>
+              <th scope="col">Horas</th>
+              <th scope="col">Status</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaBody">
+            <!-- Preenchido por JS -->
+          </tbody>
+        </table>
+        
+        <div id="msgVazio" class="msg-vazio" style="display: none;">
+          <p>Nenhuma solicitação encontrada com este filtro.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>&copy; 2026 IBMEC. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../js/historico.js"></script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+:root {
+  --cor-primaria: #F5AC00;
+  --cor-secundaria: #002555;
+  --cor-sucesso: #1f8b4c;
+  --cor-erro: #b3261e;
+  --cor-aviso: #f5ac00;
+  --cor-progresso: #6366f1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0a0e27 0%, #16213e 100%);
+  color: #333;
+  min-height: 100vh;
+}
+
+.container-principal {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  min-height: calc(100vh - 200px);
+}
+
+/* Header */
+.header-historico {
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.titulo-historico {
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--cor-primaria) 0%, #ffb84d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitulo-historico {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* Abas de Filtro */
+.abas-filtro {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.aba-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.3rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.aba-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--cor-primaria);
+  color: #fff;
+}
+
+.aba-btn.aba-ativo {
+  background: linear-gradient(135deg, var(--cor-primaria), #ffb84d);
+  border-color: var(--cor-primaria);
+  color: var(--cor-secundaria);
+}
+
+.aba-label {
+  font-weight: 700;
+}
+
+.aba-count {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.aba-ativo .aba-count {
+  background: rgba(0, 37, 85, 0.2);
+}
+
+/* Wrapper da tabela */
+.tabela-wrapper {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 37, 85, 0.15);
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+/* Tabela */
+.tabela-historico {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tabela-historico thead {
+  background: linear-gradient(180deg, #f5f5f5 0%, #eeeeee 100%);
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tabela-historico th {
+  padding: 1.2rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: var(--cor-secundaria);
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.tabela-historico tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.12s ease;
+}
+
+.tabela-historico tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.tabela-historico td {
+  padding: 1rem;
+  color: #333;
+}
+
+/* Colunas */
+.tipo-atividade {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 80px;
+}
+
+.tipo-interna {
+  background: linear-gradient(135deg, rgba(245, 172, 0, 0.12), rgba(245, 172, 0, 0.06));
+  color: #b38600;
+  border: 1px solid rgba(245, 172, 0, 0.18);
+}
+
+.tipo-externa {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.06));
+  color: #5a5dbf;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.nome-atividade {
+  font-weight: 600;
+  color: var(--cor-secundaria);
+  max-width: 300px;
+}
+
+.data-atividade {
+  color: #666;
+  font-size: 0.93rem;
+}
+
+.horas-atividade {
+  font-weight: 700;
+  color: var(--cor-secundaria);
+  text-align: center;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.status-aprovado {
+  background: linear-gradient(135deg, rgba(31, 139, 76, 0.12), rgba(31, 139, 76, 0.06));
+  color: var(--cor-sucesso);
+  border: 1px solid rgba(31, 139, 76, 0.18);
+}
+
+.status-progresso {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.06));
+  color: var(--cor-progresso);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.status-recusado {
+  background: linear-gradient(135deg, rgba(179, 38, 30, 0.12), rgba(179, 38, 30, 0.06));
+  color: var(--cor-erro);
+  border: 1px solid rgba(179, 38, 30, 0.18);
+}
+
+/* Ações */
+.coluna-acoes {
+  text-align: center;
+}
+
+.btn-acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  color: var(--cor-secundaria);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-acao:hover {
+  background: var(--cor-primaria);
+  color: #fff;
+  border-color: var(--cor-primaria);
+}
+
+/* Mensagem Vazia */
+.msg-vazio {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+.msg-vazio p {
+  margin: 0;
+}
+
+/* Footer */
+.rodape {
+  background-color: rgba(0, 37, 85, 0.8);
+  color: #fff;
+  text-align: center;
+  padding: 2rem;
+  margin-top: 4rem;
+  border-top: 2px solid var(--cor-primaria);
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .container-principal {
+    padding: 1.5rem 1rem;
+  }
+
+  .titulo-historico {
+    font-size: 1.6rem;
+  }
+
+  .abas-filtro {
+    gap: 0.5rem;
+  }
+
+  .aba-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .aba-label {
+    display: none;
+  }
+
+  .aba-btn[data-filtro="todos"]::before {
+    content: 'Todas';
+  }
+  .aba-btn[data-filtro="aprovado"]::before {
+    content: '✓';
+  }
+  .aba-btn[data-filtro="progresso"]::before {
+    content: '⏳';
+  }
+  .aba-btn[data-filtro="recusado"]::before {
+    content: '✗';
+  }
+
+  .tabela-historico {
+    font-size: 0.85rem;
+  }
+
+  .tabela-historico th,
+  .tabela-historico td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .nome-atividade {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tabela-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo-historico {
+    font-size: 1.4rem;
+  }
+
+  .abas-filtro {
+    gap: 0.3rem;
+  }
+
+  .aba-btn {
+    padding: 0.5rem 0.8rem;
+  }
+
+  .aba-count {
+    display: none;
+  }
+
+  .tabela-historico th {
+    font-size: 0.75rem;
+    padding: 0.7rem 0.4rem;
+  }
+
+  .tabela-historico td {
+    padding: 0.7rem 0.4rem;
+  }
+}
