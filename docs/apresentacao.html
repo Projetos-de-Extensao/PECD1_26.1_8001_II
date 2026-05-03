@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AAC - Apresentacao de Projeto (PPT em HTML)</title>
+<style>
+    :root {
+      --bg: #f4f7fb;
+      --fg: #13233a;
+      --muted: #4f627b;
+      --card: #ffffff;
+      --line: #dbe4ee;
+      --accent: #0b5cab;
+      --accent2: #118a8a;
+      --ok: #0f9d58;
+      --warn: #d67a00;
+      --radius: 16px;
+      --shadow: 0 8px 28px rgba(8, 27, 56, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--fg);
+      background: linear-gradient(180deg, #eef3f9, #f7f9fc 45%, #eef3f9);
+      overflow: hidden;
+    }
+
+    .deck {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+
+    .deck::-webkit-scrollbar { display: none; }
+
+    .slide {
+      flex: 0 0 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      padding: 40px 60px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 24px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .page {
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .content {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 50px;
+      overflow: auto;
+    }
+
+    .content-cover {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border: 0;
+      box-shadow: 0 16px 56px rgba(8, 27, 56, 0.16);
+      padding: 80px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 16px;
+      color: #0f223e;
+    }
+
+    h1 { font-size: 72px; line-height: 1.15; font-weight: 700; }
+    h2 { font-size: 56px; line-height: 1.2; font-weight: 700; }
+    h3 { font-size: 32px; font-weight: 600; }
+
+    .cover-title {
+      font-size: 80px;
+      font-weight: 800;
+      margin: 0 0 24px;
+      color: white;
+      line-height: 1.1;
+    }
+
+    .cover-subtitle {
+      font-size: 36px;
+      color: rgba(255,255,255,0.95);
+      margin: 0 0 48px;
+      line-height: 1.4;
+    }
+
+    .cover-footer-text {
+      font-size: 24px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 80px;
+    }
+
+    p {
+      margin: 0 0 24px;
+      line-height: 1.8;
+      font-size: 28px;
+      color: var(--muted);
+    }
+
+    ul {
+      margin: 16px 0 0 32px;
+      padding: 0;
+      color: #233754;
+      line-height: 1.9;
+      font-size: 26px;
+    }
+
+    ul li {
+      margin-bottom: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 48px;
+      background: #fff;
+      min-height: 420px;
+    }
+
+    .card h4 {
+      margin: 0 0 24px;
+      font-size: 30px;
+      color: #123460;
+      font-weight: 700;
+    }
+
+    .card ul {
+      margin: 16px 0 0 32px;
+      padding: 0;
+      color: #233754;
+      line-height: 1.95;
+      font-size: 27px;
+    }
+
+    .card ul li {
+      margin-bottom: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 32px;
+      background: #fff;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .kpi .n {
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 14px;
+      line-height: 1;
+    }
+
+    .kpi div:last-child {
+      font-size: 22px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .prototype-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .proto-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 380px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .proto-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(8, 27, 56, 0.16);
+    }
+
+    .proto-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #123460;
+      padding: 14px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--line);
+      width: 100%;
+      background: #f9fafb;
+    }
+
+    .proto-card img {
+      max-width: 95%;
+      max-height: 80%;
+      object-fit: contain;
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .timeline .row {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      background: #fff;
+      font-size: 24px;
+    }
+
+    .timeline .row strong { 
+      color: #123460;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .timeline .row span {
+      font-size: 23px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .controls {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .controls button {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      border: 2px solid #cfd9e7;
+      background: #fff;
+      color: #244169;
+      font-size: 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: bold;
+    }
+
+    .controls button:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+
+    .dots {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 28px;
+      display: flex;
+      gap: 10px;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid #d5e0ee;
+      border-radius: 999px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 0;
+      background: #b9c9dd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot:hover {
+      background: #6b8bc4;
+      transform: scale(1.2);
+    }
+
+    .dot.active {
+      width: 32px;
+      background: var(--accent);
+      transform: scale(1.1);
+    }
+
+    .ok { color: var(--ok); font-weight: 700; font-size: 1.1em; }
+    .warn { color: var(--warn); font-weight: 700; font-size: 1.1em; }
+
+    @media (max-width: 1200px) {
+      .slide { padding: 30px 45px; }
+      h1 { font-size: 56px; }
+      h2 { font-size: 44px; }
+      p { font-size: 24px; }
+      ul { font-size: 22px; }
+      .content { padding: 40px; }
+      .card { padding: 24px; min-height: 240px; }
+      .kpi { padding: 24px; min-height: 220px; }
+      .kpi .n { font-size: 48px; }
+      .cover-title { font-size: 64px; }
+      .cover-subtitle { font-size: 28px; }
+    }
+
+    @media (max-width: 900px) {
+      .slide { padding: 20px; }
+      h1 { font-size: 36px; }
+      h2 { font-size: 28px; }
+      p { font-size: 18px; }
+      ul { font-size: 16px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .prototype-grid { grid-template-columns: 1fr; }
+      .timeline .row { grid-template-columns: 1fr; }
+      body { overflow: auto; }
+      .deck { flex-direction: column; scroll-snap-type: y mandatory; height: auto; }
+      .slide { height: auto; min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck">
+
+    <!-- Slide 1 - Cover -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Projeto Front-End | 2026.1</div>
+        <div class="page">Slide 01</div>
+      </div>
+      <div class="content-cover">
+        <div class="cover-title">Gerência de Atividades Acadêmicas Complementares</div>
+        <div class="cover-subtitle">AAC - Sistema de Automação</div>
+        <div class="cover-footer-text">
+          <div style="margin-bottom: 16px;">Projeto Acadêmico</div>
+          <div>IBMEC - Disciplina de Projeto Front-End</div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Equipe do Projeto</span>
+        <span>Semestre 2026.1</span>
+      </div>
+    </section>
+
+    <!-- Slide 2 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Contexto</div>
+        <div class="page">Slide 02</div>
+      </div>
+      <div class="content">
+        <h2>Problema e Motivação</h2>
+        <p>O processo atual de AAC tem etapas manuais, demora de validação e baixa visibilidade para o aluno sobre horas realizadas e pendências.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4>Problemas identificados</h4>
+            <ul>
+              <li>Cadastro e envio de comprovantes sem padronização.</li>
+              <li>Fila de validação com retrabalho para avaliadores.</li>
+              <li>Dificuldade de acompanhamento de progresso pelo aluno.</li>
+              <li>Risco de atraso e bloqueio por falta de controle.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Objetivo geral</h4>
+            <ul>
+              <li>Automatizar o que for possível no fluxo de AAC.</li>
+              <li>Manter validação manual quando necessário.</li>
+              <li>Melhorar experiência do aluno e eficiência da equipe.</li>
+              <li>Dar transparência de status e horas em tempo real.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fontes: Brainstorm, Pesquisa, AHT</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 3 - Mapa Mental -->
+    <section class="slide">
+    <div class="top">
+        <div class="badge">Análise e Planejamento</div>
+        <div class="page">Slide 03</div>
+    </div>
+    <div class="content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px;">
+        <h2 style="margin-bottom: 32px;">Mapa Mental - Visão Geral</h2>
+        <img src="../images/apa_mental.svg" alt="Mapa Mental do Sistema AAC" style="max-width: 90%; max-height: 70vh; object-fit: contain;" />
+    </div>
+    <div class="footer">
+        <span>Fonte: Análise e Design Thinking</span>
+        <span></span>
+    </div>
+    </section>
+    
+    <!-- Slide 3 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Planejamento</div>
+        <div class="page">Slide 03</div>
+      </div>
+      <div class="content">
+        <h2>5W2H (Visão Produto)</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h4>What / Why / Where</h4>
+            <ul>
+              <li><strong>What:</strong> plataforma AAC com automação interna e validação externa.</li>
+              <li><strong>Why:</strong> acelerar processo e reduzir trabalho manual.</li>
+              <li><strong>Where:</strong> ambiente web, acessível por navegador.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Who / When / How / How much</h4>
+            <ul>
+              <li><strong>Who:</strong> equipe de 6 alunos + usuários finais (aluno e funcionário).</li>
+              <li><strong>When:</strong> semestre 2026.1.</li>
+              <li><strong>How:</strong> Scrum + React/HTML/CSS.</li>
+              <li><strong>How much:</strong> esforço estimado de 320 horas.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: 5W2H</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 4 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Elicitação</div>
+        <div class="page">Slide 04</div>
+      </div>
+      <div class="content">
+        <h2>Brainstorm e Requisitos Elicitados</h2>
+        <p>A equipe levantou ideias e transformou o entendimento inicial em requisitos funcionais claros.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4>Pontos principais discutidos</h4>
+            <ul>
+              <li>Login diferenciado para aluno e funcionário.</li>
+              <li>Registro interno via QR Code.</li>
+              <li>Registro externo com comprovante.</li>
+              <li>Histórico de atividades e notificações.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Exemplos de requisitos (BS)</h4>
+            <ul>
+              <li>BS01/BS02: autenticação por tipo de usuário.</li>
+              <li>BS04/BS05: validação automática interna e manual externa.</li>
+              <li>BS06/BS07: dashboard e segregação de horas.</li>
+              <li>BS10: notificação de status da validação.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: Brainstorm</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 5 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Base Normativa</div>
+        <div class="page">Slide 05</div>
+      </div>
+      <div class="content">
+        <h2>Pesquisa: MEC + Regulamentação IBMEC</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h4>Diretrizes importantes</h4>
+            <ul>
+              <li>AAC obrigatórias para conclusão da graduação.</li>
+              <li>Foco em ensino, pesquisa e extensão.</li>
+              <li>Instituições definem carga horária com limites legais.</li>
+              <li>Estágio obrigatório não se confunde com AAC.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Regras operacionais consideradas</h4>
+            <ul>
+              <li>Estágio não obrigatório: até 100h.</li>
+              <li>Monitoria: até 100h.</li>
+              <li>Idiomas: até 30h.</li>
+              <li>TCC/defesa como ouvinte: até 10h.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: Pesquisa</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 6 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Modelagem de Uso</div>
+        <div class="page">Slide 06</div>
+      </div>
+      <div class="content">
+        <h2>Análise Hierárquica de Tarefas (AHT)</h2>
+        <p>Mapeamento de metas, tarefas e ações por perfil de usuário para orientar interface e fluxo.</p>
+        <div class="grid-3">
+          <div class="card">
+            <h4>Aluno</h4>
+            <ul>
+              <li>Registrar atividade interna/externa.</li>
+              <li>Acompanhar progresso e histórico.</li>
+              <li>Receber notificações de validação.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Avaliador</h4>
+            <ul>
+              <li>Filtrar solicitações pendentes.</li>
+              <li>Aprovar, rejeitar ou solicitar ajuste.</li>
+              <li>Garantir conformidade com regras.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Coordenação</h4>
+            <ul>
+              <li>Gerenciar limites e critérios.</li>
+              <li>Monitorar fila e riscos.</li>
+              <li>Acompanhar indicadores e relatórios.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: AHT</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 7 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Produto no Scrum</div>
+        <div class="page">Slide 07</div>
+      </div>
+      <div class="content">
+        <h2>Histórias de Usuário e Critérios</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h4>Épicos cobertos</h4>
+            <ul>
+              <li>Autenticação e acesso.</li>
+              <li>Atividades internas (QR Code).</li>
+              <li>Atividades externas (comprovante).</li>
+              <li>Dashboard e notificações.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Exemplos de histórias</h4>
+            <ul>
+              <li>US003: registrar atividade interna via QR Code.</li>
+              <li>US005: envio de comprovante externo.</li>
+              <li>US008: visualizar progresso em tempo real.</li>
+              <li>US012: notificação de status da validação.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: Histórias de Usuário</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 8 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Protótipo (Parte 1)</div>
+        <div class="page">Slide 08</div>
+      </div>
+      <div class="content">
+        <h2>Protótipo de Baixa Fidelidade - Fluxo Inicial</h2>
+        <div class="prototype-grid">
+          <div class="proto-card">
+            <div class="proto-title">Tela 1 - Login</div>
+            <img src="../images/login.png" alt="Tela 1 - Login" />
+          </div>
+          <div class="proto-card">
+            <div class="proto-title">Tela 2 - Perfil do Aluno</div>
+            <img src="../images/perfil_aluno.png" alt="Tela 2 - Perfil do Aluno" />
+          </div>
+          <div class="proto-card">
+            <div class="proto-title">Tela 3 - Seleção de Atividade</div>
+            <img src="../images/slec_atividade.png" alt="Tela 3 - Seleção de Atividade" />
+          </div>
+          <div class="proto-card">
+            <div class="proto-title">Tela 4 - QR Code</div>
+            <img src="../images/interno_atividade.png" alt="Tela 4 - Atividade Interna QR Code" />
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: Protótipo de Baixa Fidelidade</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 9 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Protótipo (Parte 2)</div>
+        <div class="page">Slide 09</div>
+      </div>
+      <div class="content">
+        <h2>Protótipo de Baixa Fidelidade - Fluxo Completo</h2>
+        <div class="prototype-grid">
+          <div class="proto-card">
+            <div class="proto-title">Tela 5 - Confirmação Interna</div>
+            <img src="../images/confirma_interno.png" alt="Tela 5 - Confirmação Interna" />
+          </div>
+          <div class="proto-card">
+            <div class="proto-title">Tela 6 - Upload Externo</div>
+            <img src="../images/upload_externo.png" alt="Tela 6 - Upload Externo" />
+          </div>
+          <div class="proto-card">
+            <div class="proto-title">Tela 7 - Comprovante</div>
+            <img src="../images/externo_comprovante.png" alt="Tela 7 - Envio com Comprovante" />
+          </div>
+          <div class="proto-card">
+            <div class="proto-title">Tela 8 - Dashboard</div>
+            <img src="../images/dash_atividades.png" alt="Tela 8 - Dashboard de Atividades" />
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Fonte: Protótipo de Baixa Fidelidade</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 10 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Planejamento de Execução</div>
+        <div class="page">Slide 10</div>
+      </div>
+      <div class="content">
+        <h2>Cronograma de Trabalho (Resumo)</h2>
+        <div class="timeline">
+          <div class="row"><strong>Fase 1</strong><span>Entendimento do problema, 5W2H e brainstorm.</span></div>
+          <div class="row"><strong>Fase 2</strong><span>Pesquisa normativa (MEC/IBMEC) e detalhamento de tarefas (AHT).</span></div>
+          <div class="row"><strong>Fase 3</strong><span>Histórias de usuário e critérios de aceitação.</span></div>
+          <div class="row"><strong>Fase 4</strong><span>Protótipo de baixa fidelidade e consolidação da apresentação.</span></div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>Abordagem incremental e iterativa</span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- Slide 11 -->
+    <section class="slide">
+      <div class="top">
+        <div class="badge">Resultados Esperados</div>
+        <div class="page">Slide 11</div>
+      </div>
+      <div class="content">
+        <h2>Benefícios da Solução AAC</h2>
+        <div class="grid-3">
+          <div class="kpi"><div class="n">Automação</div><div>Registro interno rápido via QR Code.</div></div>
+          <div class="kpi"><div class="n">Rastreabilidade</div><div>Status claro de cada solicitação.</div></div>
+          <div class="kpi"><div class="n">Transparência</div><div>Progresso de horas em tempo real.</div></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px;">
+          <div class="card">
+            <h4>Para o aluno</h4>
+            <ul>
+              <li>Menos fricção no envio de AAC.</li>
+              <li>Acompanhamento contínuo de metas.</li>
+              <li>Notificações de decisão de validação.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Para instituição</h4>
+            <ul>
+              <li>Menor esforço operacional em tarefas repetitivas.</li>
+              <li>Aplicação consistente das regras.</li>
+              <li>Base para relatórios e gestão acadêmica.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="ok">Impacto acadêmico e operacional positivo</span>
+        <span></span>
+      </div>
+    </section>
+  </main>
+
+  <div class="dots" id="dots" aria-label="Navegacao"></div>
+  <div class="controls" aria-label="Controles">
+    <button id="prev" type="button" aria-label="Anterior">&#8592;</button>
+    <button id="next" type="button" aria-label="Proximo">&#8594;</button>
+  </div>
+
+  <script>
+    (function () {
+      const deck = document.getElementById("deck");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const dots = document.getElementById("dots");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      let idx = 0;
+
+      function go(i) {
+        const n = Math.max(0, Math.min(i, slides.length - 1));
+        slides[n].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+      }
+
+      function setActive(i) {
+        idx = i;
+        Array.from(dots.children).forEach((d, di) => {
+          d.classList.toggle("active", di === i);
+        });
+      }
+
+      slides.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.className = "dot";
+        b.type = "button";
+        b.addEventListener("click", () => go(i));
+        dots.appendChild(b);
+      });
+
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const i = slides.indexOf(e.target);
+            if (i >= 0) setActive(i);
+          }
+        });
+      }, { root: deck, threshold: 0.6 });
+
+      slides.forEach((s) => obs.observe(s));
+      setActive(0);
+
+      prev.addEventListener("click", () => go(idx - 1));
+      next.addEventListener("click", () => go(idx + 1));
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          go(idx + 1);
+        }
+        if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          go(idx - 1);
+        }
+        if (e.key === "Home") {
+          e.preventDefault();
+          go(0);
+        }
+        if (e.key === "End") {
+          e.preventDefault();
+          go(slides.length - 1);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
