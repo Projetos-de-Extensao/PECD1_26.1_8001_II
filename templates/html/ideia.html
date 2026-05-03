@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portal AAC IBMEC - Solicitações" />
+  <title>IBMEC — Solicitações</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/ideia.css" />
+</head>
+<body>
+
+  <nav class="navegacao" role="navigation" aria-label="Menu principal">
+    <div class="nav-container">
+      <a href="/" class="logo-nav" aria-label="IBMEC - Início">
+        <div class="caixa-logo">I</div>
+        <span>IBMEC</span>
+      </a>
+
+      <ul class="menu-principal">
+        <li><a href="dashboard.html" class="menu-link">home</a></li>
+        <li><a href="ideia.html" class="menu-link">Solicitações</a></li>
+        <li class="menu-com-submenu">
+          <button class="menu-botao menu-perfil-botao" aria-expanded="false" aria-haspopup="true">
+            Perfil <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="submenu-perfil" role="menu">
+            <li role="none"><a href="#" role="menuitem">Editar Perfil</a></li>
+            <li role="none"><a href="#" role="menuitem">Configurações</a></li>
+            <li role="none"><hr aria-hidden="true" /></li>
+            <li role="none"><a href="#" role="menuitem">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container-principal">
+    <div class="layout-dual">
+      <!-- COLUNA ESQUERDA: HISTÓRICO (SEMPRE VISÍVEL) -->
+      <aside class="coluna-historico">
+        <div class="header-historico">
+          <h1 class="titulo-historico">Histórico</h1>
+          <p class="subtitulo-historico">Suas solicitações</p>
+        </div>
+
+        <div class="abas-filtro">
+          <button class="aba-btn aba-ativo" data-filtro="todos">
+            <span>Todas</span>
+            <span class="aba-count">6</span>
+          </button>
+          <button class="aba-btn" data-filtro="aprovado">
+            <span>✓ Aprovadas</span>
+            <span class="aba-count">3</span>
+          </button>
+          <button class="aba-btn" data-filtro="progresso">
+            <span>⏳ Progresso</span>
+            <span class="aba-count">2</span>
+          </button>
+          <button class="aba-btn" data-filtro="recusado">
+            <span>✗ Recusadas</span>
+            <span class="aba-count">1</span>
+          </button>
+        </div>
+
+        <div class="tabela-wrapper">
+          <table class="tabela-historico" role="table">
+            <thead>
+              <tr>
+                <th scope="col">Tipo</th>
+                <th scope="col">Atividade</th>
+                <th scope="col">Data</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tipo-badge interno-badge">Interna</span></td>
+                <td>Workshop: Design Thinking</td>
+                <td>15/04</td>
+                <td><span class="status-badge status-aprovado">✓ Aprovado</span></td>
+              </tr>
+              <tr>
+                <td><span class="tipo-badge externo-badge">Externa</span></td>
+                <td>Palestra: Inovação</td>
+                <td>10/04</td>
+                <td><span class="status-badge status-aprovado">✓ Aprovado</span></td>
+              </tr>
+              <tr>
+                <td><span class="tipo-badge interno-badge">Interna</span></td>
+                <td>Curso: Python</td>
+                <td>08/04</td>
+                <td><span class="status-badge status-aprovado">✓ Aprovado</span></td>
+              </tr>
+              <tr>
+                <td><span class="tipo-badge externo-badge">Externa</span></td>
+                <td>Seminário: Empreendedorismo</td>
+                <td>05/04</td>
+                <td><span class="status-badge status-progresso">⏳ Progresso</span></td>
+              </tr>
+              <tr>
+                <td><span class="tipo-badge interno-badge">Interna</span></td>
+                <td>Mentoria: Liderança</td>
+                <td>02/04</td>
+                <td><span class="status-badge status-recusado">✗ Recusado</span></td>
+              </tr>
+              <tr>
+                <td><span class="tipo-badge externo-badge">Externa</span></td>
+                <td>Congresso: Tech</td>
+                <td>28/03</td>
+                <td><span class="status-badge status-progresso">⏳ Progresso</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+
+      <!-- COLUNA DIREITA: FORMULÁRIOS -->
+      <section class="coluna-formularios">
+        <!-- Botões de Navegação -->
+        <div class="botoes-navegacao">
+          <button class="btn-nav ativo" data-form="interno">
+            <span class="icone">🏫</span>
+            <span class="texto">Interna</span>
+          </button>
+          <button class="btn-nav" data-form="externo">
+            <span class="icone">🌐</span>
+            <span class="texto">Externa</span>
+          </button>
+        </div>
+
+        <!-- FORMULÁRIO INTERNO -->
+        <div id="form-interno" class="formulario ativo">
+          <div class="painel-envio">
+            <h2 class="titulo-form">Seleção e Envio Interno</h2>
+            <p class="subtitulo-form">Leia o QR Code para preencher automaticamente</p>
+
+            <div class="acoes">
+              <button id="btnLerQr" class="btn btn-principal" type="button">Ler QR Code</button>
+              <button id="btnPararLeitura" class="btn btn-secundario" type="button" disabled>Parar</button>
+            </div>
+
+            <p id="status" class="status" role="status" aria-live="polite"></p>
+
+            <div id="scannerArea" class="scanner-area">
+              <video id="videoScanner" autoplay playsinline muted></video>
+            </div>
+
+            <div id="miniTela" class="mini-tela">
+              <h3>Confirme os dados</h3>
+              <div class="detalhes">
+                <div class="detalhe">
+                  <span class="rotulo">Palestra</span>
+                  <span id="valorNome" class="valor">-</span>
+                </div>
+                <div class="detalhe">
+                  <span class="rotulo">Data</span>
+                  <span id="valorDia" class="valor">-</span>
+                </div>
+                <div class="detalhe">
+                  <span class="rotulo">Horas</span>
+                  <span id="valorHoras" class="valor">-</span>
+                </div>
+              </div>
+              <button id="btnEnviarInterno" class="btn btn-principal" type="button">Enviar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMULÁRIO EXTERNO -->
+        <div id="form-externo" class="formulario">
+          <div class="painel-envio">
+            <h2 class="titulo-form">Solicitação Externa</h2>
+            <p class="subtitulo-form">Envie documentos de eventos externos</p>
+
+            <div class="campo-select-wrapper">
+              <label for="categoria">Categoria</label>
+              <select id="categoria">
+                <option value="">— Escolha uma categoria —</option>
+                <option value="palestra">Palestra</option>
+                <option value="workshop">Workshop</option>
+                <option value="curso">Curso</option>
+              </select>
+            </div>
+
+            <form id="formExterno" class="form-oculto" enctype="multipart/form-data" novalidate>
+              <div class="form-rows">
+                <div class="campo">
+                  <label for="curso">Título</label>
+                  <input id="curso" name="curso" type="text" placeholder="Nome do evento" required />
+                </div>
+
+                <div class="campo">
+                  <label for="data">Data</label>
+                  <input id="data" name="data" type="date" required />
+                </div>
+
+                <div class="campo">
+                  <label for="duracao">Horas</label>
+                  <input id="duracao" name="duracao" type="number" min="0" step="0.5" required />
+                </div>
+
+                <div class="campo">
+                  <label for="arquivo">PDF</label>
+                  <input id="arquivo" name="arquivo" type="file" accept="application/pdf" required />
+                  <div id="nomeArquivo" class="arquivo-info"></div>
+                </div>
+              </div>
+
+              <div class="acoes">
+                <button id="btnEnviar" type="submit" class="btn btn-principal">Enviar</button>
+                <button id="btnLimpar" type="button" class="btn btn-secundario">Limpar</button>
+              </div>
+            </form>
+
+            <div id="mensagem" role="status" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="rodape">
+    <p>&copy; 2026 IBMEC. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../js/ideia.js"></script>
+</body>
+</html>
