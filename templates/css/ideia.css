@@ -33,6 +33,145 @@ body {
   gap: 2rem;
 }
 
+
+/* HAMBURGER MENU */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 101;
+}
+
+.hamburger span {
+  width: 28px;
+  height: 3px;
+  background-color: var(--cor-primaria);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.hamburger.ativo span:nth-child(1) {
+  transform: rotate(45deg) translate(10px, 10px);
+}
+
+.hamburger.ativo span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.hamburger.ativo span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-container {
+    position: relative;
+  }
+
+  .menu-principal {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #003d7a;
+    flex-direction: column;
+    gap: 0;
+    width: 100vw;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu-principal.aberto {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+
+  .menu-principal > li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-principal a,
+  .menu-principal button {
+    padding: 1.2rem 1.5rem !important;
+    width: 100%;
+    text-align: left;
+    display: block;
+    border: none;
+  }
+
+  .menu-principal button {
+    background: transparent;
+    color: var(--cor-texto);
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .submenu,
+  .submenu-perfil {
+    position: static !important;
+    background-color: #001d40 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: none;
+    min-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .submenu li,
+  .submenu-perfil li {
+    border: none;
+  }
+
+  .submenu a,
+  .submenu-perfil a {
+    padding: 0.8rem 1.5rem 0.8rem 2.5rem !important;
+  }
+
+  .menu-com-submenu.ativo .submenu,
+  .menu-perfil.ativo .submenu-perfil {
+    display: block;
+  }
+
+  .menu-com-submenu:hover .submenu,
+  .menu-perfil:hover .submenu-perfil {
+    display: none;
+  }
+
+  .menu-com-submenu > button::after,
+  .menu-perfil-botao::after {
+    content: '';
+    display: inline-block;
+    margin-left: auto;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid currentColor;
+  }
+
+  .submenu hr,
+  .submenu-perfil hr {
+    margin: 0.5rem 0;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
 /* ========== COLUNA HISTÓRICO ========== */
 .coluna-historico {
   background: var(--cor-card-bg);
