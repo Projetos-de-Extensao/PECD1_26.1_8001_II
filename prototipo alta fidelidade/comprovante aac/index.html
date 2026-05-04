@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IBMEC — Comprovante de Certificados</title>
+  <link rel="stylesheet" href="comprovante.css" />
+</head>
+<body>
+  <div class="pagina">
+    <div class="cartao">
+      <div class="logo">
+        <div class="caixa-logo">I</div>
+        <span>IBMEC</span>
+      </div>
+
+      <h1>Comprovante de envio</h1>
+      <p class="subtitulo">Confira o status do envio dos certificados e valide o comprovante.</p>
+
+      <section class="resumo">
+        <div class="bloco-status">
+          <span class="rotulo">Status atual</span>
+          <strong id="statusAtual">Pendente</strong>
+          <p class="texto-status">O comprovante ainda não foi validado pelo portal.</p>
+        </div>
+        <div class="bloco-infos">
+          <div>
+            <span class="rotulo">Data do envio</span>
+            <strong id="dataEnvio">03/05/2026</strong>
+          </div>
+          <div>
+            <span class="rotulo">Tipo de certificado</span>
+            <strong id="nomeResponsavel">Certificados AAC</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="detalhes" id="detalhesEnvio">
+        <h2>Detalhes do comprovante</h2>
+        <dl>
+          <div>
+            <dt>Número do comprovante</dt>
+            <dd id="numeroComprovante">AAC-2026-0558</dd>
+          </div>
+          <div>
+            <dt>Quantidade enviada</dt>
+            <dd id="quantidadeCertificados">3 certificados</dd>
+          </div>
+          <div>
+            <dt>Plataforma de envio</dt>
+            <dd id="plataformaEnvio">Portal AAC IBMEC</dd>
+          </div>
+          <div>
+            <dt>Observações</dt>
+            <dd id="mensagemComprovante">Envio concluído com sucesso. Aguarde a validação do setor.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <form id="formularioValidacao" novalidate>
+        <div class="campo">
+          <label for="codigoComprovante">Código para validação</label>
+          <input type="text" id="codigoComprovante" placeholder="Digite o código do comprovante" />
+          <span class="erro" id="erroCodigo"></span>
+        </div>
+
+        <button type="submit" id="botaoValidar">Validar comprovante</button>
+        <p id="retornoValidacao" class="retorno oculto"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="comprovante.js"></script>
+</body>
+</html>
