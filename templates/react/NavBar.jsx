@@ -1,9 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../css/base.css';
 
 function NavBar() {
   const [solicitacoesOpen, setSolicitacoesOpen] = useState(false);
   const [perfilOpen, setPerfilOpen] = useState(false);
+
+  // Fecha os dois dropdowns ao clicar fora da nav
+  useEffect(() => {
+    function handleClickFora(e) {
+      if (!e.target.closest('.navegacao')) {
+        setSolicitacoesOpen(false);
+        setPerfilOpen(false);
+      }
+    }
+    document.addEventListener('click', handleClickFora);
+    return () => document.removeEventListener('click', handleClickFora);
+  }, []);
 
   return (
     <nav className="navegacao" role="navigation" aria-label="Menu principal">
