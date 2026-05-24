@@ -133,9 +133,11 @@ nav.navegacao {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Mostrar submenus ao passar o mouse */
+/* Mostrar submenus via hover (HTML puro) ou classe .aberto (React) */
 .menu-com-submenu:hover .submenu,
-.menu-perfil:hover .submenu-perfil {
+.menu-perfil:hover .submenu-perfil,
+.submenu.aberto,
+.submenu-perfil.aberto {
   display: block;
 }
 

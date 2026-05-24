@@ -236,7 +236,6 @@ body {
 .erro {
   font-size: 0.8rem;
   color: var(--cor-erro);
-  display: none;
 }
 
 /* Botões */

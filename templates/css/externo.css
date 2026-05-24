@@ -91,17 +91,14 @@
   margin-top:1rem;
   padding:.85rem;
   border-radius:12px;
-  display:none;
   font-weight:700;
 }
 #mensagem.success {
-  display:block;
   color: var(--interno-sucesso);
   background: rgba(31,139,76,0.06);
   border: 1px solid rgba(31,139,76,0.14);
 }
 #mensagem.error {
-  display:block;
   color: var(--interno-erro);
   background: rgba(179,38,30,0.04);
   border: 1px solid rgba(179,38,30,0.12);
