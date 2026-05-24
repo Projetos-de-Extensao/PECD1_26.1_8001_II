@@ -377,19 +377,16 @@ body {
   padding: 0.9rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  display: none;
   font-weight: 700;
 }
 
 .msg-modal.success {
-  display: block;
   background: rgba(31, 139, 76, 0.08);
   color: var(--cor-sucesso);
   border: 1px solid rgba(31, 139, 76, 0.15);
 }
 
 .msg-modal.error {
-  display: block;
   background: rgba(179, 38, 30, 0.06);
   color: var(--cor-erro);
   border: 1px solid rgba(179, 38, 30, 0.12);
