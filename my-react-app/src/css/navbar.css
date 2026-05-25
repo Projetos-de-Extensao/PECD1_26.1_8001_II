@@ -1,0 +1,95 @@
+:root{
+  --cor-primaria:#F5AC00;
+  --cor-sec:#002555;
+  --cor-texto:#fff;
+}
+
+/* Base mobile */
+.navegacao {
+  background: var(--cor-sec);
+  color: var(--cor-texto);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+}
+
+/* Logo */
+.logo-nav { display:flex; align-items:center; gap:.5rem; text-decoration:none; color:var(--cor-texto); }
+.caixa-logo { width:36px; height:36px; background:var(--cor-primaria); color:var(--cor-sec); display:flex; align-items:center; justify-content:center; border-radius:6px; font-weight:800; }
+
+/* Hamburger visible on mobile */
+.hamburger {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  background:none;
+  border:0;
+  padding:6px;
+  cursor:pointer;
+}
+.hamburger span { width:24px; height:3px; background:var(--cor-texto); border-radius:2px; transition:all .25s; display:block; }
+
+/* menu hidden by default */
+.menu-principal {
+  position: absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:var(--cor-sec);
+  margin:0;
+  padding:0.75rem 1rem;
+  list-style:none;
+  max-height:0;
+  overflow:hidden;
+  transition: max-height .28s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* aberto */
+.menu-principal.aberto { max-height: 800px; }
+
+/* itens do menu mobile */
+.menu-principal li { margin:0.5rem 0; }
+.menu-principal a, .menu-botao { color:var(--cor-texto); text-decoration:none; display:block; background:none; border:none; padding:0.5rem 0; width:100%; text-align:left; font-weight:700; }
+
+/* Submenus (mobile) */
+.submenu, .submenu-perfil { display:none; padding-left:0.75rem; list-style:none; }
+.menu-com-submenu.ativo .submenu, .menu-perfil.ativo .submenu-perfil { display:block; }
+
+/* Desktop styles */
+@media (min-width:768px) {
+  .hamburger { display:none; }
+  .menu-principal {
+    position:static;
+    display:flex;
+    gap:0.5rem;
+    align-items:center;
+    padding:0;
+    background:transparent;
+    max-height:none;
+    box-shadow:none;
+  }
+  .menu-principal li { margin:0; }
+  .menu-principal a, .menu-botao { padding:1rem; }
+  .submenu, .submenu-perfil {
+    position:absolute;
+    top:100%;
+    left:0;
+    background:#003d7a;
+    min-width:200px;
+    display:none;
+    border-top:4px solid var(--cor-primaria);
+  }
+  .menu-com-submenu:hover .submenu,
+  .menu-perfil:hover .submenu-perfil { display:block; }
+}
