@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import NavBar from './NavBar';
+import { enviarComprovante } from './api/comprovantesApi';
 import '../css/interno.css';
 import '../css/externo.css';
 
@@ -8,6 +9,15 @@ const CATEGORIAS = [
   { value: 'workshop',  label: 'Workshop'  },
   { value: 'curso',     label: 'Curso'     },
 ];
+
+// TODO (backend/auth): substituir por dados reais da sessão do aluno logado.
+function obterAlunoLogado() {
+  try {
+    const raw = localStorage.getItem('aac:alunoLogado');
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignora */ }
+  return { nome: 'Aluno IBMEC', matricula: '—', curso: '—' };
+}
 
 function Externo() {
   const [categoria,    setCategoria]    = useState('');
@@ -86,25 +96,33 @@ function Externo() {
 
     setEnviando(true);
 
-    const fd = new FormData();
-    fd.append('categoria', categoria);
-    fd.append('curso',     curso.trim());
-    fd.append('data',      data);
-    fd.append('duracao',   parseFloat(duracao));
-    fd.append('arquivo',   arquivo);
-
     try {
-      const resp = await fetch('/solicitacao/externa', { method: 'POST', body: fd });
+      const aluno          = obterAlunoLogado();
+      const categoriaLabel = CATEGORIAS.find(c => c.value === categoria)?.label || categoria;
+      const dataBR         = new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
 
-      if (resp.ok) {
-        setMensagem({ texto: '✓ Solicitação enviada com sucesso!', tipo: 'success' });
-        resetForm();
-      } else {
-        const txt = await resp.text().catch(() => resp.statusText);
-        setMensagem({ texto: `Erro: ${txt}`, tipo: 'error' });
-      }
-    } catch {
-      setMensagem({ texto: 'Erro de conexão. Verifique sua internet e tente novamente.', tipo: 'error' });
+      const novo = await enviarComprovante({
+        aluno:         aluno.nome,
+        matricula:     aluno.matricula,
+        curso:         aluno.curso,
+        atividade:     `${categoriaLabel}: ${curso.trim()}`,
+        tipo:          'externa',
+        horas:         parseFloat(duracao),
+        dataAtividade: dataBR,
+        observacao:    '',
+        arquivo,
+      });
+
+      setMensagem({
+        texto: `✓ Solicitação enviada! Código: ${novo.id}. Aguarde a análise da Coordenação.`,
+        tipo:  'success',
+      });
+      resetForm();
+    } catch (err) {
+      setMensagem({
+        texto: err.message || 'Erro ao enviar. Tente novamente.',
+        tipo:  'error',
+      });
     } finally {
       setEnviando(false);
     }

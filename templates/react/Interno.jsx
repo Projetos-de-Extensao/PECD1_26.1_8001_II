@@ -1,6 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import NavBar from './NavBar';
+import { enviarComprovante } from './api/comprovantesApi';
 import '../css/interno.css';
+
+// TODO (backend/auth): substituir por dados reais da sessão do aluno logado.
+function obterAlunoLogado() {
+  try {
+    const raw = localStorage.getItem('aac:alunoLogado');
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignora */ }
+  return { nome: 'Aluno IBMEC', matricula: '—', curso: '—' };
+}
 
 function Interno() {
   const [lendo,     setLendo]     = useState(false);
@@ -118,16 +128,26 @@ function Interno() {
     setEnviando(true);
     setStatus('Enviando solicitação...');
 
-    // Substitua pelo fetch real quando o backend estiver pronto:
-    // await fetch('/solicitacao/interna', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(dadosQr),
-    // });
+    try {
+      const aluno = obterAlunoLogado();
+      const novo = await enviarComprovante({
+        aluno:         aluno.nome,
+        matricula:     aluno.matricula,
+        curso:         aluno.curso,
+        atividade:     dadosQr.nome,
+        tipo:          'interna',
+        horas:         parseFloat(dadosQr.horas) || 0,
+        dataAtividade: dadosQr.dia,
+        observacao:    'Envio via leitura de QR Code.',
+      });
 
-    await new Promise(r => setTimeout(r, 800));
-    setStatus('Solicitação enviada com sucesso.', 'sucesso');
-    setEnviando(false);
+      setStatus(`✓ Solicitação enviada! Código: ${novo.id}. Aguarde análise da Coordenação.`, 'sucesso');
+      setDadosQr(null);
+    } catch (err) {
+      setStatus(err.message || 'Erro ao enviar. Tente novamente.', 'erro');
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
