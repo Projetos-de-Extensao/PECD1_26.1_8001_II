@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../css/Comprovante.css';
 
 function Comprovante({ idSolicitacao = '123' }) { // Recebe o ID da solicitação por prop
   // 1. Estados para os dados da API
