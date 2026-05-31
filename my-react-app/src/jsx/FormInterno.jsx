@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import jsQR from 'jsqr'; // Importando o leitor de QR Code
+import jsQR from 'jsqr'; 
+import '../css/FormInterno.css';
 
 export default function FormInterno({ ativo }) {
   const videoRef = useRef(null);

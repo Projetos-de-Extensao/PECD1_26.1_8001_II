@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import '../css/FormExterno.css';
 
 export default function FormExterno({ ativo }) {
   // Estados para gerenciar as categorias vindas do Banco de Dados
