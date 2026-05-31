@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import TabelaAtividades from '../componentes/TabelaAtividades';
-import FormInterno from '../componentes/FormInterno';
-import FormExterno from '../componentes/FormExterno';
+import TabelaAtividades from '../jsx/TabelaAtividades';
+import FormInterno from '../jsx/FormInterno';
+import FormExterno from '../jsx/FormExterno';
 
 export default function Solicitacoes() {
   const [formAtivo, setFormAtivo] = useState('interno');
