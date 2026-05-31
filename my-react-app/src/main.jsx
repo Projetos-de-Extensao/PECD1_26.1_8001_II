@@ -6,8 +6,8 @@ import Login from './jsx/Login.jsx'
 import Perfil from './jsx/Perfil.jsx'
 import Solicitacoes from './jsx/Solicitacoes.jsx'
 import Dashboard from './jsx/Dashboard.jsx'
-import Navbar from './jsx/Navbar.jsx'
-import Footer from './jsx/Footer.js'
+import Navbar from './componentes/Navbar.jsx'
+import Footer from './componentes/Footer.jsx'
 
 function AppLayout() {
   const location = useLocation()

@@ -1,19 +1,8 @@
-import { useState, useEffect } from 'react';
-import '../css/perfil.css'
+import React, { useState, useEffect } from 'react';
+import '../css/perfil.css';
 import '../css/index.css';
 
-
-const USUARIO = {
-  iniciais:    'GA',
-  nome:        'Gabriel Aruzo',
-  nomeCompleto:'Gabriel Aruzo Silva',
-  matricula:   '2024001',
-  email:       'gabriel.aruzo@ibmec.edu.br',
-  curso:       'Administração',
-  anoEntrada:  '2024',
-  periodo:     '2º Semestre',
-};
-
+// Mantemos os campos fixos, pois eles apenas mapeiam como exibir os dados na tela
 const CAMPOS_PERFIL = [
   { label: 'Nome Completo',  chave: 'nomeCompleto' },
   { label: 'Matrícula',      chave: 'matricula'    },
@@ -24,16 +13,56 @@ const CAMPOS_PERFIL = [
 ];
 
 function Perfil() {
+  // ==========================================
+  // ESTADOS DO USUÁRIO E API
+  // ==========================================
+  const [usuario, setUsuario] = useState(null);
+  const [carregandoPerfil, setCarregandoPerfil] = useState(true);
+  const [erroPerfil, setErroPerfil] = useState(false);
+
+  // ==========================================
+  // ESTADOS DA INTERFACE E MODAL
+  // ==========================================
   const [menuAberto,          setMenuAberto]          = useState(false);
   const [submenuPerfilAberto, setSubmenuPerfilAberto] = useState(false);
   const [modalAberto,         setModalAberto]         = useState(false);
-  const [senhaAtual,          setSenhaAtual]          = useState('');
-  const [senhaNova,           setSenhaNova]           = useState('');
-  const [senhaConfirm,        setSenhaConfirm]        = useState('');
-  const [msgModal,            setMsgModal]            = useState({ texto: '', tipo: '' });
-  const [enviando,            setEnviando]            = useState(false);
+  
+  // Estados do formulário de senha
+  const [senhaAtual,   setSenhaAtual]   = useState('');
+  const [senhaNova,    setSenhaNova]    = useState('');
+  const [senhaConfirm, setSenhaConfirm] = useState('');
+  const [msgModal,     setMsgModal]     = useState({ texto: '', tipo: '' });
+  const [enviando,     setEnviando]     = useState(false);
 
-  // Fecha submenu e hamburger ao clicar fora
+  // ==========================================
+  // BUSCA DOS DADOS DO USUÁRIO (API)
+  // ==========================================
+  useEffect(() => {
+    async function carregarDadosUsuario() {
+      try {
+        // Substitua pela URL real da sua API
+        const resposta = await fetch('/api/perfil/meus-dados');
+        
+        if (!resposta.ok) {
+          throw new Error('Falha ao carregar dados do usuário');
+        }
+
+        const dados = await resposta.json();
+        setUsuario(dados); // Salva os dados recebidos da API
+      } catch (erro) {
+        console.error("Erro na API de perfil:", erro);
+        setErroPerfil(true);
+      } finally {
+        setCarregandoPerfil(false);
+      }
+    }
+
+    carregarDadosUsuario();
+  }, []);
+
+  // ==========================================
+  // EFEITOS DE INTERFACE (Menus e Scroll)
+  // ==========================================
   useEffect(() => {
     function handleClickFora(e) {
       if (!e.target.closest('.menu-com-submenu')) setSubmenuPerfilAberto(false);
@@ -43,12 +72,14 @@ function Perfil() {
     return () => document.removeEventListener('click', handleClickFora);
   }, []);
 
-  // Bloqueia scroll do body quando modal está aberto
   useEffect(() => {
     document.body.style.overflow = modalAberto ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [modalAberto]);
 
+  // ==========================================
+  // LÓGICA DO MODAL E TROCA DE SENHA
+  // ==========================================
   function abrirModal() {
     setSenhaAtual('');
     setSenhaNova('');
@@ -117,13 +148,30 @@ function Perfil() {
     }
   }
 
-  function handleLogout(e) {
-    e.preventDefault();
-    if (window.confirm('Tem certeza que deseja sair?')) {
-      window.location.href = '/logout';
-    }
+  // ==========================================
+  // RENDERIZAÇÃO CONDICIONAL (CARREGAMENTO)
+  // ==========================================
+  if (carregandoPerfil) {
+    return (
+      <main className="container-principal">
+        <p style={{ textAlign: 'center', padding: '3rem' }}>Carregando dados do perfil...</p>
+      </main>
+    );
   }
 
+  if (erroPerfil || !usuario) {
+    return (
+      <main className="container-principal">
+        <p style={{ textAlign: 'center', padding: '3rem', color: 'red' }}>
+          Não foi possível carregar as informações do usuário. Tente recarregar a página.
+        </p>
+      </main>
+    );
+  }
+
+  // ==========================================
+  // RENDERIZAÇÃO PRINCIPAL DA TELA
+  // ==========================================
   return (
     <>
       <main className="container-principal">
@@ -131,11 +179,12 @@ function Perfil() {
 
           <div className="header-perfil">
             <div className="avatar-usuario">
-              <span className="iniciais">{USUARIO.iniciais}</span>
+              {/* Ajustado para usar a variável 'usuario' minúscula que vem do estado */}
+              <span className="iniciais">{usuario.iniciais || '👤'}</span>
             </div>
             <div className="info-basica">
-              <h1 className="nome-usuario">{USUARIO.nome}</h1>
-              <p className="matricula-usuario">Matrícula: {USUARIO.matricula}</p>
+              <h1 className="nome-usuario">{usuario.nome}</h1>
+              <p className="matricula-usuario">Matrícula: {usuario.matricula}</p>
             </div>
           </div>
 
@@ -145,7 +194,7 @@ function Perfil() {
               {CAMPOS_PERFIL.map(({ label, chave }) => (
                 <div key={chave} className="campo-info">
                   <strong>{label}</strong>
-                  <div className="valor-info">{USUARIO[chave]}</div>
+                  <div className="valor-info">{usuario[chave] || '-'}</div>
                 </div>
               ))}
             </div>
@@ -162,7 +211,7 @@ function Perfil() {
         </section>
       </main>
 
-      {/* Modal — renderização condicional preserva a animação slideUp a cada abertura */}
+      {/* MODAL DE SENHA MANTIDO INTACTO */}
       {modalAberto && (
         <div className="modal ativo" onClick={fecharModal}>
           <div className="modal-conteudo" onClick={e => e.stopPropagation()}>
