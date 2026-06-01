@@ -1,95 +1,195 @@
-:root{
-  --cor-primaria:#F5AC00;
-  --cor-sec:#002555;
-  --cor-texto:#fff;
+:root {
+  --cor-primaria: #F5AC00;
+  --cor-sec: #002555; /* O azul escuro do menu */
+  --cor-texto: #fff;
 }
 
-/* Base mobile */
+/* =========================================
+   1. OVERLAY (A Cortina Escura)
+   ========================================= */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 98; /* Fica abaixo da nav, mas acima do site */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.menu-overlay.ativo {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* =========================================
+   2. BARRA DE NAVEGAÇÃO TOPO
+   ========================================= */
 .navegacao {
   background: var(--cor-sec);
   color: var(--cor-texto);
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0.75rem 1rem;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-/* Logo */
-.logo-nav { display:flex; align-items:center; gap:.5rem; text-decoration:none; color:var(--cor-texto); }
-.caixa-logo { width:36px; height:36px; background:var(--cor-primaria); color:var(--cor-sec); display:flex; align-items:center; justify-content:center; border-radius:6px; font-weight:800; }
+.logo-nav { display: flex; align-items: center; gap: .5rem; text-decoration: none; color: var(--cor-texto); }
+.caixa-logo { width: 36px; height: 36px; background: var(--cor-primaria); color: var(--cor-sec); display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: 800; }
 
-/* Hamburger visible on mobile */
 .hamburger {
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-  background:none;
-  border:0;
-  padding:6px;
-  cursor:pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: 0;
+  padding: 6px;
+  cursor: pointer;
 }
-.hamburger span { width:24px; height:3px; background:var(--cor-texto); border-radius:2px; transition:all .25s; display:block; }
 
-/* menu hidden by default */
+.hamburger span { width: 24px; height: 3px; background: var(--cor-texto); border-radius: 2px; display: block; }
+
+/* =========================================
+   3. MENU LATERAL (SIDE DRAWER MOBILE)
+   ========================================= */
 .menu-principal {
-  position: absolute;
-  top:100%;
-  left:0;
-  right:0;
-  background:var(--cor-sec);
-  margin:0;
-  padding:0.75rem 1rem;
-  list-style:none;
-  max-height:0;
-  overflow:hidden;
-  transition: max-height .28s ease;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #1a2235; /* Cor baseada na sua imagem de referência */
+  margin: 0;
+  padding: 1rem 1.5rem;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  z-index: 101; /* Passa por cima de tudo */
+  
+  /* Esconde o menu para fora da tela na esquerda */
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
 }
 
-/* aberto */
-.menu-principal.aberto { max-height: 800px; }
+/* Quando ganha a classe 'aberto', ele desliza para dentro */
+.menu-principal.aberto {
+  transform: translateX(0);
+}
 
-/* itens do menu mobile */
-.menu-principal li { margin:0.5rem 0; }
-.menu-principal a, .menu-botao { color:var(--cor-texto); text-decoration:none; display:block; background:none; border:none; padding:0.5rem 0; width:100%; text-align:left; font-weight:700; }
+/* O "X" para fechar */
+.fechar-menu {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: #8898aa;
+  font-size: 2rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
 
-/* Submenus (mobile) */
-.submenu, .submenu-perfil { display:none; padding-left:0.75rem; list-style:none; }
-.menu-com-submenu.ativo .submenu, .menu-perfil.ativo .submenu-perfil { display:block; }
+.fechar-menu:hover { color: #fff; }
 
-/* Desktop styles */
-@media (min-width:768px) {
-  .hamburger { display:none; }
+.menu-principal li { margin: 0.2rem 0; position: relative; }
+
+.menu-principal a, .menu-botao { 
+  color: #cbd5e1; 
+  text-decoration: none; 
+  display: block; 
+  background: none; 
+  border: none; 
+  padding: 0.8rem 0; 
+  width: 100%; 
+  text-align: left; 
+  font-weight: 500; 
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.menu-principal a:hover, .menu-botao:hover { color: #fff; }
+
+.submenu-toggle { display: none; }
+
+/* Submenus (Mobile) */
+.submenu, .submenu-perfil { display: none; padding-left: 1rem; list-style: none; }
+.menu-com-submenu.ativo .submenu, .menu-perfil.ativo .submenu-perfil { display: block; }
+.submenu-perfil a { color: #94a3b8; font-size: 0.95rem; }
+
+
+/* =========================================
+   4. DESKTOP (A partir de 768px)
+   ========================================= */
+@media (min-width: 768px) {
+  .hamburger, .menu-overlay, .fechar-menu { 
+    display: none; 
+  }
+  
   .menu-principal {
-    position:static;
-    display:flex;
-    gap:0.5rem;
-    align-items:center;
-    padding:0;
-    background:transparent;
-    max-height:none;
-    box-shadow:none;
+    position: static;
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    height: auto;
+    padding: 0;
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+    gap: 0.5rem;
+    align-items: center;
+    overflow: visible;
   }
-  .menu-principal li { margin:0; }
-  .menu-principal a, .menu-botao { padding:1rem; }
+  
+  .menu-principal li { margin: 0; }
+  
+  .menu-principal a, .menu-botao { 
+    padding: 1rem; 
+    color: var(--cor-texto);
+    font-weight: 700;
+  }
+  
+  /* Submenus Desktop */
   .submenu, .submenu-perfil {
-    position:absolute;
-    top:100%;
-    left:0;
-    background:#003d7a;
-    min-width:200px;
-    display:none;
-    border-top:4px solid var(--cor-primaria);
+    position: absolute;
+    top: 100%;
+    right: 0; 
+    left: auto; 
+    background: var(--cor-sec); 
+    min-width: 180px;
+    display: none;
+    border-top: 4px solid var(--cor-primaria);
+    padding: 0; 
+    border-radius: 0 0 8px 8px;
+    z-index: 9999; 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   }
-  .menu-com-submenu:hover .submenu,
-  .menu-perfil:hover .submenu-perfil { display:block; }
+  
+  .submenu a, .submenu-perfil a {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+    color: var(--cor-texto);
+  }
+  
+  .submenu a:hover, .submenu-perfil a:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-perfil:hover .submenu-perfil,
+  .menu-perfil.ativo .submenu-perfil { 
+    display: block; 
+  }
 }

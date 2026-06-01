@@ -4,26 +4,29 @@ import '../css/navbar.css'
 
 export default function Navbar({ onLogout } = {}) {
   const [menuAberto, setMenuAberto] = useState(false)
-  const [solicitacoesOpen, setSolicitacoesOpen] = useState(false)
   const [perfilOpen, setPerfilOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     function handleClickFora(e) {
-      if (!e.target.closest('.navegacao')) {
+      if (!e.target.closest('.menu-principal') && !e.target.closest('.hamburger')) {
         setMenuAberto(false)
-        setSolicitacoesOpen(false)
         setPerfilOpen(false)
       }
     }
+
     document.addEventListener('click', handleClickFora)
     return () => document.removeEventListener('click', handleClickFora)
   }, [])
 
   useEffect(() => {
     function onKey(e) {
-      if (e.key === 'Escape') setMenuAberto(false)
+      if (e.key === 'Escape') {
+        setMenuAberto(false)
+        setPerfilOpen(false)
+      }
     }
+
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [])
@@ -36,90 +39,104 @@ export default function Navbar({ onLogout } = {}) {
 
   function navTo(path) {
     setMenuAberto(false)
-    setSolicitacoesOpen(false)
     setPerfilOpen(false)
     navigate(path)
   }
 
+  function togglePerfil(e) {
+    e.stopPropagation()
+    setPerfilOpen((v) => !v)
+  }
+
   return (
-    <nav className="navegacao" role="navigation" aria-label="Menu principal">
-      <div className="nav-container">
-        <Link to="/dashboard" className="logo-nav" onClick={() => setMenuAberto(false)}>
-          <div className="caixa-logo">I</div>
-          <span>IBMEC</span>
-        </Link>
+    <>
+      <div
+        className={`menu-overlay ${menuAberto ? 'ativo' : ''}`}
+        onClick={() => setMenuAberto(false)}
+      />
 
-        <button
-          className={`hamburger ${menuAberto ? 'ativo' : ''}`}
-          aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
-          aria-expanded={menuAberto}
-          onClick={(e) => { e.stopPropagation(); setMenuAberto(v => !v) }}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+      <nav className="navegacao" role="navigation" aria-label="Menu principal">
+        <div className="nav-container">
+          <Link to="/dashboard" className="logo-nav" onClick={() => setMenuAberto(false)}>
+            <div className="caixa-logo">I</div>
+            <span>IBMEC</span>
+          </Link>
 
-        <ul className={`menu-principal ${menuAberto ? 'aberto' : ''}`}>
-          <li>
-            <Link to="/home" onClick={() => navTo('/home')}>Home</Link>
-          </li>
-
-          {/* Solicitações: rótulo também é Link + submenu */}
-          <li
-            className={`menu-com-submenu ${solicitacoesOpen ? 'ativo' : ''}`}
-            onMouseEnter={() => setSolicitacoesOpen(true)}
-            onMouseLeave={() => setSolicitacoesOpen(false)}
+          <button
+            className={`hamburger ${menuAberto ? 'ativo' : ''}`}
+            aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={menuAberto}
+            onClick={(e) => {
+              e.stopPropagation()
+              setMenuAberto((v) => !v)
+            }}
           >
-            <Link
-              to="/solicitacoes"
-              className="menu-botao"
-              onClick={(e) => { e.preventDefault(); navTo('/solicitacoes') }}
-            >
-              Solicitações <span aria-hidden="true">▾</span>
-            </Link>
+            <span />
+            <span />
+            <span />
+          </button>
 
+          <ul className={`menu-principal ${menuAberto ? 'aberto' : ''}`}>
             <button
-              className="submenu-toggle"
-              aria-label="Abrir submenu solicitações"
-              onClick={(e) => { e.stopPropagation(); setSolicitacoesOpen(v => !v) }}
-            />
-            <ul className="submenu" role="menu">
-              <li role="none">
-                <Link to="/solicitacoes" role="menuitem" onClick={() => navTo('/solicitacoes')}>Solicitações</Link>
-              </li>
-            </ul>
-          </li>
-
-          {/* Perfil: rótulo também é Link + submenu */}
-          <li
-            className={`menu-perfil ${perfilOpen ? 'ativo' : ''}`}
-            onMouseEnter={() => setPerfilOpen(true)}
-            onMouseLeave={() => setPerfilOpen(false)}
-          >
-            <Link
-              to="/perfil"
-              className="menu-botao"
-              onClick={(e) => { e.preventDefault(); navTo('/perfil') }}
+              type="button"
+              className="fechar-menu"
+              onClick={() => setMenuAberto(false)}
+              aria-label="Fechar"
             >
-              Perfil <span aria-hidden="true">▾</span>
-            </Link>
+              ×
+            </button>
 
-            <button
-              className="submenu-toggle"
-              aria-label="Abrir submenu perfil"
-              onClick={(e) => { e.stopPropagation(); setPerfilOpen(v => !v) }}
-            />
-            <ul className="submenu-perfil" role="menu">
-              <li role="none"><Link to="/perfil" role="menuitem" onClick={() => navTo('/perfil')}>Meu Perfil</Link></li>
-              <li role="none"><Link to="/config" role="menuitem" onClick={() => navTo('/config')}>Configurações</Link></li>
-              <li role="none"><hr aria-hidden="true" /></li>
-              <li role="none"><a href="/logout" role="menuitem" onClick={handleLogout}>Sair</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
+            <li>
+              <Link to="/home" className="menu-botao" onClick={() => navTo('/home')}>
+                Home
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/solicitacoes"
+                className="menu-botao"
+                onClick={() => navTo('/solicitacoes')}
+              >
+                Solicitações
+              </Link>
+            </li>
+
+            <li
+              className={`menu-perfil ${perfilOpen ? 'ativo' : ''}`}
+              onMouseEnter={() => setPerfilOpen(true)}
+              onMouseLeave={() => setPerfilOpen(false)}
+            >
+              <button type="button" className="menu-botao" onClick={togglePerfil}>
+                Perfil <span aria-hidden="true">▾</span>
+              </button>
+
+              <button
+                type="button"
+                className="submenu-toggle"
+                aria-label="Abrir submenu perfil"
+                onClick={togglePerfil}
+              />
+
+              <ul className="submenu-perfil" role="menu">
+                <li role="none">
+                  <Link to="/perfil" role="menuitem" onClick={() => navTo('/perfil')}>
+                    Meu perfil
+                  </Link>
+                </li>
+                <li role="none">
+                  <hr aria-hidden="true" />
+                </li>
+                <li role="none">
+                  <a href="/logout" role="menuitem" onClick={handleLogout}>
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </>
   )
 }
-
