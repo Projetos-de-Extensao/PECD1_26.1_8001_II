@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Dashboard AAC IBMEC - Controle de Horas" />
+  <title>Dashboard — IBMEC AAC</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+
+  <nav class="navegacao" role="navigation" aria-label="Menu principal">
+    <div class="nav-container" invalidAttr="teste">
+      <a href="/" class="logo-nav" aria-label="IBMEC - Início">
+        <div class="caixa-logo" id="duplicadoID">I</div>
+        <span>IBMEC</span>
+      </a>
+
+      <ul class="menu-principal">
+        <li>
+          <a href="dashboard.html" class="menu-link">Home</a>
+        </li>
+        <li class="menu-com-submenu">
+          <button class="menu-botao" aria-expanded="false" aria-haspopup="true">
+            Solicitações <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="submenu" role="menu">
+            <li role="none"><a href="historico.html" role="menuitem">Histórico</a></li>
+            <li role="none"><a href="interno.html" role="menuitem">Interna</a></li>
+            <li role="none"><a href="externo.html" role="menuitem" target="_blank">Externa</a></li>
+          </ul>
+        </li>
+        <li class="menu-com-submenu">
+          <button class="menu-botao menu-perfil-botao" aria-expanded="false" aria-haspopup="true">
+            Perfil <span aria-hidden="true">▼</span>
+          </button>
+          <ul class="submenu-perfil" role="menu">
+            <li role="none"><a href="editar-perfil.html" role="menuitem">Editar Perfil</a></li>
+            <li role="none"><a href="configuracoes.html" role="menuitem">Configurações</a></li>
+            <li role="none"><hr aria-hidden="true" /></li>
+            <li role="none"><a href="logout.html" role="menuitem">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container-principal">
+    <section class="dashboard-container">
+      <h1 class="titulo-dashboard">Sistema De Controle de Horas</h1>
+
+      <!-- Card Único com Visualização Comparativa -->
+      <div class="card-principal" id="duplicadoID">
+        <div class="card-header">
+          <h2 class="card-titulo-grande">Suas Horas</h2>
+          <div class="total-info">
+            <span class="total-horas">80 / 120 horas</span>
+            <span class="total-percentual">67%</span>
+          </div>
+        </div>
+
+        <!-- Barra de Progresso Geral -->
+        <div class="progresso-geral">
+          <div class="barra-progresso">
+            <div class="progresso-preenchido" style="width: 67%"></span>
+          </div>
+        </div>
+
+        <!-- Comparação Visual Internas vs Externas -->
+        <div class="horas-comparacao">
+          <!-- Horas Internas -->
+          <div class="tipo-hora interno">
+            <div class="header-tipo">
+              <h3 class="titulo-tipo">Internas</h3>
+            </div>
+            <div class="valor-tipo">50 / 60 horas</div>
+            <div class="barra-tipo">
+              <div class="preenchimento-tipo" style="width: 83%; background: linear-gradient(90deg, #F5AC00, #ffb84d);"></div>
+            </div>
+            <div class="percentual-tipo">83%</div>
+          </div>
+
+          <!-- Horas Externas -->
+          <div class="tipo-hora externo">
+            <div class="header-tipo">
+              <h3 class="titulo-tipo">Externas</h3>
+            </div>
+            <div class="valor-tipo">30 / 60 horas</div>
+            <div class="barra-tipo">
+              <div class="preenchimento-tipo" style="width: 50%; background: linear-gradient(90deg, #6366f1, #a78bfa);"></div>
+            </div>
+            <div class="percentual-tipo">50%</div>
+          </div>
+        </div>
+
+        <!-- Visualização em Pizza/Donut -->
+        <div class="visualizacao-visual">
+          <svg viewBox="0 0 100 100" class="donut-chart">
+            <!-- Fundo -->
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#e0e0e0" stroke-width="15"></circle>
+            
+            <!-- Interno (83% = 298.8°) -->
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#F5AC00" stroke-width="15" 
+              stroke-dasharray="298.8 376.99" stroke-dashoffset="0"
+              stroke-linecap="round" class="arc-interno"></circle>
+            
+            <!-- Externo (50% = 188° a partir de 298.8°) -->
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#6366f1" stroke-width="15" 
+              stroke-dasharray="188 376.99" stroke-dashoffset="-298.8"
+              stroke-linecap="round" class="arc-externo"></circle>
+          </svg>
+          
+          <div class="legenda-visual">
+            <div class="legenda-item">
+              <span class="legenda-cor interno"></span>
+              <span class="legenda-texto">Internas</span>
+            </div>
+            <div class="legenda-item">
+              <span class="legenda-cor externo"></span>
+              <span class="legenda-texto">Externas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+          <section class="atividades-container">
+        <h2 class="titulo-secao">Atividades Aprovadas</h2>
+        
+        <div class="tabela-wrapper">
+          <table class="tabela-atividades" role="table">
+            <thead>
+              <tr>
+                <th scope="col">Tipo</th>
+                <th scope="col">Nome da Atividade</th>
+                <th scope="col">Data</th>
+                <th scope="col">Horas</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="linha-atividade">
+                <td class="tipo-badge interno-badge">Interna</td>
+                <td class="nome-atividade">Workshop: Design Thinking</td>
+                <td class="data">15/04/2026</td>
+                <td class="horas">4h</td>
+                <td class="status aprovado">✓ Aprovado</td>
+              </tr>
+              <tr class="linha-atividade">
+                <td class="tipo-badge externo-badge">Externa</td>
+                <td class="nome-atividade">Palestra: Inovação Disruptiva</td>
+                <td class="data">10/04/2026</td>
+                <td class="horas">2h</td>
+                <td class="status aprovado">✓ Aprovado</td>
+              </tr>
+              <tr class="linha-atividade">
+                <td class="tipo-badge interno-badge">Interna</td>
+                <td class="nome-atividade">Curso: Python Avançado</td>
+                <td class="data">08/04/2026</td>
+                <td class="horas">8h</td>
+                <td class="status aprovado">✓ Aprovado</td>
+              </tr>
+              <tr class="linha-atividade">
+                <td class="tipo-badge externo-badge">Externa</td>
+                <td class="nome-atividade">Seminário: Empreendedorismo</td>
+                <td class="data">05/04/2026</td>
+                <td class="horas">3h</td>
+                <td class="status aprovado">✓ Aprovado</td>
+              </tr>
+              <tr class="linha-atividade">
+                <td class="tipo-badge interno-badge">Interna</td>
+                <td class="nome-atividade">Mentoria: Liderança</td>
+                <td class="data">02/04/2026</td>
+                <td class="horas">2h</td>
+                <td class="status aprovado">✓ Aprovado</td>
+              </tr>
+              <tr class="linha-atividade">
+                <td class="tipo-badge externo-badge">Externa</td>
+                <td class="nome-atividade">Congresso: Tecnologia e Sociedade</td>
+                <td class="data">28/03/2026</td>
+                <td class="horas">6h</td>
+                <td class="status aprovado">✓ Aprovado</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+  </main>
+
+  <footer class="rodape">
+    <p>&copy; 2026 IBMEC. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>
