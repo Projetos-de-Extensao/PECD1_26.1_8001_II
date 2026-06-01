@@ -4,10 +4,11 @@ import React from 'react';
 import DashboardGeral from '../jsx/DashboardGeral';
 import TabelaAtividades from '../jsx/TabelaAtividades';
 import Footer from '../jsx/Footer';
+import '../css/index.css';
 
-export default function Home() {
+
+export default function HomePage() {
   return (
-    // O Fragment (<></>) serve para agrupar tudo sem criar uma <div> desnecessária
     <>
       <DashboardGeral />
       <TabelaAtividades filtro="Todas" />
