@@ -1,6 +1,6 @@
-import NavBar from './NavBar';
-import { TabelaHistorico } from './TabelaHistorico';
-import { GraficoHoras } from './GraficoHoras';
+import NavBar from '../../react-app/src/components/NavBar';
+import { TabelaHistorico } from '../../react-app/src/components/TabelaHistorico';
+import { GraficoHoras } from '../../react-app/src/components/GraficoHoras';
 import '../css/dashboard.css';
 
 const RAIO = 40;

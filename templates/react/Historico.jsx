@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../react-app/src/components/NavBar';
 import '../css/historico.css';
 
 const SOLICITACOES = [

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../react-app/src/components/NavBar';
 import {
   listarComprovantes,
   aprovarComprovante,

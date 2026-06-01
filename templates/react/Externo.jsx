@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../react-app/src/components/NavBar';
 import { enviarComprovante } from './api/comprovantesApi';
 import '../css/interno.css';
 import '../css/externo.css';
