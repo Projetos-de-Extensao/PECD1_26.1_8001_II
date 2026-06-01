@@ -1,78 +1,31 @@
+/* ========== TÍTULOS E CONTAINERS ========== */
+.painel-envio { padding: 0; }
+.titulo-form { font-size: 1.5rem; color: var(--cor-secundaria); margin-bottom: 0.3rem; font-weight: 800; }
+.subtitulo-form { font-size: 0.9rem; color: #666; margin-bottom: 1.2rem; }
+
+/* ========== BOTÕES ========== */
+.acoes { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.btn { border: none; padding: 0.7rem 1.3rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.9rem; }
+.btn-principal { background: linear-gradient(135deg, var(--cor-secundaria), #003d7a); color: #fff; }
+.btn-principal:hover { filter: brightness(1.05); }
+.btn-secundario { background: transparent; border: 1px solid #ddd; color: var(--cor-secundaria); }
+.btn-secundario:hover { background: #f9f9f9; }
+
 /* ========== SCANNER E VÍDEO ========== */
-.scanner-area {
-  display: none;
-  border: 2px dashed #bbb;
-  border-radius: 10px;
-  padding: 1rem;
-  background: #f9f9f9;
-  margin-bottom: 1rem;
-}
-
-.scanner-area.ativo {
-  display: block;
-}
-
-#videoScanner {
-  width: 100%;
-  max-height: 240px;
-  border-radius: 8px;
-  background: #111;
-}
+.scanner-area { display: none; border: 2px dashed #bbb; border-radius: 10px; padding: 1rem; background: #f9f9f9; margin-bottom: 1rem; }
+.scanner-area.ativo { display: block; }
+#videoScanner { width: 100%; max-height: 240px; border-radius: 8px; background: #111; }
 
 /* ========== MINI TELA DE CONFIRMAÇÃO ========== */
-.mini-tela {
-  display: none;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #f9f9f9;
-  padding: 1rem;
-  margin-top: 1rem;
-}
+.mini-tela { display: none; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9; padding: 1rem; margin-top: 1rem; }
+.mini-tela.ativa { display: block; }
+.mini-tela h3 { font-size: 1rem; color: var(--cor-secundaria); margin-bottom: 0.8rem; }
 
-.mini-tela.ativa {
-  display: block;
-}
-
-.mini-tela h3 {
-  font-size: 1rem;
-  color: var(--cor-secundaria);
-  margin-bottom: 0.8rem;
-}
-
-.detalhes {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
-}
-
-.detalhe {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.6rem;
-}
-
-.rotulo {
-  display: block;
-  font-size: 0.7rem;
-  color: #666;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
-
-.valor {
-  display: block;
-  font-weight: 800;
-  color: var(--cor-secundaria);
-  font-size: 0.9rem;
-}
-
-.status {
-  min-height: 1rem;
-  margin: 0.5rem 0 1rem;
-  font-size: 0.9rem;
-}
+.detalhes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
+.detalhe { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 0.6rem; }
+.rotulo { display: block; font-size: 0.7rem; color: #666; font-weight: 700; margin-bottom: 0.25rem; }
+.valor { display: block; font-weight: 800; color: var(--cor-secundaria); font-size: 0.9rem; }
+.status { min-height: 1rem; margin: 0.5rem 0 1rem; font-size: 0.9rem; }
 
 /* ========== RESPONSIVIDADE INTERNO ========== */
 @media (max-width: 1024px) {

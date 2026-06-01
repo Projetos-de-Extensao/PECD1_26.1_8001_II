@@ -9,28 +9,94 @@
   --transicao: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
 
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: smooth; 
+  overflow-x: hidden; /* <-- Adicione isto para travar a tela horizontalmente */
+}
 
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: linear-gradient(135deg, #0a0e27 0%, #16213e 100%);
   color: #333;
   min-height: 100vh;
+  overflow-x: hidden; /* <-- Adicione isto aqui também! */
 }
 
+/* =========================================
+   1. BASE (MOBILE FIRST) - Celulares
+   ========================================= */
 .container-principal {
-  max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  /* No celular, o padding é menor para aproveitar o espaço da tela */
+  padding: 1.5rem 1rem; 
   min-height: calc(100vh - 200px);
 }
 
-@media (max-width: 768px) {
-  .container-principal { padding: 2rem 1rem; }
+/* ========== BOTÕES GLOBAIS ========== */
+/* Como você vai usar botões no Perfil, Login e Formulários, eles ficam no Global */
+.btn {
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transicao);
+  font-size: 0.9rem;
+  width: 100%; /* No celular, os botões ocupam a tela toda por padrão */
+  text-align: center;
 }
 
-@media (max-width: 480px) {
-  .container-principal { padding: 1rem; }
+.btn-principal {
+  background: linear-gradient(135deg, var(--cor-secundaria), #003d7a);
+  color: #fff;
+}
+
+.btn-principal:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px rgba(0, 37, 85, 0.3);
+}
+
+.btn-secundario {
+  background: transparent;
+  border: 2px solid #ddd;
+  color: var(--cor-secundaria);
+}
+
+.btn-secundario:hover {
+  background: #f9f9f9;
+  border-color: var(--cor-secundaria);
+}
+
+
+/* =========================================
+   2. TABLETS - Telas Médias (A partir de 768px)
+   ========================================= */
+@media (min-width: 768px) {
+  .container-principal {
+    /* Aumenta o respiro lateral em telas um pouco maiores */
+    padding: 2.5rem 1.5rem; 
+  }
+
+  .btn {
+    width: auto; /* Deixa de ser tela toda e abraça apenas o conteúdo do texto */
+  }
+}
+
+
+/* =========================================
+   3. DESKTOPS E TVS - Telas Grandes (A partir de 1024px)
+   ========================================= */
+@media (min-width: 1024px) {
+  .container-principal {
+    /* Só no computador nós travamos a largura máxima para o site não esticar infinitamente */
+    max-width: 1100px; 
+    padding: 3rem 1.5rem; 
+  }
 }
