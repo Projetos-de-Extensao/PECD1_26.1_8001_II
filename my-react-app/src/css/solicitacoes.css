@@ -1,0 +1,71 @@
+/* =========================================
+   1. BASE (MOBILE FIRST) - Telas Pequenas (Celular)
+   ========================================= */
+.layout-dual {
+  display: flex;
+  /* A MÁGICA: Empilha os itens e inverte a ordem! 
+     O formulário de envio sobe para o topo e o Histórico desce. */
+  flex-direction: column-reverse; 
+  gap: 1.5rem;
+}
+
+/* Cartões com fundo branco e sombras suaves */
+.coluna-historico, 
+.coluna-formularios {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 37, 85, 0.08);
+  width: 100%;
+}
+
+/* Opcional: Um espacinho extra no histórico já que ele vai ficar por baixo */
+.coluna-historico {
+  margin-bottom: 2rem;
+}
+
+/* ========== BOTÕES DE ALTERNAR (Interna / Externa) ========== */
+.botoes-navegacao {
+  display: flex;
+  background: #f0f4f8; 
+  padding: 0.4rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.btn-nav {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  background: transparent;
+  color: #64748b; 
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.btn-nav.ativo {
+  background: #ffffff;
+  color: var(--cor-secundaria, #002555);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ========== A MÁGICA DO ESCONDE/MOSTRA FORMULÁRIOS ========== */
+.formulario { display: none; }
+.formulario.ativo { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   2. DESKTOP - Telas Grandes (A partir de 1024px)
+   ========================================= */
+@media (min-width: 1024px) {
+  .layout-dual {
+    /* No computador, volta a ficar um do lado do outro (grade) */
+    display: grid;
+    /* Tabela fica com 60% do espaço, Formulário com 40
