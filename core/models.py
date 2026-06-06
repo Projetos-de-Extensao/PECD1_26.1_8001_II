@@ -9,6 +9,9 @@ class Usuario(models.Model):
     curso = models.CharField(max_length=100)
     horas_computadas = models.FloatField(default=0)
     horas_totais = models.FloatField(default=0) 
+    ano_entrada = models.CharField(max_length=4, default='2024')
+    periodo = models.CharField(max_length=20, default='1º Período')
+    ativo = models.BooleanField(default=True)  # Para controle de usuários ativos/inativos
 
 
     def __str__(self):
@@ -24,13 +27,17 @@ class Solicitacao(models.Model):
     nome_atividade = models.CharField(max_length=100)
     arquivo = models.CharField(max_length=200, null=True, blank=True)
     status = models.CharField(max_length=20, default='Pendente')  # Pendente, Aprovada, Rejeitada
+    observacao = models.TextField(null=True, blank=True)
+
 
 #Models das categorias de atividades complementares
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
     atividade = models.CharField(max_length=100)
+    categoria = models.CharField(max_length=100)
     tipo = models.BooleanField(default=False)  # True interna e False externa
     horas = models.FloatField()
+    ativo = models.BooleanField(default=True)  # Para controle de categorias ativas/inativas
 
     def __str__(self):
         return self.atividade
@@ -46,6 +53,7 @@ class Eventos(models.Model):
     curso_alvo = models.CharField(max_length=150, null=True, blank=True)
     palestrante = models.CharField(max_length=150, null=True, blank=True)
     unidade = models.CharField(max_length=100, null=True, blank=True)
+    ativo = models.BooleanField(default=True)  # Para controle de eventos ativos/inativos
 
 
     def __str__(self):
