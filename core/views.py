@@ -300,8 +300,10 @@ class EventosViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/eventos/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_eventos(self, request):
-        # pega todas os eventos 
-        pass
+        eventos = Eventos.objects.all().order_by('id_evento')
+        serializer = self.get_serializer(eventos, many=True)
+        return Response(serializer.data)
+    
 
 
 
