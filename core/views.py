@@ -186,11 +186,54 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     serializer_class = SolicitacaoSerializer
     permission_classes = [AllowAny]
 
-    # Endpoint: POST /api/solicitacoes/criar/
-    @action(detail=False, methods=['post'], url_path='criar')
-    def criar_solicitacao(self, request):
-        # Cria uma nova solicitação de atividade complementar
-        pass
+    # Endpoint: POST /api/solicitacoes/criar-externa/
+    @action(detail=False, methods=['post'], url_path='criar-externa')
+    def criar_externa(self, request):
+        dados = request.data.copy()
+        dados['tipo'] = 'Externa'
+        dados['status'] = 'Pendente'
+        
+        # Simulando o usuário logado (depois trocar por request.user.matricula)
+        usuario = Usuario.objects.first()
+        if usuario:
+            dados['aluno'] = usuario.matricula
+
+        serializer = self.get_serializer(data=dados)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    # Endpoint: POST /api/solicitacoes/criar-interna/ (VIA QR CODE)
+    @action(detail=False, methods=['post'], url_path='criar-interna')
+    def criar_interna(self, request):
+        evento_id = request.data.get('evento_id')
+        usuario = Usuario.objects.first() # Simulando usuário logado
+
+        if not evento_id or not usuario:
+            return Response({"mensagem": "ID do Evento ou Usuário não informados."}, status=400)
+
+        try:
+            evento = Eventos.objects.get(id_evento=evento_id)
+        except Eventos.DoesNotExist:
+            return Response({"mensagem": "Evento não encontrado no sistema."}, status=404)
+
+        # Validação contra fraudes: Aluno não pode bipar o mesmo QR Code duas vezes
+        if Solicitacao.objects.filter(aluno=usuario, evento=evento).exists():
+            return Response({"mensagem": "Você já registrou presença neste evento!"}, status=400)
+
+        # Pega a Categoria baseada no nome que está salvo no Evento (ou usa a primeira como fallback)
+        categoria_obj = Categoria.objects.filter(atividade=evento.categoria).first() or Categoria.objects.first()
+
+        # Cria a solicitação pré-aprovada com os dados puxados diretamente do Evento
+        solicitacao = Solicitacao.objects.create(
+            aluno=usuario, evento=evento, categoria=categoria_obj,
+            data=evento.data, horas=evento.horas, tipo='Interna',
+            nome_atividade=evento.nome, status='Aprovada'
+        )
+
+        serializer = self.get_serializer(solicitacao)
+        return Response(serializer.data, status=201)
 
     # Endpoint: POST /api/solicitacoes/aprovar/
     @action(detail=False, methods=['post'], url_path='aprovar')

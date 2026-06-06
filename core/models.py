@@ -10,8 +10,9 @@ class Usuario(models.Model):
     horas_computadas = models.FloatField(default=0)
     horas_totais = models.FloatField(default=0) 
     horas_internas = models.FloatField(default=0)
-    horas_externas = models.FloatField(default=0)    ano_entrada = models.CharField(max_length=4, default='2024')
-    periodo = models.CharField(max_length=20, default='1º Período')
+    horas_externas = models.FloatField(default=0)    
+    ano_entrada = models.CharField(max_length=4, default='2026')
+    periodo = models.CharField(max_length=20, default='2º Período')
     ativo = models.BooleanField(default=True)  # Para controle de usuários ativos/inativos
 
 
@@ -26,6 +27,7 @@ class Solicitacao(models.Model):
     evento = models.ForeignKey('Eventos', on_delete=models.SET_NULL, null=True, blank=True, related_name='solicitacoes')
     data = models.DateField()
     horas = models.FloatField()
+    tipo = models.CharField(max_length=20)  # Interna ou Externa
     nome_atividade = models.CharField(max_length=100)
     arquivo = models.CharField(max_length=200, null=True, blank=True)
     status = models.CharField(max_length=20, default='Pendente')  # Pendente, Aprovada, Rejeitada
