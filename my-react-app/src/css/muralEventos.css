@@ -11,15 +11,15 @@
 }
 
 .mural-header h2 {
-  color: var(--cor-secundaria, #002555);
-  font-size: 1.8rem;
-  margin-bottom: 0.2rem;
+  color: #ffffff;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
   font-weight: 800;
 }
 
 .mural-header p {
-  color: #64748b;
-  font-size: 1rem;
+  color: #cbd5e1;
+  font-size: 1.1rem;
 }
 
 /* Estrutura Base do Carrossel */
@@ -56,7 +56,7 @@
   align-items: center;
   
   /* Efeito Glassmorphism (Vidro Fosco) */
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 3rem 4rem;
@@ -65,21 +65,42 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.badge-tipo {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
+.badge-grupo {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.badge-item {
   padding: 0.4rem 1.2rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.badge-interno {
+  background: rgba(245, 172, 0, 0.2);
+  color: #F5AC00;
+  border: 1px solid rgba(245, 172, 0, 0.3);
+}
+
+.badge-externo {
+  background: rgba(167, 139, 250, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.badge-categoria {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .slide-conteudo h3 {
-  font-size: 2.6rem;
+  font-size: 2.8rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
   line-height: 1.2;
@@ -89,30 +110,55 @@
 .slide-infos {
   display: flex;
   justify-content: center;
-  gap: 2rem;
-  font-size: 1.15rem;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  opacity: 0.95;
-}
-
-.slide-detalhes-extras {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
+  gap: 2.5rem;
+  font-size: 1.2rem;
   margin-bottom: 2.5rem;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+  color: #e2e8f0;
 }
 
-.slide-detalhes-extras span {
+.grid-detalhes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 3rem;
+}
+
+.card-detalhe {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  text-align: left;
+}
+
+.icone-detalhe {
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+.icone-detalhe.roxo { background: rgba(167, 139, 250, 0.2); }
+.icone-detalhe.azul { background: rgba(56, 189, 248, 0.2); }
+.icone-detalhe.laranja { background: rgba(245, 172, 0, 0.2); }
+
+.texto-detalhe {
+  display: flex;
+  flex-direction: column;
+}
+
+.texto-detalhe .rotulo {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.texto-detalhe .valor {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .btn-inscrever {
@@ -195,11 +241,11 @@
   .slide-conteudo { padding: 2rem 1.5rem; }
   .slide-conteudo h3 { font-size: 1.8rem; }
   .carrossel-slide { padding: 4rem 1rem; }
-  .slide-infos { flex-direction: column; gap: 0.5rem; align-items: center; }
-  .slide-detalhes-extras { 
-    flex-direction: column; 
+  .slide-infos { flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .grid-detalhes { 
+    grid-template-columns: 1fr; 
     gap: 0.8rem; 
-    align-items: flex-start; 
+    margin-bottom: 2rem; 
   }
   .btn-controle { width: 40px; height: 40px; font-size: 1.2rem; }
   .btn-inscrever { padding: 0.8rem 2rem; font-size: 1rem; }

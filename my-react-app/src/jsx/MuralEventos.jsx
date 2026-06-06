@@ -46,11 +46,6 @@ export default function MuralEventos() {
 
   return (
     <div className="mural-container">
-      <div className="mural-header">
-        <h2>Eventos</h2>
-        <p>Participe de eventos disponíveis e garanta suas horas complementares (AAC)</p>
-      </div>
-      
       <div className="carrossel">
         <button className="btn-controle prev" onClick={slideAnterior}>&#10094;</button>
         
@@ -59,18 +54,42 @@ export default function MuralEventos() {
           {eventos.map((evento) => (
             <div className="carrossel-slide" key={evento.id} style={{ background: evento.cor }}>
               <div className="slide-conteudo">
-                <span className="badge-tipo">{evento.categoria}</span>
+                
+                <div className="badge-grupo">
+                  <span className="badge-item badge-categoria">{evento.categoria}</span>
+                </div>
+                
                 <h3>{evento.titulo}</h3>
+                
                 <div className="slide-infos">
-                  <span>🗓️ {evento.data} às {evento.hora}</span>
-                  <span>⏱️ Total: {evento.horas}h AAC</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🗓️ {evento.data} às {evento.hora}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>⏱️ {evento.horas}h AAC</span>
                 </div>
-                <div className="slide-detalhes-extras">
-                  {evento.palestrante && <span><strong>🗣️ Palestrante:</strong> {evento.palestrante}</span>}
-                  {evento.cursoAlvo && <span><strong>🎯 Curso Alvo:</strong> {evento.cursoAlvo}</span>}
-                  {evento.unidade && <span><strong>📍 Unidade:</strong> {evento.unidade}</span>}
+                
+                <div className="grid-detalhes">
+                  {evento.palestrante && (
+                    <div className="card-detalhe">
+                      <div className="icone-detalhe roxo">🗣️</div>
+                      <div className="texto-detalhe"><span className="rotulo">Palestrante</span><span className="valor">{evento.palestrante}</span></div>
+                    </div>
+                  )}
+                  
+                  {evento.cursoAlvo && (
+                    <div className="card-detalhe">
+                      <div className="icone-detalhe azul">🎯</div>
+                      <div className="texto-detalhe"><span className="rotulo">Curso Alvo</span><span className="valor">{evento.cursoAlvo}</span></div>
+                    </div>
+                  )}
+                  
+                  {evento.unidade && (
+                    <div className="card-detalhe">
+                      <div className="icone-detalhe laranja">📍</div>
+                      <div className="texto-detalhe"><span className="rotulo">Unidade</span><span className="valor">{evento.unidade}</span></div>
+                    </div>
+                  )}
                 </div>
-                <button className="btn-inscrever">Quero Participar</button>
+                
+                <button className="btn-inscrever">Garantir Minha Vaga</button>
               </div>
             </div>
           ))}
