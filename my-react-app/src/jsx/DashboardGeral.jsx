@@ -14,26 +14,39 @@ function DashboardGeral() {
   useEffect(() => {
     async function buscarDadosDashboard() {
       setCarregando(true);
-      const DADOS_ZERADOS = {
-        total: { atual: 0, meta: 120 },
-        internas: { atual: 0, meta: 60 },
-        externas: { atual: 0, meta: 60 },
-      };
-
       try {
-        const resp = await fetch('/api/dashboard-horas'); 
+        const usuarioSalvo = localStorage.getItem('usuario');
+        if (!usuarioSalvo) {
+          throw new Error('Usuário não autenticado');
+        }
+        const usuarioLogado = JSON.parse(usuarioSalvo);
+
+        const resp = await fetch('http://localhost:8000/api/usuarios/horas-totais/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Usuario-Matricula': usuarioLogado.matricula
+          }
+        }); 
         
         if (!resp.ok) throw new Error('Falha na API');
 
         const dados = await resp.json();
         
-        setHoras(dados || DADOS_ZERADOS); 
+        setHoras({
+          total: { atual: dados.horas_totais || 0, meta: dados.meta_total || 120 },
+          internas: { atual: dados.horas_internas || 0, meta: dados.meta_internas || 60 },
+          externas: { atual: dados.horas_externas || 0, meta: dados.meta_externas || 60 }
+        });
 
       } catch (error) {
-        console.error('API indisponível, mostrando dados simulados.', error);
+        console.error('Erro ao buscar dados do dashboard:', error);
         
-        // Dados Simulados (Visão Geral)
-        setHoras({ total: { atual: 99, meta: 120 }, internas: { atual: 64, meta: 60 }, externas: { atual: 35, meta: 60 } });
+        setHoras({
+          total: { atual: 0, meta: 120 },
+          internas: { atual: 0, meta: 60 },
+          externas: { atual: 0, meta: 60 }
+        });
       } finally {
         setCarregando(false);
       }

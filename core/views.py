@@ -110,16 +110,35 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         except Usuario.DoesNotExist:
             return Response({"mensagem": "Usuário não encontrado."}, status=404)
             
-        total_horas = Solicitacao.objects.filter(aluno=usuario, status='Aprovada').aggregate(total=Sum('horas'))['total'] or 0
+        # Soma as horas aprovadas separando por Internas e Externas
+        total_internas = Solicitacao.objects.filter(aluno=usuario, status='Aprovada', tipo='Interna').aggregate(total=Sum('horas'))['total'] or 0
+        total_externas = Solicitacao.objects.filter(aluno=usuario, status='Aprovada', tipo='Externa').aggregate(total=Sum('horas'))['total'] or 0
+        total_horas = total_internas + total_externas
         
-        # Atualizamos as horas computadas (realizadas) com a soma do banco
+        # Atualiza os dados no modelo do usuário e salva no banco
+        usuario.horas_internas = total_internas
+        usuario.horas_externas = total_externas
         usuario.horas_computadas = total_horas
         usuario.horas_totais = total_horas
         usuario.save()
 
+        # Lógica de metas baseada no curso do aluno
+        curso_nome = usuario.curso.lower() if usuario.curso else ""
+        if "engenharia" in curso_nome or "computação" in curso_nome or "sistemas" in curso_nome:
+            meta_total, meta_int, meta_ext = 240, 120, 120
+        elif "direito" in curso_nome:
+            meta_total, meta_int, meta_ext = 300, 150, 150
+        else:
+            meta_total, meta_int, meta_ext = 120, 60, 60  # Meta padrão
+
         return Response({
             "horas_totais": usuario.horas_totais,
-            "horas_computadas": usuario.horas_computadas
+            "horas_computadas": usuario.horas_computadas,
+            "horas_internas": usuario.horas_internas,
+            "horas_externas": usuario.horas_externas,
+            "meta_total": meta_total,
+            "meta_internas": meta_int,
+            "meta_externas": meta_ext
         })
 
     # Endpoint: GET /api/usuarios/lista/
