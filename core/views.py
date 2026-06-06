@@ -239,9 +239,9 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/categorias/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista(self, request):
-        # pega todas as categorias 
-        pass
-
+        categorias = Categoria.objects.all().order_by('id_categoria')
+        serializer = self.get_serializer(categorias, many=True)
+        return Response(serializer.data)
 
 class EventosViewSet(viewsets.ModelViewSet):
     queryset = Eventos.objects.all().order_by('id_evento')
