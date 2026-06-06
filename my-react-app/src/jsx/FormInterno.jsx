@@ -125,25 +125,34 @@ export default function FormInterno({ ativo }) {
     setScannerStatus('Enviando para o banco de dados...');
     
     try {
-      const resposta = await fetch('/api/solicitacoes/interna', {
+      const usuarioSalvo = localStorage.getItem('usuario');
+      if (!usuarioSalvo) {
+        throw new Error('Usuário não autenticado. Faça login novamente.');
+      }
+      const usuarioLogado = JSON.parse(usuarioSalvo);
+
+      const resposta = await fetch('http://localhost:8000/api/solicitacoes/criar-interna/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // Mandamos os dados pro backend
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Usuario-Matricula': usuarioLogado.matricula
+        },
         body: JSON.stringify({
-          id_evento: dadosQr.idEvento,
-          horas_solicitadas: dadosQr.horas
-          // Adicione aqui o ID do usuário logado se necessário
+          evento_id: dadosQr.idEvento
         }), 
       });
 
-      if (!resposta.ok) throw new Error('Falha no servidor');
+      if (!resposta.ok) {
+        const erroData = await resposta.json().catch(() => ({}));
+        throw new Error(erroData.mensagem || 'Falha ao registrar a atividade no servidor');
+      }
 
       setScannerStatus('✓ Horas aprovadas e salvas no banco de dados!');
       setDadosQr({ idEvento: '', nomePalestra: '-', data: '-', horas: '-' });
       
     } catch (erro) {
       console.error(erro);
-      setScannerStatus('✗ Erro ao salvar no banco. Tente novamente.');
+      setScannerStatus(`✗ ${erro.message}`);
     }
   }
 
