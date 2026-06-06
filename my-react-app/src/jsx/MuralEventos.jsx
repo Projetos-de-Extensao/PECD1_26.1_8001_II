@@ -6,21 +6,49 @@ export default function MuralEventos() {
   const [slideAtual, setSlideAtual] = useState(0);
 
   useEffect(() => {
-    // Simulando a busca de eventos em destaque do Banco de Dados
-    setEventos([
-      { 
-        id: 1, titulo: 'Semana da Computação IBMEC', data: '15/05/2026', hora: '14:00 às 18:00', horas: 20, tipo: 'Interno', categoria: 'Eventos', palestrante: 'Vários Palestrantes', cursoAlvo: 'Tecnologia', unidade: 'Barra da Tijuca',
-        cor: 'linear-gradient(135deg, #002555 0%, #004b99 100%)' // Azul Institucional
-      },
-      { 
-        id: 2, titulo: 'Palestra: IA e o Futuro do Trabalho', data: '20/05/2026', hora: '19:00', horas: 3, tipo: 'Externo', categoria: 'Palestra', palestrante: 'Maria Inovação', cursoAlvo: 'Todos os Cursos', unidade: 'Online',
-        cor: 'linear-gradient(135deg, #F5AC00 0%, #ff8800 100%)' // Amarelo/Laranja
-      },
-      { 
-        id: 3, titulo: 'Workshop de Design Thinking Avançado', data: '10/06/2026', hora: '09:00 às 12:00', horas: 5, tipo: 'Interno', categoria: 'Cursos', palestrante: 'Prof. Carlos Mendes', cursoAlvo: 'Comunicação e Design', unidade: 'Centro',
-        cor: 'linear-gradient(135deg, #1f8b4c 0%, #2db965 100%)' // Verde Sucesso
+    async function buscarEventos() {
+      try {
+        const resposta = await fetch('http://localhost:8000/api/eventos/lista/', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!resposta.ok) throw new Error('Falha ao buscar eventos da API');
+
+        const dados = await resposta.json();
+
+        // Paleta de cores para enfeitar os slides
+        const paletaCores = [
+          'linear-gradient(135deg, #002555 0%, #004b99 100%)', // Azul Institucional
+          'linear-gradient(135deg, #F5AC00 0%, #ff8800 100%)', // Amarelo/Laranja
+          'linear-gradient(135deg, #1f8b4c 0%, #2db965 100%)', // Verde Sucesso
+          'linear-gradient(135deg, #6f42c1 0%, #8950d6 100%)'  // Roxo
+        ];
+
+        // Filtra apenas eventos ativos e formata os nomes pro Layout React
+        const eventosFormatados = dados
+          .filter(evento => evento.ativo !== false)
+          .map((evento, index) => ({
+            id: evento.id_evento,
+            titulo: evento.nome,
+            data: evento.data,
+            hora: evento.hora || '',
+            horas: evento.horas,
+            tipo: 'Interno',
+            categoria: evento.categoria,
+            palestrante: evento.palestrante || '',
+            cursoAlvo: evento.curso_alvo || '',
+            unidade: evento.unidade || '',
+            cor: paletaCores[index % paletaCores.length]
+          }));
+
+        setEventos(eventosFormatados);
+      } catch (error) {
+        console.error('Erro ao carregar o mural de eventos:', error);
       }
-    ]);
+    }
+
+    buscarEventos();
   }, []);
 
   // Efeito para trocar o slide automaticamente a cada 5 segundos
