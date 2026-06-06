@@ -14,6 +14,29 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     serializer_class = UsuarioSerializer
     permission_classes = [AllowAny]
 
+    # Endpoint: POST /api/usuarios/login/
+    @action(detail=False, methods=['post'], url_path='login')
+    def login(self, request):
+        email = request.data.get('email')
+        senha = request.data.get('senha')
+
+        if not email or not senha:
+            return Response({"mensagem": "Email e senha são obrigatórios."}, status=400)
+
+        try:
+            usuario = Usuario.objects.get(email=email)
+            # TODO: Em um ambiente de produção, as senhas devem ser verificadas com hash (ex: check_password)
+            if usuario.senha == senha:
+                serializer = self.get_serializer(usuario)
+                return Response({
+                    "mensagem": "Login realizado com sucesso!",
+                    "usuario": serializer.data
+                }, status=200)
+            else:
+                return Response({"mensagem": "Credenciais inválidas."}, status=401)
+        except Usuario.DoesNotExist:
+            return Response({"mensagem": "Credenciais inválidas."}, status=401)
+
     # Endpoint: GET /api/usuarios/meus-dados/
     @action(detail=False, methods=['get'], url_path='meus-dados')
     def meus_dados(self, request):
