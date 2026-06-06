@@ -1,79 +1,103 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/login.css'
 import '../css/index.css';
 
-
-async function handleLogin(email, senha) {
-  try {
-    const resposta = await fetch('http://localhost:8000/api/usuarios/login/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, senha }),
-    });
-
-    const dados = await resposta.json();
-
-    if (resposta.ok) {
-      console.log('Login efetuado com sucesso!', dados.usuario);
-      // Salva os dados do usuário logado no localStorage
-      localStorage.setItem('usuario', JSON.stringify(dados.usuario));
-    } else {
-      console.error('Erro de login:', dados.mensagem);
-      // Aqui você exibe o erro na tela pro usuário
-    }
-  } catch (erro) {
-    console.error('Falha na comunicação com a API:', erro);
-  }
-}
-
-
 function Login() {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [lembrar, setLembrar] = useState(false);
+  const [erro, setErro] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
+    e.preventDefault(); // Impede o reload da página
+    setErro('');
+
+    if (!email || !senha) {
+      setErro('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    setCarregando(true);
+
+    try {
+      // Descobre o IP automaticamente (seja localhost ou 192.168...)
+      const urlBackend = `http://${window.location.hostname}:8000/api/usuarios/login/`;
+      const resposta = await fetch(urlBackend, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        console.log('Login efetuado com sucesso!', dados.usuario);
+        localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+        
+        // Redireciona para o dashboard de forma fluida e sem recarregar a página
+        navigate('/dashboard'); 
+      } else {
+        setErro(dados.mensagem || 'Credenciais inválidas.');
+      }
+    } catch (erro) {
+      console.error('Falha na comunicação com a API:', erro);
+      setErro('Erro de conexão com o servidor.');
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   return (
     <>
-    <section class="pagina">
-      <article class="cartao">
+    <section className="pagina">
+      <article className="cartao">
 
-        <div class="logo">
-          <div class="caixa-logo">I</div>
+        <div className="logo">
+          <div className="caixa-logo">I</div>
           <span>IBMEC</span>
         </div>
 
         <h1>Entrar</h1>
-        <p class="subtitulo">Acesse o portal AAC</p>
+        <p className="subtitulo">Acesse o portal AAC</p>
 
-        <form id="formularioLogin" novalidate>
+        <form id="formularioLogin" noValidate onSubmit={handleSubmit}>
 
-          <div class="campo">
-            <label for="email">E-mail ou RA</label>
-            <input type="text" id="email" placeholder="seu.email@ibmec.edu.br" />
-            <span class="erro" id="erroEmail"></span>
+          <div className="campo">
+            <label htmlFor="email">E-mail de Acesso</label>
+            <input type="text" id="email" placeholder="aluno@ibmec.edu.br ou prof@ibmec.br" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
 
-          <div class="campo">
-            <label for="senha">Senha</label>
-            <div class="grupo-senha">
-              <input type="password" id="senha" placeholder="••••••••" />
-              <button type="button" id="botaoSenha">Mostrar</button>
+          <div className="campo">
+            <label htmlFor="senha">Senha</label>
+            <div className="grupo-senha">
+              <input type={mostrarSenha ? "text" : "password"} id="senha" placeholder="••••••••" value={senha} onChange={(e) => setSenha(e.target.value)} />
+              <button type="button" id="botaoSenha" onClick={() => setMostrarSenha(!mostrarSenha)}>
+                {mostrarSenha ? 'Ocultar' : 'Mostrar'}
+              </button>
             </div>
-            <span class="erro" id="erroSenha"></span>
           </div>
 
-          <div class="opcoes">
-            <label class="lembrar">
-              <input type="checkbox" id="lembrar" />
+          {erro && <p className="erro" style={{color: '#b3261e', marginTop: '0.5rem', fontSize: '0.85rem'}}>{erro}</p>}
+
+          <div className="opcoes">
+            <label className="lembrar">
+              <input type="checkbox" id="lembrar" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} />
               Lembrar de mim
             </label>
             <a href="#">Esqueci minha senha</a>
           </div>
 
-          <button type="submit" id="botaoEntrar">Entrar</button>
-
-          <p id="retorno" class="retorno oculto"></p>
+          <button type="submit" id="botaoEntrar" disabled={carregando}>
+            {carregando ? 'Entrando...' : 'Entrar'}
+          </button>
 
         </form>
 
-        <p class="rodape">Problemas? <a href="#">Fale com o suporte</a></p>
+        <p className="rodape">Problemas? <a href="#">Fale com o suporte</a></p>
 
       </article>
     </section>

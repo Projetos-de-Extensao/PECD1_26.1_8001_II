@@ -11,8 +11,9 @@ import '../css/index.css';
 export default function HomePage() {
   return (
     <>
-      <DashboardGeral />
       <MuralEventos />
+      <DashboardGeral />
+
 
     </>
   );

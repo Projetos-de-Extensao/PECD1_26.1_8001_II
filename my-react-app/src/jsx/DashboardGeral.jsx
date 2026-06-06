@@ -90,7 +90,7 @@ function DashboardGeral() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', alignItems: 'center', justifyContent: 'space-between' }}>
               
               {/* INFORMAÇÕES GERAIS */}
-              <div style={{ flex: '1 1 400px' }}>
+              <div style={{ flex: '1 1 280px' }}>
                 <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.5rem', color: '#fff' }}>Seu Progresso AAC</h2>
                 <p style={{ color: '#cbd5e1', fontSize: '1.1rem', marginBottom: '2rem' }}>
                   Acompanhe a distribuição das suas horas complementares e fique de olho na sua meta para a formatura.
