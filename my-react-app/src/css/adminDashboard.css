@@ -3,6 +3,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Remove o fundo azul escuro da página inteira apenas no Admin */
+.container-principal.container-fluido {
+  background-color: #f8fafc !important;
+  min-height: 100vh;
+}
+
 .admin-dashboard {
   padding: 1rem 0;
   animation: fadeIn 0.5s ease-out;
@@ -14,25 +20,26 @@
 
 .titulo-admin {
   font-size: 2.2rem;
-  color: #fff;
+  color: var(--cor-secundaria, #002555);
   font-weight: 800;
   margin-bottom: 0.5rem;
 }
 
 .subtitulo-admin {
-  color: #cbd5e1;
+  color: #64748b;
   font-size: 1rem;
 }
 
 /* =========================================
-   Expansão de Tela (Tamanho Fixo para Desktop 1920x1080)
+   Expansão de Tela Flexível para Desktop
    ========================================= */
 @media (min-width: 1024px) {
   .container-principal.container-fluido {
-    width: 1800px; /* Largura estática baseada em tela Full HD */
-    max-width: 1800px; 
-    height: 1000px; /* Altura estática aumentada */
-    overflow: hidden;
+    width: 100%;
+    max-width: 100%; 
+    height: auto;
+    min-height: calc(100vh - 80px); /* Altura adaptável à tela */
+    overflow: visible;
     display: flex;
     flex-direction: column;
   }
@@ -40,7 +47,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
   }
 }
 
@@ -89,8 +96,7 @@
 
 .menu-btn.ativo {
   background-color: #ffffff;
-  color: var(--cor-secundaria, #002555);
-  border-top: 4px solid var(--cor-secundaria, #002555);
+  border-top: 4px solid var(--cor-primaria, #F5AC00);
   border-bottom: 1px solid #ffffff;
   font-weight: 700;
   z-index: 2;
@@ -104,7 +110,7 @@
   border-radius: 0 12px 12px 12px;
   padding: 2rem;
   box-shadow: 0 8px 25px rgba(0, 37, 85, 0.08);
-  overflow-y: auto; /* A rolagem acontece APENAS verticalmente dentro desta caixa */
+  overflow-y: visible; /* Agora a página inteira rola livremente, melhor para mobile/tablets */
   overflow-x: hidden;
   position: relative;
   z-index: 1;
@@ -343,7 +349,11 @@
 /* Celulares Grandes / Tablets Menores (Até 768px) */
 @media (max-width: 768px) {
   .titulo-admin {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
+  }
+
+  .subtitulo-admin {
+    font-size: 0.9rem;
   }
 
   .grid-metricas {
@@ -351,17 +361,115 @@
     gap: 1rem;
   }
 
+  /* Transforma as abas em um carrossel horizontal rolável no celular */
+  .admin-menu-lateral {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Rolagem suave no iPhone */
+    padding-bottom: 2px;
+    -ms-overflow-style: none; /* Esconde scrollbar no Edge */
+    scrollbar-width: none; /* Esconde scrollbar no Firefox */
+    justify-content: flex-start;
+  }
+
+  .admin-menu-lateral::-webkit-scrollbar {
+    display: none; /* Esconde scrollbar no Chrome/Safari/iOS */
+  }
+
   .menu-btn {
-    padding: 1rem;
-    font-size: 1rem;
+    flex: 0 0 auto; /* Impede que a aba seja espremida */
+    min-width: auto; /* Remove a largura mínima de 200px */
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+    white-space: nowrap; /* Força o texto a ficar em uma única linha */
   }
 
   .admin-conteudo-lateral {
-    padding: 1.2rem;
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
   }
 
   .form-admin-inline {
     flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .form-admin-inline input,
+  .form-admin-inline select,
+  .form-admin-inline button {
+    width: 100%;
+  }
+
+  .header-eventos {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .titulo-secao-admin {
+    font-size: 1.2rem;
+  }
+
+  /* A MÁGICA: Transforma as Tabelas em Cards no Celular */
+  .tabela-wrapper {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow-x: visible;
+  }
+
+  .tabela-admin, .tabela-admin tbody, .tabela-admin tr, .tabela-admin td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabela-admin thead {
+    display: none; /* Esconde o cabeçalho original da tabela */
+  }
+
+  .tabela-admin tr {
+    margin-bottom: 1.2rem;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0.5rem 1.2rem;
+    box-shadow: 0 4px 15px rgba(0, 37, 85, 0.05);
+  }
+
+  .tabela-admin td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: right;
+  }
+
+  .tabela-admin td:last-child {
+    border-bottom: none;
+  }
+
+  /* O ::before recria os títulos das colunas na lateral esquerda do Card */
+  .tabela-admin td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    text-align: left;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Coloca a div de Ações em uma nova linha no final do Card */
+  .tabela-admin td[data-label="Ações"] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .acoes-tabela {
+    width: 100%;
+    justify-content: flex-end;
   }
 }
 
@@ -369,6 +477,24 @@
 @media (max-width: 480px) {
   .grid-metricas {
     grid-template-columns: 1fr;
+  }
+
+  .card-metrica {
+    padding: 1rem;
+  }
+
+  .valor-metrica {
+    font-size: 1.8rem;
+  }
+
+  /* Empilha os botões de Aprovar/Recusar na tabela */
+  .acoes-tabela {
+    flex-direction: column;
+  }
+
+  .btn-acao {
+    width: 100%;
+    text-align: center;
   }
 }
 

@@ -430,28 +430,28 @@ export default function AdminDashboard() {
                         const pctExternas = Math.min(100, Math.round((aluno.externas / aluno.metaExternas) * 100));
                         return (
                           <tr key={aluno.matricula}>
-                            <td><strong>{aluno.matricula}</strong></td>
-                            <td>{aluno.nome}</td>
-                            <td>{aluno.curso}</td>
-                            <td>
+                            <td data-label="Matrícula"><strong>{aluno.matricula}</strong></td>
+                            <td data-label="Nome do Aluno">{aluno.nome}</td>
+                            <td data-label="Curso">{aluno.curso}</td>
+                            <td data-label="Internas">
                               <span style={{ fontSize: '0.85rem', fontWeight: '600', color: pctInternas === 100 ? '#1f8b4c' : '#F5AC00' }}>
                                 {aluno.internas}/{aluno.metaInternas}h
                               </span>
                             </td>
-                            <td>
+                            <td data-label="Externas">
                               <span style={{ fontSize: '0.85rem', fontWeight: '600', color: pctExternas === 100 ? '#1f8b4c' : '#6366f1' }}>
                                 {aluno.externas}/{aluno.metaExternas}h
                               </span>
                             </td>
-                            <td>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <div style={{ width: '100%', background: '#e2e8f0', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                            <td data-label="Progresso AAC">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                <div style={{ width: '80px', background: '#e2e8f0', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
                                   <div style={{ width: `${percentual}%`, background: percentual === 100 ? '#1f8b4c' : 'var(--cor-secundaria)', height: '100%' }}></div>
                                 </div>
                                 <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{aluno.horasCumpridas}/{aluno.meta}h</span>
                               </div>
                             </td>
-                            <td>
+                            <td data-label="Status">
                               <span className={`status-badge ${percentual === 100 ? 'status-aprovado' : 'status-pendente'}`}>
                                 {percentual === 100 ? 'Concluído' : 'Em Andamento'}
                               </span>
@@ -507,25 +507,29 @@ export default function AdminDashboard() {
                     <tbody>
                       {solicitacoesFiltradas.map(sol => (
                         <tr key={sol.id} className="linha-atividade">
-                          <td>{sol.aluno}</td>
-                          <td>{sol.matricula}</td>
-                          <td>
-                            <div style={{ fontSize: '0.85rem' }}>{sol.categoria}</div>
-                            <strong style={{ fontSize: '0.8rem', color: sol.tipo === 'Interna' ? '#1f8b4c' : '#0056b3' }}>{sol.tipo}</strong>
+                          <td data-label="Aluno">{sol.aluno}</td>
+                          <td data-label="Matrícula">{sol.matricula}</td>
+                          <td data-label="Categoria / Tipo">
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                              <span style={{ fontSize: '0.85rem' }}>{sol.categoria}</span>
+                              <strong style={{ fontSize: '0.8rem', color: sol.tipo === 'Interna' ? '#1f8b4c' : '#0056b3' }}>{sol.tipo}</strong>
+                            </div>
                           </td>
-                          <td>{sol.atividade}</td>
-                          <td>{sol.horas}h</td>
-                          <td>
-                            <span className={`status-badge status-${sol.status.toLowerCase()}`}>
-                              {sol.status}
-                            </span>
-                            {sol.status === 'Recusado' && sol.motivo && (
-                              <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: '#b3261e', lineHeight: '1.3', maxWidth: '180px' }}>
-                                <strong>Motivo:</strong> {sol.motivo}
-                              </div>
-                            )}
+                          <td data-label="Atividade">{sol.atividade}</td>
+                          <td data-label="Horas">{sol.horas}h</td>
+                          <td data-label="Status">
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                              <span className={`status-badge status-${sol.status.toLowerCase()}`}>
+                                {sol.status}
+                              </span>
+                              {sol.status === 'Recusado' && sol.motivo && (
+                                <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: '#b3261e', lineHeight: '1.3', maxWidth: '180px', textAlign: 'right' }}>
+                                  <strong>Motivo:</strong> {sol.motivo}
+                                </div>
+                              )}
+                            </div>
                           </td>
-                          <td>
+                          <td data-label="Ações">
                             <div className="acoes-tabela" style={{ alignItems: 'center' }}>
                               {sol.arquivo && (
                                 <button 
@@ -605,15 +609,15 @@ export default function AdminDashboard() {
                     <tbody>
                       {atividades.map(ativ => (
                         <tr key={ativ.id}>
-                          <td>{ativ.categoria}</td>
-                          <td><strong>{ativ.nome}</strong></td>
-                          <td>
+                          <td data-label="Categoria">{ativ.categoria}</td>
+                          <td data-label="Nome"><strong>{ativ.nome}</strong></td>
+                          <td data-label="Tipo">
                             <span className={`status-badge ${ativ.tipo === 'Interna' ? 'status-aprovado' : 'status-pendente'}`}>
                               {ativ.tipo}
                             </span>
                           </td>
-                          <td>{ativ.horas}h</td>
-                          <td>
+                          <td data-label="Total Horas AC">{ativ.horas}h</td>
+                          <td data-label="Ações">
                             <button className="btn-acao btn-perigo" onClick={() => handleRemoverAtividade(ativ.id)}>
                               🗑️ Remover
                             </button>

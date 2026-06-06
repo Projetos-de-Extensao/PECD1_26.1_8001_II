@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Sum
+import uuid
 
 from .models import Usuario, Categoria, Solicitacao, Eventos
 from .serilizers import EventosSerializer, UsuarioSerializer, CategoriaSerializer, SolicitacaoSerializer
@@ -27,7 +28,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
         try:
             usuario = Usuario.objects.get(email=email)
-            # TODO: Em um ambiente de produção, as senhas devem ser verificadas com hash (ex: check_password)
+            # : Em um ambiente de produção, as senhas devem ser verificadas com hash (ex: check_password)
             if usuario.senha == senha:
                 serializer = self.get_serializer(usuario)
                 return Response({
@@ -193,7 +194,8 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             'curso': request.data.get('curso'),
             'ano_entrada': request.data.get('anoEntrada', '2026'),
             'periodo': request.data.get('periodo', '2º Período'),
-            'ativo': True
+            'ativo': True,
+            'is_funcionario': False
         }
 
         serializer = self.get_serializer(data=dados_usuario)
@@ -202,6 +204,34 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    # Endpoint: POST /api/usuarios/criar-funcionario/
+    @action(detail=False, methods=['post'], url_path='criar-funcionario')
+    def criar_funcionario(self, request):
+        nome = request.data.get('nome')
+        email = request.data.get('email')
+        senha = request.data.get('senha')
+
+        if not nome or not email or not senha:
+            return Response({"mensagem": "Nome, e-mail e senha são obrigatórios."}, status=400)
+
+        # Gera uma matrícula única e automática para o funcionário (pois é a Chave Primária do banco)
+        matricula_gerada = f"FUNC-{uuid.uuid4().hex[:8].upper()}"
+
+        dados_funcionario = {
+            'matricula': matricula_gerada,
+            'nome': nome,
+            'email': email,
+            'senha': senha,
+            'curso': 'Administrativo',
+            'is_funcionario': True,
+            'ativo': True
+        }
+
+        serializer = self.get_serializer(data=dados_funcionario)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all().order_by('id_categoria')

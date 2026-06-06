@@ -13,6 +13,7 @@ class Usuario(models.Model):
     ano_entrada = models.CharField(max_length=4, default='2026')
     periodo = models.CharField(max_length=20, default='2º Período')
     ativo = models.BooleanField(default=True)  # Para controle de usuários ativos/inativos
+    is_funcionario = models.BooleanField(default=False)  # True para Funcionários/Administradores
 
 
     def __str__(self):
@@ -28,7 +29,7 @@ class Solicitacao(models.Model):
     horas = models.FloatField()
     tipo = models.CharField(max_length=20)  # Interna ou Externa
     nome_atividade = models.CharField(max_length=100)
-    arquivo = models.CharField(max_length=200, null=True, blank=True)
+    arquivo = models.FileField(upload_to='comprovantes/', null=True, blank=True)
     status = models.CharField(max_length=20, default='Pendente')  # Pendente, Aprovada, Rejeitada
     observacao = models.TextField(null=True, blank=True)
 
