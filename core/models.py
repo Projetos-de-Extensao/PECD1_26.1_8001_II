@@ -1,29 +1,52 @@
 from django.db import models
 
+# Models do cadastro de usuários 
 class Usuario(models.Model):
+    matricula = models.CharField(max_length=20, primary_key=True)
     nome = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     senha = models.CharField(max_length=100)
+    curso = models.CharField(max_length=100)
+    horas_computadas = models.FloatField(default=0)
+    horas_totais = models.FloatField(default=0) 
+
 
     def __str__(self):
         return self.nome
 
-
-class Categoria(models.Model):
-    atividade = models.CharField(max_length=100)
-    natureza = models.CharField(max_length=100)  # Interna ou externa
-
-    def __str__(self):
-        return self.atividade
-
-
-class Atividade(models.Model):
-    aluno = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='atividades')
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='atividades')
+# Models das socilitações de atividades complementares
+class Solicitacao(models.Model):
+    id_solicitacao = models.AutoField(primary_key=True)
+    aluno = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='solicitacoes')
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name='solicitacoes')
     data = models.DateField()
     horas = models.FloatField()
     nome_atividade = models.CharField(max_length=100)
     arquivo = models.CharField(max_length=200, null=True, blank=True)
+    status = models.CharField(max_length=20, default='Pendente')  # Pendente, Aprovada, Rejeitada
+
+#Models das categorias de atividades complementares
+class Categoria(models.Model):
+    id_categoria = models.AutoField(primary_key=True)
+    atividade = models.CharField(max_length=100)
+    tipo = models.BooleanField(default=False)  # True interna e False externa
+    horas = models.FloatField()
 
     def __str__(self):
-        return f'{self.nome_atividade} - {self.aluno.nome}'
+        return self.atividade
+
+# Models dos Eventos Institucionais (Mural de Eventos)
+class Evento(models.Model):
+    id_evento = models.AutoField(primary_key=True)
+    nome = models.CharField(max_length=200)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='eventos')
+    data = models.DateField()
+    hora = models.CharField(max_length=100)
+    horas = models.FloatField()
+    curso_alvo = models.CharField(max_length=150, null=True, blank=True)
+    palestrante = models.CharField(max_length=150, null=True, blank=True)
+    unidade = models.CharField(max_length=100, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.nome
