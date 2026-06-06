@@ -209,9 +209,17 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/categorias/desativar/
     @action(detail=False, methods=['post'], url_path='desativar')
     def desativar(self, request):
-        # Desativa uma Categoria ativa
-        pass
-
+        categoria_id = request.data.get('id_categoria')
+        if not categoria_id:
+            return Response({"mensagem": "ID da categoria é obrigatório."}, status=400)
+        try:
+            categoria = Categoria.objects.get(id_categoria=categoria_id)
+            categoria.ativo = False
+            categoria.save()
+        except Categoria.DoesNotExist:
+            return Response({"mensagem": "Categoria não encontrada."}, status=404)
+        return Response({"mensagem": "Categoria desativada com sucesso!"})  
+         
     # Endpoint: GET /api/categorias/ativar/
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar(self, request):
