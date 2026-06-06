@@ -42,31 +42,6 @@ export default function AdminDashboard() {
 
   // Simulando a busca de dados do banco de dados ao carregar a página
   useEffect(() => {
-    // Mock de métricas gerenciais
-    setMetricas({
-      totalAlunos: 1250,
-      totalSolicitacoes: 485,
-      atendidas: 430,
-      aguardando: 55,
-      internas: 300,
-      externas: 185
-    });
-
-    // Mock de alunos cadastrados
-    setAlunos([
-      { matricula: '2026101', nome: 'João Silva', curso: 'Ciência da Computação', horasCumpridas: 80, meta: 120, internas: 50, metaInternas: 60, externas: 30, metaExternas: 60 },
-      { matricula: '2026102', nome: 'Maria Souza', curso: 'Administração', horasCumpridas: 120, meta: 120, internas: 60, metaInternas: 60, externas: 60, metaExternas: 60 },
-      { matricula: '2026103', nome: 'Carlos Mendes', curso: 'Direito', horasCumpridas: 45, meta: 150, internas: 30, metaInternas: 75, externas: 15, metaExternas: 75 },
-      { matricula: '2026104', nome: 'Ana Beatriz', curso: 'Relações Internacionais', horasCumpridas: 10, meta: 100, internas: 10, metaInternas: 50, externas: 0, metaExternas: 50 }
-    ]);
-
-    // Mock de solicitações pendentes
-    setSolicitacoes([
-      { id: '1', aluno: 'João Silva', matricula: '2026101', categoria: 'Cursos', tipo: 'Interna', atividade: 'Curso de Python Avançado', horas: 10, status: 'Pendente' },
-      { id: '2', aluno: 'Maria Souza', matricula: '2026102', categoria: 'Eventos', tipo: 'Externa', atividade: 'Palestra de Inovação', horas: 2, status: 'Pendente', arquivo: { nome: 'certificado_maria.pdf', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' } },
-      { id: '3', aluno: 'Carlos Mendes', matricula: '2026103', categoria: 'Eventos', tipo: 'Interna', atividade: 'Workshop de Design Thinking', horas: 4, status: 'Aprovado', arquivo: { nome: 'comprovante.pdf', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' } },
-      { id: '4', aluno: 'Ana Beatriz', matricula: '2026104', categoria: 'Cursos', tipo: 'Interna', atividade: 'Design Gráfico', horas: 5, status: 'Recusado', motivo: 'Comprovante ilegível. Por favor, envie novamente.' }
-    ]);
 
     // Busca real de Tipos de Atividades na API do Django
     async function buscarCategorias() {
@@ -115,20 +90,131 @@ export default function AdminDashboard() {
         console.error('Erro ao buscar eventos do banco de dados:', err);
       }
     }
+
+    // Busca real de Alunos na API do Django
+    async function buscarAlunos() {
+      try {
+        const resp = await fetch('http://localhost:8000/api/usuarios/lista/');
+        if (resp.ok) {
+          const dados = await resp.json();
+          const formatado = dados.map(item => {
+            // Replica a lógica de metas do backend baseada no curso
+            const cursoNome = (item.curso || '').toLowerCase();
+            let metaTotal = 120, metaInt = 60, metaExt = 60;
+            if (cursoNome.includes('engenharia') || cursoNome.includes('computação') || cursoNome.includes('sistemas')) {
+              metaTotal = 240; metaInt = 120; metaExt = 120;
+            } else if (cursoNome.includes('direito')) {
+              metaTotal = 300; metaInt = 150; metaExt = 150;
+            }
+            
+            return {
+              matricula: item.matricula,
+              nome: item.nome,
+              curso: item.curso,
+              horasCumpridas: item.horas_totais || 0,
+              meta: metaTotal,
+              internas: item.horas_internas || 0,
+              metaInternas: metaInt,
+              externas: item.horas_externas || 0,
+              metaExternas: metaExt
+            };
+          });
+          setAlunos(formatado);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar alunos do banco de dados:', err);
+      }
+    }
     
+    // Busca real da Fila de Validação na API do Django
+    async function buscarSolicitacoes() {
+      try {
+        // Utilizamos a rota padrão /api/solicitacoes/ porque ela retorna TODAS as requisições pro Admin.
+        // (A rota /api/solicitacoes/lista/ devolveria apenas as da matrícula logada).
+        const resp = await fetch('http://localhost:8000/api/solicitacoes/');
+        if (resp.ok) {
+          const dados = await resp.json();
+          const formatado = dados.map(item => {
+            // Traduz os status do Backend pro que a Interface Gráfica espera
+            let statusFormatado = 'Pendente';
+            if (item.status === 'Aprovada') statusFormatado = 'Aprovado';
+            if (item.status === 'Rejeitada') statusFormatado = 'Recusado';
+
+            return {
+              id: item.id_solicitacao,
+              aluno: item.aluno || 'Aluno', // O django retorna a PK (Matrícula) como ForeignKey
+              matricula: item.aluno, 
+              categoria: item.categoria || 'Geral',
+              tipo: item.tipo,
+              atividade: item.nome_atividade,
+              horas: item.horas,
+              status: statusFormatado,
+              motivo: item.observacao,
+              arquivo: item.arquivo ? { url: item.arquivo, nome: 'comprovante.pdf' } : null
+            };
+          });
+          setSolicitacoes(formatado.reverse()); // As solicitações mais recentes aparecem primeiro
+        }
+      } catch (err) {
+        console.error('Erro ao buscar fila de solicitações:', err);
+      }
+    }
+
     buscarCategorias();
     buscarEventos();
+    buscarAlunos();
+    buscarSolicitacoes();
   }, []);
 
+  // Recalcula as métricas dinamicamente no JS sempre que as listas mudarem
+  useEffect(() => {
+    const totalAlunos = alunos.length;
+    const totalSolicitacoes = solicitacoes.length;
+    const atendidas = solicitacoes.filter(s => s.status !== 'Pendente').length;
+    const aguardando = solicitacoes.filter(s => s.status === 'Pendente').length;
+    const internas = solicitacoes.filter(s => s.tipo === 'Interna').length;
+    const externas = solicitacoes.filter(s => s.tipo === 'Externa').length;
+
+    setMetricas({
+      totalAlunos, totalSolicitacoes, atendidas, aguardando, internas, externas
+    });
+  }, [alunos, solicitacoes]);
+
   // Funções para lidar com as ações do avaliador
-  function handleAprovar(id) {
-    setSolicitacoes(prev => prev.map(s => s.id === id ? { ...s, status: 'Aprovado' } : s));
+  async function handleAprovar(id) {
+    try {
+      const resp = await fetch('http://localhost:8000/api/solicitacoes/aprovar/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_solicitacao: id })
+      });
+      if (resp.ok) {
+        setSolicitacoes(prev => prev.map(s => s.id === id ? { ...s, status: 'Aprovado' } : s));
+      } else {
+        alert('Erro ao aprovar solicitação no servidor.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  function handleRecusar(id) {
+  async function handleRecusar(id) {
     const motivo = prompt('Qual o motivo da recusa?');
     if (motivo) {
-      setSolicitacoes(prev => prev.map(s => s.id === id ? { ...s, status: 'Recusado', motivo } : s));
+      try {
+        const resp = await fetch('http://localhost:8000/api/solicitacoes/rejeitar/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_solicitacao: id, motivo })
+        });
+        if (resp.ok) {
+          setSolicitacoes(prev => prev.map(s => s.id === id ? { ...s, status: 'Recusado', motivo } : s));
+        } else {
+          alert('Erro ao recusar solicitação no servidor.');
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
