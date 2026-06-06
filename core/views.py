@@ -131,20 +131,55 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     # Endpoint: POST /api/usuarios/desativar/
     @action(detail=False, methods=['post'], url_path='desativar')
     def desativar_usuario(self, request):
-        # Desativa um usuário ativo
-        pass
+        matricula = request.data.get('X-Usuario-Matricula')
+     
+        if not matricula:
+            return Response({"mensagem": "Usuário não autenticado."}, status=401)
+        
+        try:
+            usuario = Usuario.objects.get(matricula=matricula)
+            usuario.ativo = False
+            usuario.save()
+            return Response({"mensagem": "Usuário desativado com sucesso!"})
+        
+        except Usuario.DoesNotExist:    
+            return Response({"mensagem": "Usuário não encontrado."}, status=404)
 
     # Endpoint: POST /api/usuarios/ativar/
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar_usuario(self, request):
-        # Ativa um usuário inativo
-        pass
+        matricula = request.data.get('X-Usuario-Matricula')
+
+        if not matricula:
+            return Response({"mensagem": "Usuário não autenticado."}, status=401)
+        try:
+            usuario = Usuario.objects.get(matricula=matricula)
+            usuario.ativo = True
+            usuario.save()
+            return Response({"mensagem": "Usuário ativado com sucesso!"})
+        except Usuario.DoesNotExist:    
+            return Response({"mensagem": "Usuário não encontrado."}, status=404)
 
     # Endpoint: POST /api/usuarios/criar/
     @action(detail=False, methods=['post'], url_path='criar')
     def criar_usuario(self, request):
-        # Cria um novo usuário
-        pass
+        
+        dados_usuario = {
+            'matricula': request.data.get('matricula'),
+            'nome': request.data.get('nome'),
+            'email': request.data.get('email'),
+            'senha': request.data.get('senha'),
+            'curso': request.data.get('curso'),
+            'ano_entrada': request.data.get('anoEntrada', '2026'),
+            'periodo': request.data.get('periodo', '2º Período'),
+            'ativo': True
+        }
+
+        serializer = self.get_serializer(data=dados_usuario)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
     
 
