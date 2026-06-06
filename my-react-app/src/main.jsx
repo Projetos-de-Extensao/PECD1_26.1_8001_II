@@ -9,12 +9,14 @@ import SolicitacoesPage from './pages/SolicitacoesPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import Navbar from './jsx/Navbar.jsx'
 import Footer from './jsx/Footer.jsx'
+import AdminPage from './pages/AdminPage.jsx'
 
 function AppLayout() {
   const location = useLocation()
 
   const hideNavOn = ['/', '/login']
   const hideFooterOn = ['/', '/login']
+
 
   return (
     <>
@@ -26,6 +28,7 @@ function AppLayout() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/perfil" element={<PerfilPage />} />
         <Route path="/solicitacoes" element={<SolicitacoesPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
 
       {!hideFooterOn.includes(location.pathname) && <Footer />}
