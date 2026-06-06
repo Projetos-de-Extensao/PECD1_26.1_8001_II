@@ -7,33 +7,50 @@ export default function AppAtividades() {
 
   useEffect(() => {
     async function buscarDadosDaApi() {
-      // 1. Criamos a nossa lista de "backup" para deixar a tela bonita
-      const MOCK_ATIVIDADES = [
-        { id: 1, tipo: 'Interna', nome: 'Workshop: Design Thinking', data: '15/04/2026', horas: 4, status: 'Aprovado' },
-        { id: 2, tipo: 'Externa', nome: 'Palestra: Inovação Disruptiva', data: '10/04/2026', horas: 2, status: 'Pendente' },
-        { id: 3, tipo: 'Interna', nome: 'Curso: Python Avançado', data: '08/04/2026', horas: 8, status: 'Aprovado' },
-        { id: 4, tipo: 'Externa', nome: 'Seminário: Empreendedorismo', data: '05/04/2026', horas: 3, status: 'Recusado', motivo: 'O certificado anexado não possui informações sobre a carga horária do evento nem o CNPJ da instituição emissora.' },
-        { id: 5, tipo: 'Interna', nome: 'Mentoria: Liderança', data: '02/04/2026', horas: 2, status: 'Pendente' },
-        { id: 6, tipo: 'Externa', nome: 'Congresso: Tecnologia e Sociedade', data: '28/03/2026', horas: 6, status: 'Aprovado' }
-      ];
-
       try {
-        const resp = await fetch('/api/atividades'); 
+        const usuarioSalvo = localStorage.getItem('usuario');
+        if (!usuarioSalvo) {
+          throw new Error('Usuário não autenticado');
+        }
+        const usuarioLogado = JSON.parse(usuarioSalvo);
+
+        const resp = await fetch('http://localhost:8000/api/solicitacoes/lista/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Usuario-Matricula': usuarioLogado.matricula
+          }
+        }); 
         
         if (!resp.ok) {
           throw new Error('Erro ao buscar atividades');
         }
 
         const dados = await resp.json();
+
+        // Traduzindo os nomes dos campos do banco de dados (Django) para o que a tela (React) espera
+        const dadosFormatados = dados.map(item => {
+          // Mapeando os status e nomes do Backend (Django) para o Frontend (React)
+          let statusFormatado = 'Pendente';
+          if (item.status === 'Aprovada') statusFormatado = 'Aprovado';
+          if (item.status === 'Rejeitada') statusFormatado = 'Recusado';
+
+          return {
+            id: item.id_solicitacao,
+            nome: item.nome_atividade,
+            data: item.data,
+            horas: item.horas,
+            status: statusFormatado,
+            tipo: item.tipo || 'Interna',
+            motivo: item.observacao // A justificativa da recusa fica guardada em observacao
+          };
+        });
         
-        // Se a API retornar um array vazio (ou nulo), usamos o Mock para a tela não ficar vazia
-        setListaAtividades(dados && dados.length > 0 ? dados : MOCK_ATIVIDADES); 
+        setListaAtividades(dadosFormatados || []); 
 
       } catch (error) {
-        console.error('API indisponível, usando dados de demonstração:', error);
-        
-        // 2. A MÁGICA: Se der erro (API offline), preenchemos com os dados falsos!
-        setListaAtividades(MOCK_ATIVIDADES); 
+        console.error('Erro ao buscar as atividades do aluno:', error);
+        setListaAtividades([]); 
       } finally {
         setCarregando(false); 
       }
