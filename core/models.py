@@ -7,7 +7,6 @@ class Usuario(models.Model):
     email = models.EmailField(unique=True)
     senha = models.CharField(max_length=100)
     curso = models.CharField(max_length=100)
-    horas_computadas = models.FloatField(default=0)
     horas_totais = models.FloatField(default=0) 
     horas_internas = models.FloatField(default=0)
     horas_externas = models.FloatField(default=0)    
