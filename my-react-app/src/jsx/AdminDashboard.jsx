@@ -483,13 +483,16 @@ export default function AdminDashboard() {
                         style={{ flex: '1 1 100%' }}
                         required
                       />
-                      <input 
-                        type="text" 
-                        placeholder="Categoria (Ex: Palestra) *" 
+                      <select 
                         value={novoEvento.categoria} 
                         onChange={(e) => setNovoEvento({...novoEvento, categoria: e.target.value})} 
                         required
-                      />
+                      >
+                        <option value="" disabled>Selecione a Categoria *</option>
+                        {atividades.map(ativ => (
+                          <option key={ativ.id} value={ativ.nome}>{ativ.categoria} - {ativ.nome}</option>
+                        ))}
+                      </select>
                       <input 
                         type="text" 
                         placeholder="Horário (Ex: 14:00 às 18:00) *" 
