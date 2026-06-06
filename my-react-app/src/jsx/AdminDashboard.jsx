@@ -68,17 +68,56 @@ export default function AdminDashboard() {
       { id: '4', aluno: 'Ana Beatriz', matricula: '2026104', categoria: 'Cursos', tipo: 'Interna', atividade: 'Design Gráfico', horas: 5, status: 'Recusado', motivo: 'Comprovante ilegível. Por favor, envie novamente.' }
     ]);
 
-    // Mock de eventos cadastrados
-    setEventos([
-      { id: '1', nome: 'Semana da Computação IBMEC', data: '15/05/2026', horas: 20, tipo: 'Interno', categoria: 'Semana Acadêmica', cursoAlvo: 'Tecnologia', palestrante: 'Vários Palestrantes' },
-      { id: '2', nome: 'Palestra Carreira Tech', data: '20/05/2026', horas: 3, tipo: 'Externo', categoria: 'Palestra', cursoAlvo: 'Todos', palestrante: 'Maria Inovação' }
-    ]);
+    // Busca real de Tipos de Atividades na API do Django
+    async function buscarCategorias() {
+      try {
+        const resp = await fetch('http://localhost:8000/api/categorias/');
+        if (resp.ok) {
+          const dados = await resp.json();
+          
+          // Traduzimos o JSON do Banco para o formato que a Tabela e o Select usam
+          const formatado = dados.map(item => ({
+            id: item.id_categoria,
+            categoria: item.categoria,
+            nome: item.atividade, // O Django chama de 'atividade' e o React chama de 'nome'
+            tipo: item.tipo ? 'Interna' : 'Externa', // True = Interna, False = Externa
+            horas: item.horas
+          }));
+          
+          setAtividades(formatado);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar categorias do banco de dados:', err);
+      }
+    }
 
-    // Mock de Tipos de Atividades
-    setAtividades([
-      { id: '1', categoria: 'Cursos', nome: 'Curso de Extensão', tipo: 'Interna', horas: 40 },
-      { id: '2', categoria: 'Eventos', nome: 'Participação em Palestra', tipo: 'Externa', horas: 5 }
-    ]);
+    // Busca real de Eventos na API do Django
+    async function buscarEventos() {
+      try {
+        const resp = await fetch('http://localhost:8000/api/eventos/lista/');
+        if (resp.ok) {
+          const dados = await resp.json();
+          const formatado = dados.map(item => ({
+            id: item.id_evento,
+            nome: item.nome,
+            data: item.data,
+            hora: item.hora,
+            horas: item.horas,
+            tipo: 'Interno',
+            categoria: item.categoria,
+            cursoAlvo: item.curso_alvo,
+            palestrante: item.palestrante,
+            unidade: item.unidade
+          }));
+          setEventos(formatado);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar eventos do banco de dados:', err);
+      }
+    }
+    
+    buscarCategorias();
+    buscarEventos();
   }, []);
 
   // Funções para lidar com as ações do avaliador
@@ -100,20 +139,65 @@ export default function AdminDashboard() {
   }
 
   // Funções para gerenciar Tipos de Atividades
-  function handleAdicionarAtividade(e) {
+  async function handleAdicionarAtividade(e) {
     e.preventDefault();
     if (!novaAtividade.nome || !novaAtividade.categoria || !novaAtividade.horas) {
       alert('Preencha os campos obrigatórios (Categoria, Nome e Horas).');
       return;
     }
-    const id = Date.now().toString();
-    setAtividades(prev => [...prev, { id, ...novaAtividade }]);
-    setNovaAtividade({ categoria: '', nome: '', tipo: 'Interna', horas: '' });
+
+    // Montando o pacote JSON exatamente como configuramos na view "criar_categoria" do Django
+    const payload = {
+      atividade: novaAtividade.nome,
+      categoria: novaAtividade.categoria,
+      tipo: novaAtividade.tipo === 'Interna', // Transforma a string em Booleano (True/False)
+      horas: parseFloat(novaAtividade.horas)
+    };
+
+    try {
+      const resp = await fetch('http://localhost:8000/api/categorias/criar/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (resp.ok) {
+        const data = await resp.json();
+        
+        // Adiciona a nova categoria na tabela instantaneamente após a resposta do servidor
+        setAtividades(prev => [...prev, {
+          id: data.id_categoria,
+          categoria: data.categoria,
+          nome: data.atividade,
+          tipo: data.tipo ? 'Interna' : 'Externa',
+          horas: data.horas
+        }]);
+        
+        setNovaAtividade({ categoria: '', nome: '', tipo: 'Interna', horas: '' });
+      } else {
+        alert('Erro ao salvar a categoria no banco de dados.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão com a API.');
+    }
   }
 
-  function handleRemoverAtividade(id) {
+  async function handleRemoverAtividade(id) {
     if (window.confirm('Tem certeza que deseja remover este tipo de atividade?')) {
-      setAtividades(prev => prev.filter(a => a.id !== id));
+      try {
+        const resp = await fetch(`http://localhost:8000/api/categorias/${id}/`, {
+          method: 'DELETE'
+        });
+        
+        if (resp.ok || resp.status === 204) {
+          setAtividades(prev => prev.filter(a => a.id !== id));
+        } else {
+          alert('Erro ao excluir do banco de dados.');
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
