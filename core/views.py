@@ -251,8 +251,23 @@ class EventosViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/eventos/criar/
     @action(detail=False, methods=['post'], url_path='criar')
     def criar_evento(self, request):
-        # Cria um novo evento
-        pass
+        dados_evento = {
+            'nome': request.data.get('nome'),
+            'categoria': request.data.get('categoria'),
+            'data': request.data.get('data'),
+            'hora': request.data.get('hora'),
+            'horas': request.data.get('horas'),
+            'curso_alvo': request.data.get('curso_alvo'),
+            'palestrante': request.data.get('palestrante'),
+            'unidade': request.data.get('unidade'),
+            'ativo': True
+        }
+
+        serializer = self.get_serializer(data=dados_evento)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
     # Endpoint: GET /api/eventos/desativar/
     @action(detail=False, methods=['post'], url_path='desativar')
