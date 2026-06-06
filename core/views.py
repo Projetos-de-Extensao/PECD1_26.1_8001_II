@@ -272,14 +272,30 @@ class EventosViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/eventos/desativar/
     @action(detail=False, methods=['post'], url_path='desativar')
     def desativar_evento(self, request):
-        # Desativa um evento ativo
-        pass
+        evento_id = request.data.get('id_evento')
+        if not evento_id:
+            return Response({"mensagem": "ID do evento é obrigatório."}, status=400)
+        try:
+            evento = Eventos.objects.get(id_evento=evento_id)
+            evento.ativo = False
+            evento.save()
+        except Eventos.DoesNotExist:
+            return Response({"mensagem": "Evento não encontrado."}, status=404)
+        return Response({"mensagem": "Evento desativado com sucesso!"})
 
     # Endpoint: GET /api/eventos/ativar/
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar_evento(self, request):
-        # Ativa um evento inativo
-        pass
+        evento_id = request.data.get('id_evento')
+        if not evento_id:
+            return Response({"mensagem": "ID do evento é obrigatório."}, status=400)
+        try:
+            evento = Eventos.objects.get(id_evento=evento_id)
+            evento.ativo = True
+            evento.save()
+        except Eventos.DoesNotExist:
+            return Response({"mensagem": "Evento não encontrado."}, status=404)
+        return Response({"mensagem": "Evento ativado com sucesso!"})
 
     # Endpoint: GET /api/eventos/lista/
     @action(detail=False, methods=['get'], url_path='lista')
