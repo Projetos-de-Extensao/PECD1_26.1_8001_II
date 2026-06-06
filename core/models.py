@@ -36,10 +36,10 @@ class Categoria(models.Model):
         return self.atividade
 
 # Models dos Eventos Institucionais (Mural de Eventos)
-class Evento(models.Model):
+class Eventos(models.Model):
     id_evento = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=200)
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='eventos')
+    categoria = models.CharField(max_length=100, null=True, blank=True)
     data = models.DateField()
     hora = models.CharField(max_length=100)
     horas = models.FloatField()
