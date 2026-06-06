@@ -9,15 +9,15 @@ export default function MuralEventos() {
     // Simulando a busca de eventos em destaque do Banco de Dados
     setEventos([
       { 
-        id: 1, titulo: 'Semana da Computação IBMEC', data: '15/05/2026', horas: 20, tipo: 'Interno', 
+        id: 1, titulo: 'Semana da Computação IBMEC', data: '15/05/2026', hora: '14:00 às 18:00', horas: 20, tipo: 'Interno', categoria: 'Eventos', palestrante: 'Vários Palestrantes', cursoAlvo: 'Tecnologia', unidade: 'Barra da Tijuca',
         cor: 'linear-gradient(135deg, #002555 0%, #004b99 100%)' // Azul Institucional
       },
       { 
-        id: 2, titulo: 'Palestra: IA e o Futuro do Trabalho', data: '20/05/2026', horas: 3, tipo: 'Externo', 
+        id: 2, titulo: 'Palestra: IA e o Futuro do Trabalho', data: '20/05/2026', hora: '19:00', horas: 3, tipo: 'Externo', categoria: 'Palestra', palestrante: 'Maria Inovação', cursoAlvo: 'Todos os Cursos', unidade: 'Online',
         cor: 'linear-gradient(135deg, #F5AC00 0%, #ff8800 100%)' // Amarelo/Laranja
       },
       { 
-        id: 3, titulo: 'Workshop de Design Thinking Avançado', data: '10/06/2026', horas: 5, tipo: 'Interno', 
+        id: 3, titulo: 'Workshop de Design Thinking Avançado', data: '10/06/2026', hora: '09:00 às 12:00', horas: 5, tipo: 'Interno', categoria: 'Cursos', palestrante: 'Prof. Carlos Mendes', cursoAlvo: 'Comunicação e Design', unidade: 'Centro',
         cor: 'linear-gradient(135deg, #1f8b4c 0%, #2db965 100%)' // Verde Sucesso
       }
     ]);
@@ -59,11 +59,16 @@ export default function MuralEventos() {
           {eventos.map((evento) => (
             <div className="carrossel-slide" key={evento.id} style={{ background: evento.cor }}>
               <div className="slide-conteudo">
-                <span className="badge-tipo">{evento.tipo}</span>
+                <span className="badge-tipo">{evento.categoria}</span>
                 <h3>{evento.titulo}</h3>
                 <div className="slide-infos">
-                  <span>🗓️ {evento.data}</span>
-                  <span>⏱️ Garanta {evento.horas}h</span>
+                  <span>🗓️ {evento.data} às {evento.hora}</span>
+                  <span>⏱️ Total: {evento.horas}h AAC</span>
+                </div>
+                <div className="slide-detalhes-extras">
+                  {evento.palestrante && <span><strong>🗣️ Palestrante:</strong> {evento.palestrante}</span>}
+                  {evento.cursoAlvo && <span><strong>🎯 Curso Alvo:</strong> {evento.cursoAlvo}</span>}
+                  {evento.unidade && <span><strong>📍 Unidade:</strong> {evento.unidade}</span>}
                 </div>
                 <button className="btn-inscrever">Quero Participar</button>
               </div>

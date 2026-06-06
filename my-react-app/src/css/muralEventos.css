@@ -91,9 +91,28 @@
   justify-content: center;
   gap: 2rem;
   font-size: 1.15rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   font-weight: 600;
   opacity: 0.95;
+}
+
+.slide-detalhes-extras {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.slide-detalhes-extras span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-inscrever {
@@ -177,6 +196,11 @@
   .slide-conteudo h3 { font-size: 1.8rem; }
   .carrossel-slide { padding: 4rem 1rem; }
   .slide-infos { flex-direction: column; gap: 0.5rem; align-items: center; }
+  .slide-detalhes-extras { 
+    flex-direction: column; 
+    gap: 0.8rem; 
+    align-items: flex-start; 
+  }
   .btn-controle { width: 40px; height: 40px; font-size: 1.2rem; }
   .btn-inscrever { padding: 0.8rem 2rem; font-size: 1rem; }
   .mural-container { padding: 0 1rem; }
