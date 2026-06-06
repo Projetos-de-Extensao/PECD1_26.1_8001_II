@@ -2,6 +2,32 @@ import '../css/login.css'
 import '../css/index.css';
 
 
+async function handleLogin(email, senha) {
+  try {
+    const resposta = await fetch('http://localhost:8000/api/usuarios/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, senha }),
+    });
+
+    const dados = await resposta.json();
+
+    if (resposta.ok) {
+      console.log('Login efetuado com sucesso!', dados.usuario);
+      // Salva os dados do usuário logado no localStorage
+      localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+    } else {
+      console.error('Erro de login:', dados.mensagem);
+      // Aqui você exibe o erro na tela pro usuário
+    }
+  } catch (erro) {
+    console.error('Falha na comunicação com a API:', erro);
+  }
+}
+
+
 function Login() {
   return (
     <>
