@@ -183,7 +183,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all().order_by('id_categoria')
@@ -394,6 +393,16 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/solicitacoes/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_solicitacoes(self, request):
-        solicitacoes = Solicitacao.objects.all().order_by('id_solicitacao')
+        matricula = request.headers.get('X-Usuario-Matricula')
+        
+        if not matricula:
+            return Response({"mensagem": "Usuário não autenticado."}, status=401)
+
+        try:
+            usuario = Usuario.objects.get(matricula=matricula)
+        except Usuario.DoesNotExist:
+            return Response({"mensagem": "Usuário não encontrado."}, status=404)
+
+        solicitacoes = Solicitacao.objects.filter(aluno=usuario).order_by('-id_solicitacao')
         serializer = self.get_serializer(solicitacoes, many=True)
         return Response(serializer.data)
