@@ -65,8 +65,7 @@ function DashboardGeral() {
     <>
       <main className="container-principal">
         <section className="dashboard-container">
-          <h1 className="titulo-dashboard">Sistema De Controle de Horas</h1>
-
+  
           <div className="card-principal">
             <div className="card-header">
               <h2 className="card-titulo-grande">Suas Horas</h2>
