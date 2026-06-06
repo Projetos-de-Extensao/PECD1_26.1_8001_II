@@ -40,11 +40,17 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/usuarios/meus-dados/
     @action(detail=False, methods=['get'], url_path='meus-dados')
     def meus_dados(self, request):
-        # Como ainda não temos autenticação real, pegamos o primeiro usuário do banco
-        usuario = Usuario.objects.first()
-        if not usuario:
-            return Response({"mensagem": "Nenhum usuário cadastrado"}, status=404)
+        # Pega a matrícula enviada pelo frontend através dos Headers
+        matricula = request.headers.get('X-Usuario-Matricula')
         
+        if not matricula:
+            return Response({"mensagem": "Usuário não autenticado. Matrícula não fornecida."}, status=401)
+
+        try:
+            usuario = Usuario.objects.get(matricula=matricula)
+        except Usuario.DoesNotExist:
+            return Response({"mensagem": "Usuário não encontrado."}, status=404)
+
         nomes = usuario.nome.split()
         iniciais = ""
         if len(nomes) > 0:
@@ -69,8 +75,14 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     # Endpoint: POST /api/usuarios/mudar-senha/
     @action(detail=False, methods=['post'], url_path='mudar-senha')
     def mudar_senha(self, request):
-        usuario = Usuario.objects.first()
-        if not usuario:
+        matricula = request.headers.get('X-Usuario-Matricula')
+        
+        if not matricula:
+            return Response({"mensagem": "Usuário não autenticado."}, status=401)
+
+        try:
+            usuario = Usuario.objects.get(matricula=matricula)
+        except Usuario.DoesNotExist:
             return Response({"mensagem": "Usuário não encontrado."}, status=404)
 
         senha_atual = request.data.get('senhaAtual')
@@ -86,10 +98,16 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/usuarios/horas-totais/
     @action(detail=False, methods=['get'], url_path='horas-totais')
     def horas_totais(self, request):
-        # Como ainda não temos autenticação real, pegamos o primeiro usuário do banco
-        usuario = Usuario.objects.first()
-        if not usuario:
-            return Response({"mensagem": "Nenhum usuário cadastrado"}, status=404)
+        matricula = request.headers.get('X-Usuario-Matricula')
+        
+        if not matricula:
+            return Response({"mensagem": "Usuário não autenticado."}, status=401)
+
+        try:
+            usuario = Usuario.objects.get(matricula=matricula)
+        except Usuario.DoesNotExist:
+            return Response({"mensagem": "Usuário não encontrado."}, status=404)
+            
         total_horas = Solicitacao.objects.filter(aluno=usuario, status='Aprovada').aggregate(total=Sum('horas'))['total'] or 0
         
         # Atualizamos as horas computadas (realizadas) com a soma do banco
@@ -216,10 +234,9 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
         dados['tipo'] = 'Externa'
         dados['status'] = 'Pendente'
         
-        # Simulando o usuário logado (depois trocar por request.user.matricula)
-        usuario = Usuario.objects.first()
-        if usuario:
-            dados['aluno'] = usuario.matricula
+        matricula = request.headers.get('X-Usuario-Matricula')
+        if matricula:
+            dados['aluno'] = matricula
 
         serializer = self.get_serializer(data=dados)
         if serializer.is_valid():
@@ -231,7 +248,11 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='criar-interna')
     def criar_interna(self, request):
         evento_id = request.data.get('evento_id')
-        usuario = Usuario.objects.first() # Simulando usuário logado
+        matricula = request.headers.get('X-Usuario-Matricula')
+        
+        usuario = None
+        if matricula:
+            usuario = Usuario.objects.filter(matricula=matricula).first()
 
         if not evento_id or not usuario:
             return Response({"mensagem": "ID do Evento ou Usuário não informados."}, status=400)
