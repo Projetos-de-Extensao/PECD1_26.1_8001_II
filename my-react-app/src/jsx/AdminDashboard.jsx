@@ -19,9 +19,11 @@ export default function AdminDashboard() {
   const [novoEvento, setNovoEvento] = useState({
     nome: '',
     categoria: '',
+    hora: '',
     horas: '',
     cursoAlvo: '',
     palestrante: '',
+    unidade: '',
     tipo: 'Interno'
   });
 
@@ -118,8 +120,8 @@ export default function AdminDashboard() {
   // Função para criar o evento a partir do formulário estendido
   function handleAdicionarEvento(e) {
     e.preventDefault();
-    if (!novoEvento.nome || !novoEvento.categoria || !novoEvento.horas) {
-      alert('Preencha os campos obrigatórios (Nome, Categoria e Horas).');
+    if (!novoEvento.nome || !novoEvento.categoria || !novoEvento.hora || !novoEvento.horas) {
+      alert('Preencha os campos obrigatórios (Nome, Categoria, Horário e Horas).');
       return;
     }
     
@@ -131,7 +133,7 @@ export default function AdminDashboard() {
     }, ...prev]);
     
     // Limpa o formulário e esconde
-    setNovoEvento({ nome: '', categoria: '', horas: '', cursoAlvo: '', palestrante: '', tipo: 'Interno' });
+    setNovoEvento({ nome: '', categoria: '', hora: '', horas: '', cursoAlvo: '', palestrante: '', unidade: '', tipo: 'Interno' });
     setMostrarFormEvento(false);
   }
 
@@ -489,6 +491,13 @@ export default function AdminDashboard() {
                         required
                       />
                       <input 
+                        type="text" 
+                        placeholder="Horário (Ex: 14:00 às 18:00) *" 
+                        value={novoEvento.hora} 
+                        onChange={(e) => setNovoEvento({...novoEvento, hora: e.target.value})} 
+                        required
+                      />
+                      <input 
                         type="number" 
                         placeholder="Horas AC *" 
                         value={novoEvento.horas} 
@@ -501,6 +510,7 @@ export default function AdminDashboard() {
                     <div className="form-admin-inline" style={{ marginTop: '1rem' }}>
                       <input type="text" placeholder="Palestrante / Convidado" value={novoEvento.palestrante} onChange={(e) => setNovoEvento({...novoEvento, palestrante: e.target.value})} />
                       <input type="text" placeholder="Curso Alvo (Opcional)" value={novoEvento.cursoAlvo} onChange={(e) => setNovoEvento({...novoEvento, cursoAlvo: e.target.value})} />
+                      <input type="text" placeholder="Unidade (Ex: Barra da Tijuca)" value={novoEvento.unidade} onChange={(e) => setNovoEvento({...novoEvento, unidade: e.target.value})} />
                     </div>
 
                     <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
@@ -530,11 +540,12 @@ export default function AdminDashboard() {
                     <div key={evento.id} className="card-evento">
                       <strong>{evento.nome}</strong>
                       <div className="valor-info">Categoria: {evento.categoria || '-'}</div>
-                      <div className="valor-info">Data: {evento.data}</div>
+                      <div className="valor-info">Data/Hora: {evento.data} {evento.hora ? `às ${evento.hora}` : ''}</div>
                       {evento.palestrante && <div className="valor-info">Palestrante: {evento.palestrante}</div>}
                       {evento.cursoAlvo && (
                         <div className="valor-info" style={{ color: 'var(--cor-secundaria)', fontWeight: '600' }}>Alvo: {evento.cursoAlvo}</div>
                       )}
+                      {evento.unidade && <div className="valor-info">Unidade: {evento.unidade}</div>}
                       <div className="valor-info">Horas AAC: {evento.horas}h</div>
                       <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
                         <button className="btn btn-secundario btn-gerar-qr" style={{ flex: 1, padding: '0.5rem' }}>
