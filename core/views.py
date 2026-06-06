@@ -1,3 +1,5 @@
+from urllib import request
+
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
@@ -223,9 +225,17 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/categorias/ativar/
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar(self, request):
-        # Ativa uma Categoria inativaa
-        pass
-
+        categoria_id = request.data.get('id_categoria')
+        if not categoria_id:
+            return Response({"mensagem": "ID da categoria é obrigatório."}, status=400)
+        try:
+            categoria = Categoria.objects.get(id_categoria=categoria_id)
+            categoria.ativo = True
+            categoria.save()
+        except Categoria.DoesNotExist:
+            return Response({"mensagem": "Categoria não encontrada."}, status=404)
+        return Response({"mensagem": "Categoria ativada com sucesso!"})  
+    
     # Endpoint: GET /api/categorias/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista(self, request):
