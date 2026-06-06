@@ -19,13 +19,19 @@ export default function FormExterno({ ativo }) {
   useEffect(() => {
     async function carregarCategorias() {
       try {
-        // Rota da sua API que lista as categorias cadastradas
-        const resposta = await fetch('/api/categorias-externas');
+        const resposta = await fetch('http://localhost:8000/api/categorias/lista/');
         
         if (!resposta.ok) throw new Error('Falha ao carregar categorias');
         
         const dados = await resposta.json();
-        setListaCategorias(dados); // Salva as categorias no estado
+        
+        // Pega apenas as categorias externas (onde o tipo é false no banco de dados)
+        // e traduz os nomes pro formato do layout
+        const categoriasExternas = dados
+          .filter(item => item.tipo === false)
+          .map(item => ({ id: item.id_categoria, nome: `${item.categoria} - ${item.atividade}` }));
+          
+        setListaCategorias(categoriasExternas);
         
       } catch (erro) {
         console.error('Erro na API de categorias:', erro);
@@ -75,13 +81,22 @@ export default function FormExterno({ ativo }) {
     setMensagemEnvio('Enviando documentos...');
 
     try {
+      const usuarioSalvo = localStorage.getItem('usuario');
+      if (!usuarioSalvo) {
+        throw new Error('Usuário não autenticado. Faça login novamente.');
+      }
+      const usuarioLogado = JSON.parse(usuarioSalvo);
+
       // O FormData captura todos os inputs com atributo 'name' dentro do formRef
       const pacoteDados = new FormData(formRef.current);
       
       // Enviamos o pacote para a API. 
       // IMPORTANTE: NÃO coloque 'Content-Type' no headers. O navegador faz isso automaticamente para arquivos.
-      const resposta = await fetch('/api/solicitacoes/externa', {
+      const resposta = await fetch('http://localhost:8000/api/solicitacoes/criar-externa/', {
         method: 'POST',
+        headers: {
+          'X-Usuario-Matricula': usuarioLogado.matricula
+        },
         body: pacoteDados,
       });
 
@@ -116,7 +131,7 @@ export default function FormExterno({ ativo }) {
             <label htmlFor="categoria">Categoria do Evento</label>
             <select 
               id="categoria" 
-              name="categoriaId" // O backend vai receber esse nome
+              name="categoria" 
               value={categoria} 
               onChange={(e) => setCategoria(e.target.value)}
               required
@@ -139,7 +154,7 @@ export default function FormExterno({ ativo }) {
               
               <div className="campo">
                 <label htmlFor="curso">Título do Evento</label>
-                <input id="curso" name="titulo" type="text" placeholder="Ex: Semana da Computação" required />
+                <input id="curso" name="nome_atividade" type="text" placeholder="Ex: Semana da Computação" required />
               </div>
 
               <div className="campo">
@@ -157,7 +172,7 @@ export default function FormExterno({ ativo }) {
                 <label htmlFor="arquivo">Anexar Certificado (PDF)</label>
                 <input 
                   id="arquivo" 
-                  name="certificado" // O backend vai procurar por esse nome no Multer/Upload
+                  name="arquivo" 
                   type="file" 
                   accept="application/pdf" 
                   onChange={handleArquivoChange} 
