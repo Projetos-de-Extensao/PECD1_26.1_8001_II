@@ -379,11 +379,13 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='rejeitar')
     def rejeitar_solicitacao(self, request):
         id_solicitacao = request.data.get('id_solicitacao')
+        motivo = request.data.get('motivo', 'Sem motivo informado')
         if not id_solicitacao:
             return Response({"mensagem": "ID da solicitação é obrigatório."}, status=400)
         try:
             solicitacao = Solicitacao.objects.get(id_solicitacao=id_solicitacao)
             solicitacao.status = 'Rejeitada'
+            solicitacao.observacao = motivo
             solicitacao.save()
         except Solicitacao.DoesNotExist:
             return Response({"mensagem": "Solicitação não encontrada."}, status=404)
@@ -392,6 +394,6 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     # Endpoint: GET /api/solicitacoes/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_solicitacoes(self, request):
-        # pega todas as solicitações por usuário    
-        pass
-    
+        solicitacoes = Solicitacao.objects.all().order_by('id_solicitacao')
+        serializer = self.get_serializer(solicitacoes, many=True)
+        return Response(serializer.data)
