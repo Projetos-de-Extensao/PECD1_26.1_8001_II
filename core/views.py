@@ -304,10 +304,6 @@ class EventosViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(eventos, many=True)
         return Response(serializer.data)
     
-
-
-
-
 class SolicitacaoViewSet(viewsets.ModelViewSet):
     queryset = Solicitacao.objects.all().order_by('id_solicitacao')
     serializer_class = SolicitacaoSerializer
@@ -368,9 +364,17 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     # Endpoint: POST /api/solicitacoes/aprovar/
     @action(detail=False, methods=['post'], url_path='aprovar')
     def aprovar_solicitacao(self, request):
-        # Aprova uma solicitação de atividade complementar
-        pass
-
+        id_solicitacao = request.data.get('id_solicitacao')
+        if not id_solicitacao:
+            return Response({"mensagem": "ID da solicitação é obrigatório."}, status=400)
+        try:
+            solicitacao = Solicitacao.objects.get(id_solicitacao=id_solicitacao)
+            solicitacao.status = 'Aprovada'
+            solicitacao.save()
+        except Solicitacao.DoesNotExist:
+            return Response({"mensagem": "Solicitação não encontrada."}, status=404)
+        return Response({"mensagem": "Solicitação aprovada com sucesso!"})
+    
     # Endpoint: POST /api/solicitacoes/rejeitar/
     @action(detail=False, methods=['post'], url_path='rejeitar')
     def rejeitar_solicitacao(self, request):
