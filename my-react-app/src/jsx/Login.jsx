@@ -97,8 +97,6 @@ function Login() {
 
         </form>
 
-        <p className="rodape">Problemas? <a href="#">Fale com o suporte</a></p>
-
       </article>
     </section>
 
