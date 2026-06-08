@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IBMEC · Administrador AAC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Krub:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="ibmec-admin-login.css"/>
+</head>
+<body>
+
+
+  <div class="grafismo grafismo--left"></div>
+  <div class="grafismo grafismo--right"></div>
+
+  <div class="page-wrap">
+
+    
+    <aside class="brand-panel">
+      <div class="brand-panel__inner">
+        <div class="brand-logo">
+          <span class="brand-logo__text">IBMEC</span>
+          <span class="brand-logo__dot"></span>
+        </div>
+        <div class="brand-headline">
+          <h1>Sistema de<br/>Gestão AAC</h1>
+          <p>Atividades de Apoio à Comunidade — painel exclusivo para administradores institucionais.</p>
+        </div>
+        <ul class="brand-features">
+          <li>
+            <span class="icon">&#9632;</span>
+            Controle de horas por aluno
+          </li>
+          <li>
+            <span class="icon">&#9632;</span>
+            Aprovação e validação de atividades
+          </li>
+          <li>
+            <span class="icon">&#9632;</span>
+            Relatórios e exportações
+          </li>
+          <li>
+            <span class="icon">&#9632;</span>
+            Gestão de turmas e períodos
+          </li>
+        </ul>
+        <p class="brand-warning">
+          <span>&#9888;</span>
+          Acesso restrito. Somente administradores autorizados pela instituição.
+        </p>
+      </div>
+    </aside>
+
+    
+    <main class="login-panel">
+      <div class="login-card">
+
+        <div class="login-card__header">
+          <div class="badge-adm">ADM</div>
+          <h2>Acesso Administrativo</h2>
+          <p>Entre com suas credenciais institucionais para acessar o painel de gestão AAC.</p>
+        </div>
+
+        <form class="login-form" onsubmit="handleLogin(event)">
+
+          <div class="form-group">
+            <label for="matricula">Matrícula Administrativa</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                id="matricula"
+                name="matricula"
+                placeholder="Ex: ADM-2024-0001"
+                autocomplete="username"
+                required
+              />
+            </div>
+            <span class="field-hint">Matrícula fornecida pelo setor de TI do IBMEC</span>
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail Institucional</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+              </span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="seu.nome@ibmec.edu.br"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="senha">Senha</label>
+              <a href="#" class="forgot-link" onclick="return false">Esqueci minha senha</a>
+            </div>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <input
+                type="password"
+                id="senha"
+                name="senha"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" class="toggle-pw" onclick="toggleSenha()" aria-label="Mostrar senha">
+                <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group form-group--row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="manter"/>
+              <span class="checkmark"></span>
+              Manter sessão ativa (8h)
+            </label>
+            <span class="session-info">Sessão expira automaticamente</span>
+          </div>
+
+          <button type="submit" class="btn-login" id="btn-login">
+            <span class="btn-login__text">Entrar no Painel</span>
+            <span class="btn-login__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </button>
+
+          <div class="login-divider"><span>acesso seguro SSL/TLS</span></div>
+
+          <div class="security-badges">
+            <span class="sec-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Autenticação 2FA
+            </span>
+            <span class="sec-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Criptografia AES-256
+            </span>
+            <span class="sec-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              Log de auditoria
+            </span>
+          </div>
+
+        </form>
+
+        <p class="support-text">
+          Problemas de acesso? Contate o suporte TI: <a href="mailto:ti.suporte@ibmec.edu.br">ti.suporte@ibmec.edu.br</a>
+        </p>
+      </div>
+    </main>
+
+  </div>
+
+  
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function toggleSenha() {
+      const input = document.getElementById('senha');
+      const icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+      } else {
+        input.type = 'password';
+        icon.innerHTML = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>`;
+      }
+    }
+
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast toast--${type} toast--show`;
+      setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-login');
+      btn.classList.add('btn-login--loading');
+      btn.querySelector('.btn-login__text').textContent = 'Autenticando...';
+
+      setTimeout(() => {
+        btn.classList.remove('btn-login--loading');
+        btn.querySelector('.btn-login__text').textContent = 'Entrar no Painel';
+        showToast('✓ Autenticação realizada. Redirecionando...', 'success');
+      }, 2000);
+    }
+
+    
+    document.querySelectorAll('.form-group').forEach((el, i) => {
+      el.style.animationDelay = `${0.1 + i * 0.08}s`;
+    });
+  </script>
+
+</body>
+</html>
