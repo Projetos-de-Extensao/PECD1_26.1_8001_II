@@ -6,29 +6,18 @@ function Comprovante({ idSolicitacao = '123' }) { // Recebe o ID da solicitaçã
   const [dadosSolicitacao, setDadosSolicitacao] = useState(null);
   const [carregandoDados, setCarregandoDados] = useState(true);
 
-  // 2. Estados para o formulário de validação
-  const [codigo, setCodigo] = useState('');
-  const [status, setStatus] = useState('Pendente'); // 'Pendente', 'Validado', 'Inválido'
-  const [mensagemEnvio, setMensagemEnvio] = useState('');
-  const [validando, setValidando] = useState(false);
-
   // ==========================================
   // BUSCAR DADOS INICIAIS DA SOLICITAÇÃO
   // ==========================================
   useEffect(() => {
     async function buscarDados() {
       try {
-        // Exemplo: /api/solicitacoes/123
-        const resposta = await fetch(`/api/solicitacoes/${idSolicitacao}`);
+        const resposta = await fetch(`http://localhost:8000/api/solicitacoes/${idSolicitacao}/`);
         if (!resposta.ok) throw new Error('Erro ao buscar dados');
         
         const dados = await resposta.json();
         setDadosSolicitacao(dados);
         
-        // Se a API já disser que está validado, atualizamos o status
-        if (dados.status === 'Validado') {
-          setStatus('Validado');
-        }
       } catch (erro) {
         console.error(erro);
       } finally {
@@ -38,45 +27,6 @@ function Comprovante({ idSolicitacao = '123' }) { // Recebe o ID da solicitaçã
 
     buscarDados();
   }, [idSolicitacao]);
-
-  // ==========================================
-  // LÓGICA DE VALIDAÇÃO DO CÓDIGO
-  // ==========================================
-  async function handleValidarCodigo(evento) {
-    evento.preventDefault();
-
-    if (!codigo.trim()) {
-      setMensagemEnvio('Informe o código do comprovante.');
-      setStatus('Inválido');
-      return;
-    }
-
-    setValidando(true);
-    setMensagemEnvio('');
-
-    try {
-      // Envia o código para a API validar no banco
-      const resposta = await fetch('/api/validar-comprovante', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idSolicitacao, codigo: codigo.trim() }),
-      });
-
-      if (resposta.ok) {
-        setStatus('Validado');
-        setMensagemEnvio('Comprovante validado com sucesso.');
-      } else {
-        setStatus('Inválido');
-        setMensagemEnvio('Código de comprovante inválido ou não reconhecido.');
-      }
-    } catch (erro) {
-      console.error(erro);
-      setStatus('Inválido');
-      setMensagemEnvio('Erro de conexão ao tentar validar.');
-    } finally {
-      setValidando(false);
-    }
-  }
 
   // ==========================================
   // RENDERIZAÇÃO
@@ -90,10 +40,10 @@ function Comprovante({ idSolicitacao = '123' }) { // Recebe o ID da solicitaçã
   }
 
   return (
-    <main className="container-principal">
-      <div className="card-comprovante">
-        <h1>Comprovante de envio</h1>
-        <p className="subtitulo">Confira o status do envio dos certificados e valide o comprovante.</p>
+    <div style={{ padding: '1rem 1.5rem' }}>
+      <div className="card-comprovante" style={{ margin: 0, padding: 0, boxShadow: 'none', border: 'none' }}>
+        <h1 style={{ fontSize: '1.5rem' }}>Comprovante #{idSolicitacao}</h1>
+        <p className="subtitulo">Aqui estão os detalhes da sua solicitação.</p>
 
         <section className="resumo">
           <div className="bloco-status">
@@ -101,15 +51,15 @@ function Comprovante({ idSolicitacao = '123' }) { // Recebe o ID da solicitaçã
             {/* A cor e o texto mudam dinamicamente baseados no estado */}
             <strong 
               id="statusAtual" 
-              style={{ color: status === 'Validado' ? 'green' : status === 'Inválido' ? 'red' : '#F5AC00' }}
+              style={{ color: dadosSolicitacao.status === 'Aprovada' ? 'green' : dadosSolicitacao.status === 'Rejeitada' ? 'red' : '#F5AC00' }}
             >
-              {status}
+              {dadosSolicitacao.status === 'Aprovada' ? 'Aprovado' : dadosSolicitacao.status === 'Rejeitada' ? 'Recusado' : 'Em Andamento'}
             </strong>
             
             <p className="texto-status">
-              {status === 'Pendente' && 'O comprovante ainda não foi validado pelo portal.'}
-              {status === 'Validado' && 'O comprovante é válido e o envio dos certificados foi confirmado.'}
-              {status === 'Inválido' && 'O código não foi reconhecido ou está pendente.'}
+              {dadosSolicitacao.status === 'Pendente' && 'A solicitação está aguardando avaliação.'}
+              {dadosSolicitacao.status === 'Aprovada' && 'A solicitação foi aprovada e as horas foram computadas.'}
+              {dadosSolicitacao.status === 'Rejeitada' && 'A solicitação foi recusada pelo avaliador.'}
             </p>
           </div>
 
@@ -127,45 +77,8 @@ function Comprovante({ idSolicitacao = '123' }) { // Recebe o ID da solicitaçã
           </div>
         </section>
 
-        {/* Adicionei o formulário que estava no seu JS mas faltava no JSX */}
-        <section className="validacao-section" style={{ marginTop: '2rem' }}>
-          <form id="formularioValidacao" onSubmit={handleValidarCodigo}>
-            <div className="campo">
-              <label htmlFor="codigoComprovante">Código de Validação</label>
-              <input 
-                type="text" 
-                id="codigoComprovante" 
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)} // Atualiza o estado ao digitar
-                placeholder="Ex: AAC-2026-0558"
-                disabled={status === 'Validado'} // Bloqueia se já estiver validado
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              id="botaoValidar" 
-              className="btn btn-principal"
-              disabled={validando || status === 'Validado'}
-              style={{ marginTop: '1rem' }}
-            >
-              {validando ? 'Validando...' : 'Validar comprovante'}
-            </button>
-          </form>
-
-          {/* Mensagem de Retorno */}
-          {mensagemEnvio && (
-            <div 
-              className={`retorno ${status === 'Validado' ? 'sucesso' : 'erro'}`} 
-              style={{ marginTop: '1rem', fontWeight: 'bold' }}
-            >
-              {mensagemEnvio}
-            </div>
-          )}
-        </section>
-
       </div>
-    </main>
+    </div>
   );
 }
 

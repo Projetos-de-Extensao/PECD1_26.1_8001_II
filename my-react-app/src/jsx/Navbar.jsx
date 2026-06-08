@@ -7,6 +7,10 @@ export default function Navbar({ onLogout } = {}) {
   const [perfilOpen, setPerfilOpen] = useState(false)
   const navigate = useNavigate()
 
+  // Recupera o usuário do localStorage para saber se é funcionário
+  const usuarioSalvo = localStorage.getItem('usuario');
+  const isFuncionario = usuarioSalvo ? JSON.parse(usuarioSalvo).is_funcionario : false;
+
   useEffect(() => {
     function handleClickFora(e) {
       if (!e.target.closest('.menu-principal') && !e.target.closest('.hamburger')) {
@@ -57,7 +61,7 @@ export default function Navbar({ onLogout } = {}) {
 
       <nav className="navegacao" role="navigation" aria-label="Menu principal">
         <div className="nav-container">
-          <Link to="/dashboard" className="logo-nav" onClick={() => setMenuAberto(false)}>
+          <Link to={isFuncionario ? "/admin" : "/home"} className="logo-nav" onClick={() => setMenuAberto(false)}>
             <div className="caixa-logo">I</div>
             <span>IBMEC</span>
           </Link>
@@ -86,22 +90,25 @@ export default function Navbar({ onLogout } = {}) {
               ×
             </button>
 
-            <li>
-              <Link to="/home" className="menu-botao" onClick={() => navTo('/home')}>
-                Home
-              </Link>
-            </li>
+          {/* MENU EXCLUSIVO PARA ALUNOS */}
+          {!isFuncionario && (
+            <>
+              <li>
+                <Link to="/home" className="menu-botao" onClick={() => navTo('/home')}>Home</Link>
+              </li>
+              <li>
+                <Link to="/solicitacoes" className="menu-botao" onClick={() => navTo('/solicitacoes')}>Solicitações</Link>
+              </li>
+            </>
+          )}
 
+          {/* MENU EXCLUSIVO PARA FUNCIONÁRIOS */}
+          {isFuncionario && (
             <li>
-              <Link
-                to="/solicitacoes"
-                className="menu-botao"
-                onClick={() => navTo('/solicitacoes')}
-              >
-                Solicitações
-              </Link>
+              <Link to="/admin" className="menu-botao" onClick={() => navTo('/admin')}>Painel Admin</Link>
             </li>
-
+          )}
+          
             <li
               className={`menu-perfil ${perfilOpen ? 'ativo' : ''}`}
               onMouseEnter={() => setPerfilOpen(true)}

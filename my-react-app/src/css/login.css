@@ -29,6 +29,16 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
 }
 
+/* Responsividade para Celulares Menores */
+@media (max-width: 480px) {
+  .cartao {
+    padding: 30px 20px;
+  }
+  .cartao::before {
+    margin: -30px -20px 26px;
+  }
+}
+
 /* Logo */
 .logo {
   display: flex;

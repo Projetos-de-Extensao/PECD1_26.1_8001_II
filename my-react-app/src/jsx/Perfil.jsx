@@ -36,7 +36,22 @@ function Perfil() {
   useEffect(() => {
     async function carregarDadosUsuario() {
       try {
-        const resposta = await fetch('/api/perfil/meus-dados')
+        const usuarioSalvo = localStorage.getItem('usuario')
+        if (!usuarioSalvo) {
+          setUsuario(USUARIO_ZERADO)
+          setCarregandoPerfil(false)
+          return
+        }
+
+        const usuarioLogado = JSON.parse(usuarioSalvo)
+
+        const resposta = await fetch('http://localhost:8000/api/usuarios/meus-dados/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Usuario-Matricula': usuarioLogado.matricula
+          }
+        })
 
         if (!resposta.ok) {
           setUsuario(USUARIO_ZERADO)
@@ -123,9 +138,15 @@ function Perfil() {
     setEnviando(true)
 
     try {
-      const resp = await fetch('/api/perfil/mudar-senha', {
+      const usuarioSalvo = localStorage.getItem('usuario')
+      const matricula = usuarioSalvo ? JSON.parse(usuarioSalvo).matricula : ''
+
+      const resp = await fetch('http://localhost:8000/api/usuarios/mudar-senha/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Usuario-Matricula': matricula
+        },
         body: JSON.stringify({ senhaAtual, senhaNova }),
       })
 

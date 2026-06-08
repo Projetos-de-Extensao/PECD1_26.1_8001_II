@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../css/FormExterno.css';
+import Comprovante from './Comprovante.jsx'; // Importa o componente de comprovante para mostrar o resultado da solicitação externa
 
 export default function FormExterno({ ativo }) {
   // Estados para gerenciar as categorias vindas do Banco de Dados
@@ -10,22 +11,39 @@ export default function FormExterno({ ativo }) {
   const [categoria, setCategoria] = useState('');
   const [arquivoInfo, setArquivoInfo] = useState(null);
   const [mensagemEnvio, setMensagemEnvio] = useState('');
+  const [comprovanteId, setComprovanteId] = useState(null);
+  const [isEnviando, setIsEnviando] = useState(false);
   
   const formRef = useRef(null); // Referência para acessar e limpar o formulário facilmente
 
   // ==========================================
   // 1. BUSCAR CATEGORIAS DO BANCO (GET)
-  // ==========================================
+  // ========================================== que fp foi enviado componente  comprovante dvee pa
   useEffect(() => {
     async function carregarCategorias() {
       try {
-        // Rota da sua API que lista as categorias cadastradas
-        const resposta = await fetch('/api/categorias-externas');
+        const resposta = await fetch('http://localhost:8000/api/categorias/lista/');
         
         if (!resposta.ok) throw new Error('Falha ao carregar categorias');
         
         const dados = await resposta.json();
-        setListaCategorias(dados); // Salva as categorias no estado
+        
+        // Filtro mais flexível: cobre várias formas que o banco (SQLite/Postgres) pode
+        // retornar a coluna "tipo" para atividades externas (false, 0, 'False', ou 'Externa')
+        let categoriasExternas = dados
+          .filter(item => !item.tipo || String(item.tipo).toLowerCase() === 'false' || item.tipo === 'Externa')
+          .map(item => ({ 
+            id: item.id_categoria || item.id, 
+            nome: item.atividade ? `${item.categoria} - ${item.atividade}` : item.nome || 'Categoria Externa' 
+          }));
+          
+        // Se o filtro for muito restrito e não sobrar nada (mas existirem dados na API), 
+        // libera todas as categorias para evitar que o select fique em branco.
+        if (categoriasExternas.length === 0 && dados.length > 0) {
+          categoriasExternas = dados.map(item => ({ id: item.id_categoria || item.id, nome: item.atividade ? `${item.categoria} - ${item.atividade}` : item.nome || 'Categoria Geral' }));
+        }
+
+        setListaCategorias(categoriasExternas);
         
       } catch (erro) {
         console.error('Erro na API de categorias:', erro);
@@ -50,7 +68,19 @@ export default function FormExterno({ ativo }) {
   // ==========================================
   function handleArquivoChange(e) {
     const f = e.target.files?.[0] ?? null;
-    setArquivoInfo(f ? { name: f.name, size: f.size } : null);
+    
+    if (f) {
+      // Limite de 5MB (5 * 1024 * 1024 bytes) conforme a História de Usuário (US005)
+      if (f.size > 5 * 1024 * 1024) {
+        alert('O arquivo selecionado é muito grande. O limite máximo é de 5MB.');
+        e.target.value = ''; // Limpa o input
+        setArquivoInfo(null);
+        return;
+      }
+      setArquivoInfo({ name: f.name, size: f.size });
+    } else {
+      setArquivoInfo(null);
+    }
   }
 
   function handleLimparExterno() {
@@ -73,30 +103,39 @@ export default function FormExterno({ ativo }) {
     }
 
     setMensagemEnvio('Enviando documentos...');
+    setIsEnviando(true);
 
     try {
+      const usuarioSalvo = localStorage.getItem('usuario');
+      if (!usuarioSalvo) {
+        throw new Error('Usuário não autenticado. Faça login novamente.');
+      }
+      const usuarioLogado = JSON.parse(usuarioSalvo);
+
       // O FormData captura todos os inputs com atributo 'name' dentro do formRef
       const pacoteDados = new FormData(formRef.current);
       
-      // Enviamos o pacote para a API. 
-      // IMPORTANTE: NÃO coloque 'Content-Type' no headers. O navegador faz isso automaticamente para arquivos.
-      const resposta = await fetch('/api/solicitacoes/externa', {
+      const resposta = await fetch('http://localhost:8000/api/solicitacoes/criar-externa/', {
         method: 'POST',
+        headers: {
+          'X-Usuario-Matricula': usuarioLogado.matricula
+        },
         body: pacoteDados,
       });
 
       if (!resposta.ok) throw new Error('Falha ao enviar arquivo');
 
+      const dados = await resposta.json();
+
       setMensagemEnvio('✓ Solicitação enviada e salva com sucesso!');
       
-      // Limpa o formulário após o sucesso
-      setTimeout(() => {
-        handleLimparExterno();
-      }, 2000);
-
+      setComprovanteId(dados.id_solicitacao);
+      handleLimparExterno();
     } catch (erro) {
       console.error(erro);
       setMensagemEnvio('✗ Erro ao salvar solicitação. Tente novamente.');
+    } finally {
+      setIsEnviando(false);
     }
   }
 
@@ -116,7 +155,7 @@ export default function FormExterno({ ativo }) {
             <label htmlFor="categoria">Categoria do Evento</label>
             <select 
               id="categoria" 
-              name="categoriaId" // O backend vai receber esse nome
+              name="categoria" 
               value={categoria} 
               onChange={(e) => setCategoria(e.target.value)}
               required
@@ -139,7 +178,7 @@ export default function FormExterno({ ativo }) {
               
               <div className="campo">
                 <label htmlFor="curso">Título do Evento</label>
-                <input id="curso" name="titulo" type="text" placeholder="Ex: Semana da Computação" required />
+                <input id="curso" name="nome_atividade" type="text" placeholder="Ex: Semana da Computação" required />
               </div>
 
               <div className="campo">
@@ -157,20 +196,23 @@ export default function FormExterno({ ativo }) {
                 <label htmlFor="arquivo">Anexar Certificado (PDF)</label>
                 <input 
                   id="arquivo" 
-                  name="certificado" // O backend vai procurar por esse nome no Multer/Upload
+                  name="arquivo" 
                   type="file" 
-                  accept="application/pdf" 
+                accept="application/pdf, image/png, image/jpeg" 
                   onChange={handleArquivoChange} 
                   required 
                 />
                 <div id="nomeArquivo" className="arquivo-info" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#555' }}>
                   {arquivoInfo ? `📄 ${arquivoInfo.name}` : 'Nenhum arquivo selecionado'}
+                <span style={{ display: 'block', fontSize: '0.8rem', color: '#888', marginTop: '0.2rem' }}>Máx: 5MB (PDF, PNG, JPG)</span>
                 </div>
               </div>
             </div>
 
             <div className="acoes" style={{ marginTop: '2rem' }}>
-              <button id="btnEnviar" type="submit" className="btn btn-principal">Enviar para Aprovação</button>
+            <button id="btnEnviar" type="submit" className="btn btn-principal" disabled={isEnviando}>
+              {isEnviando ? 'Enviando...' : 'Enviar para Aprovação'}
+            </button>
               <button id="btnLimpar" type="button" className="btn btn-secundario" onClick={handleLimparExterno}>Limpar</button>
             </div>
           </div>
@@ -180,6 +222,21 @@ export default function FormExterno({ ativo }) {
           {mensagemEnvio}
         </div>
       </div>
+
+      {/* MODAL DE COMPROVANTE */}
+      {comprovanteId && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 37, 85, 0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(5px)' }} onClick={() => setComprovanteId(null)}>
+          <div style={{ background: '#fff', width: '90%', maxWidth: '600px', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', animation: 'slideDown 0.3s ease-out', maxHeight: '90vh' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: 0, color: 'var(--cor-secundaria)', fontSize: '1.2rem' }}>Comprovante de Solicitação</h3>
+              <button onClick={() => setComprovanteId(null)} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>✖</button>
+            </div>
+            <div style={{ overflowY: 'auto' }}>
+              <Comprovante idSolicitacao={comprovanteId} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

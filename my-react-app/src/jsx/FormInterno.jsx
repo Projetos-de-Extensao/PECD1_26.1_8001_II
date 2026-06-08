@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import jsQR from 'jsqr'; 
 import '../css/FormInterno.css';
+import Comprovante from './Comprovante.jsx';
 
 export default function FormInterno({ ativo }) {
   const videoRef = useRef(null);
@@ -10,6 +11,7 @@ export default function FormInterno({ ativo }) {
   
   const [scannerAtivo, setScannerAtivo] = useState(false);
   const [scannerStatus, setScannerStatus] = useState('');
+  const [comprovanteId, setComprovanteId] = useState(null);
   
   const [dadosQr, setDadosQr] = useState({
     idEvento: '', // ID oculto para mandar pro banco
@@ -125,25 +127,36 @@ export default function FormInterno({ ativo }) {
     setScannerStatus('Enviando para o banco de dados...');
     
     try {
-      const resposta = await fetch('/api/solicitacoes/interna', {
+      const usuarioSalvo = localStorage.getItem('usuario');
+      if (!usuarioSalvo) {
+        throw new Error('Usuário não autenticado. Faça login novamente.');
+      }
+      const usuarioLogado = JSON.parse(usuarioSalvo);
+
+      const resposta = await fetch('http://localhost:8000/api/solicitacoes/criar-interna/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // Mandamos os dados pro backend
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Usuario-Matricula': usuarioLogado.matricula
+        },
         body: JSON.stringify({
-          id_evento: dadosQr.idEvento,
-          horas_solicitadas: dadosQr.horas
-          // Adicione aqui o ID do usuário logado se necessário
+          evento_id: dadosQr.idEvento
         }), 
       });
 
-      if (!resposta.ok) throw new Error('Falha no servidor');
+      if (!resposta.ok) {
+        const erroData = await resposta.json().catch(() => ({}));
+        throw new Error(erroData.mensagem || 'Falha ao registrar a atividade no servidor');
+      }
+
+      const dados = await resposta.json();
 
       setScannerStatus('✓ Horas aprovadas e salvas no banco de dados!');
       setDadosQr({ idEvento: '', nomePalestra: '-', data: '-', horas: '-' });
-      
+      setComprovanteId(dados.id_solicitacao);
     } catch (erro) {
       console.error(erro);
-      setScannerStatus('✗ Erro ao salvar no banco. Tente novamente.');
+      setScannerStatus(`✗ ${erro.message}`);
     }
   }
 
@@ -183,6 +196,21 @@ export default function FormInterno({ ativo }) {
           </button>
         </div>
       </div>
+
+      {/* MODAL DE COMPROVANTE */}
+      {comprovanteId && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 37, 85, 0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(5px)' }} onClick={() => setComprovanteId(null)}>
+          <div style={{ background: '#fff', width: '90%', maxWidth: '600px', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', animation: 'slideDown 0.3s ease-out', maxHeight: '90vh' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: 0, color: 'var(--cor-secundaria)', fontSize: '1.2rem' }}>Comprovante de Solicitação</h3>
+              <button onClick={() => setComprovanteId(null)} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>✖</button>
+            </div>
+            <div style={{ overflowY: 'auto' }}>
+              <Comprovante idSolicitacao={comprovanteId} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

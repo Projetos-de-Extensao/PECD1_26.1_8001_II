@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, Categoria, Atividade
+from .models import Usuario, Categoria, Solicitacao, Eventos
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -14,7 +14,12 @@ class CategoriaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AtividadeSerializer(serializers.ModelSerializer):
+class EventosSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Atividade
+        model = Eventos
+        fields = '__all__'
+
+class SolicitacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Solicitacao
         fields = '__all__'
