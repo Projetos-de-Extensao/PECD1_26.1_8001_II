@@ -99,7 +99,7 @@ function Login() {
 
       </article>
     </section>
-  )
+    </>
+  );
 }
-
-export default Login
+export default Login;
