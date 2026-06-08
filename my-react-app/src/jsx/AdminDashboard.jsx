@@ -19,6 +19,7 @@ export default function AdminDashboard() {
   const [novoEvento, setNovoEvento] = useState({
     nome: '',
     categoria: '',
+    data: '',
     hora: '',
     horas: '',
     cursoAlvo: '',
@@ -75,11 +76,12 @@ export default function AdminDashboard() {
           const formatado = dados.map(item => ({
             id: item.id_evento,
             nome: item.nome,
-            data: item.data,
+            // Formata a data AAAA-MM-DD para DD/MM/AAAA na tela
+            data: item.data ? item.data.split('-').reverse().join('/') : '',
             hora: item.hora,
             horas: item.horas,
             tipo: 'Interno',
-            categoria: item.categoria,
+            categoria: item.categoria_nome || item.categoria,
             cursoAlvo: item.curso_alvo,
             palestrante: item.palestrante,
             unidade: item.unidade
@@ -288,23 +290,40 @@ export default function AdminDashboard() {
   }
 
   // Função para criar o evento a partir do formulário estendido
-  function handleAdicionarEvento(e) {
+  async function handleAdicionarEvento(e) {
     e.preventDefault();
-    if (!novoEvento.nome || !novoEvento.categoria || !novoEvento.hora || !novoEvento.horas) {
-      alert('Preencha os campos obrigatórios (Nome, Categoria, Horário e Horas).');
+    if (!novoEvento.nome || !novoEvento.categoria || !novoEvento.data || !novoEvento.hora || !novoEvento.horas) {
+      alert('Preencha os campos obrigatórios (Nome, Categoria, Data, Horário e Horas).');
       return;
     }
     
-    const id = Date.now().toString();
-    const dataAtual = new Date().toLocaleDateString('pt-BR');
-    
-    setEventos(prev => [{
-      id, ...novoEvento, data: dataAtual
-    }, ...prev]);
-    
-    // Limpa o formulário e esconde
-    setNovoEvento({ nome: '', categoria: '', hora: '', horas: '', cursoAlvo: '', palestrante: '', unidade: '', tipo: 'Interno' });
-    setMostrarFormEvento(false);
+    try {
+      const resp = await fetch('http://localhost:8000/api/eventos/criar/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novoEvento)
+      });
+
+      if (resp.ok) {
+        const data = await resp.json();
+
+        // Encontra o nome da categoria para exibir imediatamente na tabela
+        const catSelecionada = atividades.find(a => String(a.id) === String(novoEvento.categoria));
+        
+        setEventos(prev => [{
+          id: data.id_evento, ...novoEvento, categoria: catSelecionada ? catSelecionada.nome : '', data: novoEvento.data.split('-').reverse().join('/')
+        }, ...prev]);
+        
+        // Limpa o formulário e esconde
+        setNovoEvento({ nome: '', categoria: '', data: '', hora: '', horas: '', cursoAlvo: '', palestrante: '', unidade: '', tipo: 'Interno' });
+        setMostrarFormEvento(false);
+      } else {
+        alert('Erro ao salvar evento no banco de dados.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão com a API ao criar evento.');
+    }
   }
 
   // Aplicação dos Filtros na Lista de Solicitações
@@ -664,9 +683,15 @@ export default function AdminDashboard() {
                       >
                         <option value="" disabled>Selecione a Categoria *</option>
                         {atividades.map(ativ => (
-                          <option key={ativ.id} value={ativ.nome}>{ativ.categoria} - {ativ.nome}</option>
+                          <option key={ativ.id} value={ativ.id}>{ativ.categoria} - {ativ.nome}</option>
                         ))}
                       </select>
+                      <input 
+                        type="date" 
+                        value={novoEvento.data} 
+                        onChange={(e) => setNovoEvento({...novoEvento, data: e.target.value})} 
+                        required
+                      />
                       <input 
                         type="text" 
                         placeholder="Horário (Ex: 14:00 às 18:00) *" 
