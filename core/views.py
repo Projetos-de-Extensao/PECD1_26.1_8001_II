@@ -396,8 +396,8 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
         if Solicitacao.objects.filter(aluno=usuario, evento=evento).exists():
             return Response({"mensagem": "Você já registrou presença neste evento!"}, status=400)
 
-        # Pega a Categoria baseada no nome que está salvo no Evento (ou usa a primeira como fallback)
-        categoria_obj = Categoria.objects.filter(atividade=evento.categoria).first() or Categoria.objects.first()
+        # Pega a Categoria que está salva no Evento (ou usa a primeira como fallback)
+        categoria_obj = evento.categoria or Categoria.objects.first()
 
         # Cria a solicitação pré-aprovada com os dados puxados diretamente do Evento
         solicitacao = Solicitacao.objects.create(
