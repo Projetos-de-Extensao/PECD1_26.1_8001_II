@@ -519,7 +519,7 @@ export default function AdminDashboard() {
                       <tr>
                         <th>Aluno</th>
                         <th>Matrícula</th>
-                        <th>Categoria / Tipo</th>
+                        <th>Categoria </th>
                         <th>Atividade</th>
                         <th>Horas</th>
                         <th>Status</th>
@@ -799,7 +799,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* MODAL DE VISUALIZAÇÃO DO QR CODE */}
+{/* MODAL DE VISUALIZAÇÃO DO QR CODE */}
       {qrCodeSelecionado && (
         <div className="modal-overlay-admin" onClick={() => setQrCodeSelecionado(null)}>
           <div className="modal-conteudo-admin" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center' }}>
@@ -807,13 +807,16 @@ export default function AdminDashboard() {
               <h3 style={{ margin: 0, color: 'var(--cor-secundaria)' }}>QR Code do Evento</h3>
               <button className="btn-fechar-admin" onClick={() => setQrCodeSelecionado(null)}>✖</button>
             </div>
+            
             <div className="modal-body-admin" style={{ padding: '2rem' }}>
               <p style={{ marginBottom: '1rem', fontWeight: 'bold' }}>{qrCodeSelecionado.nome}</p>
+              
               <img 
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
                   JSON.stringify({
-                    id: qrCodeSelecionado.id,
+                    evento_id: qrCodeSelecionado.id,
                     nome: qrCodeSelecionado.nome,
+                    categoria: qrCodeSelecionado.categoria,
                     horas: qrCodeSelecionado.horas,
                     data: qrCodeSelecionado.data
                   })
@@ -821,12 +824,26 @@ export default function AdminDashboard() {
                 alt={`QR Code para o evento ${qrCodeSelecionado.nome}`} 
                 style={{ width: '250px', height: '250px', border: '1px solid #e2e8f0', borderRadius: '8px' }}
               />
+              
               <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#64748b' }}>
                 Os alunos podem escanear este código através do aplicativo para registrar presença.
               </p>
             </div>
+            
             <div className="modal-footer-admin" style={{ justifyContent: 'center' }}>
-              <button className="btn btn-principal" onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(JSON.stringify({id: qrCodeSelecionado.id, nome: qrCodeSelecionado.nome, horas: qrCodeSelecionado.horas, data: qrCodeSelecionado.data}))}`, '_blank')}>
+              {/* ATENÇÃO: O botão de imprimir também precisa receber o mesmo JSON atualizado */}
+              <button 
+                className="btn btn-principal" 
+                onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(
+                  JSON.stringify({
+                    evento_id: qrCodeSelecionado.id,
+                    nome: qrCodeSelecionado.nome,
+                    categoria: qrCodeSelecionado.categoria,
+                    horas: qrCodeSelecionado.horas,
+                    data: qrCodeSelecionado.data
+                  })
+                )}`, '_blank')}
+              >
                 🖨️ Imprimir / Ampliar
               </button>
             </div>
