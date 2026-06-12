@@ -39,7 +39,7 @@ function Login() {
         localStorage.setItem('usuario', JSON.stringify(dados.usuario));
         
         // Redireciona para o dashboard de forma fluida e sem recarregar a página
-        navigate('/dashboard'); 
+        navigate('/home'); 
       } else {
         setErro(dados.mensagem || 'Credenciais inválidas.');
       }
@@ -99,9 +99,7 @@ function Login() {
 
       </article>
     </section>
-
     </>
-  )
+  );
 }
-
 export default Login;

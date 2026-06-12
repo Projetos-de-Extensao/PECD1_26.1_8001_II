@@ -1,7 +1,7 @@
 .mural-container {
   margin: 2rem auto 0 auto;
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;
   padding: 0 1.5rem;
   animation: fadeIn 0.5s ease-out;
   min-width: 0;
@@ -41,7 +41,7 @@
 /* Cada Evento (Slide) */
 .carrossel-slide {
   min-width: 100%;
-  padding: 5rem 2rem;
+  padding: 3rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,6 +53,7 @@
 
 .slide-conteudo {
   width: min(100%, 800px);
+  max-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -61,8 +62,8 @@
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 3rem 4rem;
-  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   min-width: 0;
@@ -104,9 +105,9 @@
 }
 
 .slide-conteudo h3 {
-  font-size: 2.8rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   line-height: 1.2;
   text-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
@@ -115,8 +116,8 @@
   display: flex;
   justify-content: center;
   gap: 2.5rem;
-  font-size: 1.2rem;
-  margin-bottom: 2.5rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
   font-weight: 600;
   color: #e2e8f0;
 }
@@ -126,14 +127,14 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   width: 100%;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .card-detalhe {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  padding: 1rem;
+  padding: 0.8rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -141,9 +142,9 @@
 }
 
 .icone-detalhe {
-  padding: 0.6rem;
+  padding: 0.5rem;
   border-radius: 10px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 .icone-detalhe.roxo { background: rgba(167, 139, 250, 0.2); }
 .icone-detalhe.azul { background: rgba(56, 189, 248, 0.2); }
@@ -169,8 +170,8 @@
   background: linear-gradient(135deg, var(--cor-primaria, #F5AC00) 0%, #ff8800 100%);
   color: #fff;
   border: none;
-  padding: 1rem 3.5rem;
-  font-size: 1.1rem;
+  padding: 0.8rem 2.5rem;
+  font-size: 1rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -194,8 +195,8 @@
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 55px;
-  height: 55px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   font-size: 1.5rem;
   cursor: pointer;
@@ -217,7 +218,7 @@
 
 .carrossel-indicadores {
   position: absolute;
-  bottom: 25px;
+  bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -247,6 +248,9 @@
   .slide-conteudo { padding: 2rem 1.5rem; }
   .slide-conteudo h3 { font-size: 1.8rem; }
   .carrossel-slide { padding: 4rem 1rem; }
+  .slide-conteudo { padding: 1.5rem 1rem; }
+  .slide-conteudo h3 { font-size: 1.5rem; }
+  .carrossel-slide { padding: 2.5rem 1rem; }
   .slide-infos { flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
   .grid-detalhes { 
     grid-template-columns: 1fr; 

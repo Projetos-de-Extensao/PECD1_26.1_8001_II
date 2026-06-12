@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import '../css/tabelaAtividades.css';
+import React, { useState, useEffect } from 'react'
+import '../css/tabelaAtividades.css'
 
 export default function AppAtividades() {
-  const [listaAtividades, setListaAtividades] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const [listaAtividades, setListaAtividades] = useState([])
+  const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
     async function buscarDadosDaApi() {
@@ -23,7 +23,7 @@ export default function AppAtividades() {
         }); 
         
         if (!resp.ok) {
-          throw new Error('Erro ao buscar atividades');
+          throw new Error('Erro ao buscar atividades')
         }
 
         const dados = await resp.json();
@@ -52,15 +52,15 @@ export default function AppAtividades() {
         console.error('Erro ao buscar as atividades do aluno:', error);
         setListaAtividades([]); 
       } finally {
-        setCarregando(false); 
+        setCarregando(false)
       }
     }
 
-    buscarDadosDaApi();
-  }, []);
+    buscarDadosDaApi()
+  }, [])
 
   if (carregando) {
-    return <p style={{ padding: '2rem', textAlign: 'center' }}>Carregando atividades...</p>;
+    return <p style={{ padding: '2rem', textAlign: 'center' }}>Carregando atividades...</p>
   }
 
   return (
@@ -215,5 +215,5 @@ function TabelaAtividades({ atividades = [] }) {
         </div>
       )}
     </main>
-  );
+  )
 }

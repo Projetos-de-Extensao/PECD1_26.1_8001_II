@@ -15,6 +15,8 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 
 class EventosSerializer(serializers.ModelSerializer):
+    categoria_nome = serializers.CharField(source='categoria.atividade', read_only=True)
+
     class Meta:
         model = Eventos
         fields = '__all__'

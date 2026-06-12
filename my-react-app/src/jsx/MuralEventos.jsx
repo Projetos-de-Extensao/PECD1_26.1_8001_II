@@ -31,11 +31,11 @@ export default function MuralEventos() {
           .map((evento, index) => ({
             id: evento.id_evento,
             titulo: evento.nome,
-            data: evento.data,
+            data: evento.data ? evento.data.split('-').reverse().join('/') : '',
             hora: evento.hora || '',
             horas: evento.horas,
             tipo: 'Interno',
-            categoria: evento.categoria,
+            categoria: evento.categoria_nome || evento.categoria,
             palestrante: evento.palestrante || '',
             cursoAlvo: evento.curso_alvo || '',
             unidade: evento.unidade || '',
@@ -84,7 +84,7 @@ export default function MuralEventos() {
               <div className="slide-conteudo">
                 
                 <div className="badge-grupo">
-                  <span className="badge-item badge-categoria">{evento.categoria}</span>
+                  <span className="badge-item badge-categoria">{evento.cursoAlvo || evento.categoria}</span>
                 </div>
                 
                 <h3>{evento.titulo}</h3>
