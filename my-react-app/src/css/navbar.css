@@ -70,6 +70,7 @@
   top: 0;
   left: 0;
   width: 280px;
+  max-width: 86vw;
   height: 100vh;
   background: #1a2235; /* Cor baseada na sua imagem de referência */
   margin: 0;
@@ -83,6 +84,7 @@
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
 }
 
 /* Quando ganha a classe 'aberto', ele desliza para dentro */
@@ -191,5 +193,20 @@
   .menu-perfil:hover .submenu-perfil,
   .menu-perfil.ativo .submenu-perfil { 
     display: block; 
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .logo-nav span {
+    font-size: 0.95rem;
+  }
+
+  .menu-principal {
+    width: 260px;
+    padding: 1rem 1.25rem;
   }
 }

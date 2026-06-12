@@ -550,3 +550,116 @@
   border-top: 1px solid #e2e8f0;
   background: #ffffff;
 }
+
+.admin-dashboard,
+.admin-painel-inferior,
+.admin-conteudo-lateral {
+  min-width: 0;
+}
+
+.tabela-wrapper {
+  -webkit-overflow-scrolling: touch;
+}
+
+.form-admin-inline button {
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .grid-metricas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .tabela-admin td[data-label="Ações"] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-principal.container-fluido {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1rem 0.75rem;
+    overflow-x: hidden;
+  }
+
+  .admin-dashboard {
+    padding: 0.5rem 0;
+  }
+
+  .admin-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .titulo-admin {
+    font-size: 1.35rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .subtitulo-admin {
+    font-size: 0.85rem;
+  }
+
+  .grid-metricas {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .card-metrica {
+    min-width: 0;
+    padding: 1rem;
+  }
+
+  .titulo-metrica {
+    font-size: 0.78rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-menu-lateral {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .menu-btn {
+    min-width: max-content;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-conteudo-lateral {
+    padding: 0.9rem;
+  }
+
+  .titulo-secao-admin {
+    font-size: 1.05rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .tabela-admin {
+    min-width: 0;
+  }
+
+  .tabela-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .modal-conteudo-admin {
+    width: calc(100% - 1.5rem);
+    border-radius: 12px;
+  }
+
+  .modal-header-admin,
+  .modal-footer-admin {
+    padding: 1rem;
+  }
+}

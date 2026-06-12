@@ -391,3 +391,40 @@ body {
     padding: 1rem;
   }
 }
+
+.container-principal {
+  width: 100%;
+}
+
+.card-perfil {
+  min-width: 0;
+}
+
+.valor-info {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .modal-conteudo {
+    margin: 0;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-principal {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .header-perfil,
+  .card-perfil {
+    border-radius: 12px;
+    padding: 1rem;
+  }
+
+  .modal-acoes {
+    flex-direction: column;
+    padding: 1rem;
+  }
+}

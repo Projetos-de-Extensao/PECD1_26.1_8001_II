@@ -4,6 +4,7 @@
   max-width: 1200px;
   padding: 0 1.5rem;
   animation: fadeIn 0.5s ease-out;
+  min-width: 0;
 }
 
 .mural-header {
@@ -47,10 +48,11 @@
   text-align: center;
   color: #fff;
   position: relative;
+  min-height: 520px;
 }
 
 .slide-conteudo {
-  max-width: 800px;
+  width: min(100%, 800px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,10 +65,12 @@
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-width: 0;
 }
 
 .badge-grupo {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
   margin-bottom: 1.5rem;
@@ -238,6 +242,8 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
+  .mural-header h2 { font-size: 1.7rem; }
+  .mural-header p { font-size: 0.95rem; }
   .slide-conteudo { padding: 2rem 1.5rem; }
   .slide-conteudo h3 { font-size: 1.8rem; }
   .carrossel-slide { padding: 4rem 1rem; }
@@ -250,4 +256,20 @@
   .btn-controle { width: 40px; height: 40px; font-size: 1.2rem; }
   .btn-inscrever { padding: 0.8rem 2rem; font-size: 1rem; }
   .mural-container { padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+  .mural-container { padding: 0 0.75rem; }
+  .carrossel { border-radius: 16px; }
+  .carrossel-slide { min-height: 560px; padding: 3.5rem 0.75rem; }
+  .slide-conteudo { padding: 1.5rem 1rem; border-radius: 14px; }
+  .slide-conteudo h3 { font-size: 1.45rem; }
+  .badge-grupo { gap: 0.5rem; }
+  .badge-item { font-size: 0.7rem; padding: 0.35rem 0.75rem; }
+  .card-detalhe { padding: 0.8rem; }
+  .btn-controle { top: auto; bottom: 18px; transform: none; }
+  .btn-controle:hover { transform: scale(1.05); }
+  .btn-controle.prev { left: 16px; }
+  .btn-controle.next { right: 16px; }
+  .carrossel-indicadores { bottom: 31px; }
 }

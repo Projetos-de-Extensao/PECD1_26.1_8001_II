@@ -31,6 +31,7 @@
   box-shadow: 0 16px 48px rgba(0, 37, 85, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   animation: slideInUp 0.6s ease-out;
+  min-width: 0;
 }
 
 @keyframes slideInUp {
@@ -55,7 +56,7 @@
 .barra-progresso { width: 100%; height: 16px; background-color: rgba(0, 37, 85, 0.1); border-radius: 10px; overflow: hidden; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08); }
 .progresso-preenchido { height: 100%; background: linear-gradient(90deg, var(--cor-primaria) 0%, #ffb84d 100%); border-radius: 10px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 20px rgba(245, 172, 0, 0.3); }
 .horas-comparacao { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
-.tipo-hora { padding: 1.5rem; border-radius: 16px; background: linear-gradient(135deg, rgba(245, 172, 0, 0.05), rgba(245, 172, 0, 0.02)); border: 2px solid rgba(245, 172, 0, 0.15); transition: all var(--transicao); }
+.tipo-hora { min-width: 0; padding: 1.5rem; border-radius: 16px; background: linear-gradient(135deg, rgba(245, 172, 0, 0.05), rgba(245, 172, 0, 0.02)); border: 2px solid rgba(245, 172, 0, 0.15); transition: all var(--transicao); }
 .tipo-hora.externo { background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(99, 102, 241, 0.02)); border-color: rgba(99, 102, 241, 0.15); }
 .tipo-hora:hover { border-color: var(--cor-primaria); box-shadow: 0 8px 24px rgba(245, 172, 0, 0.1); transform: translateY(-4px); }
 .tipo-hora.externo:hover { border-color: #6366f1; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15); }
@@ -108,4 +109,5 @@
   .donut-chart { width: 120px; height: 120px; }
   .legenda-item { gap: 0.6rem; }
   .legenda-texto { font-size: 0.9rem; }
+  .header-tipo { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
 }

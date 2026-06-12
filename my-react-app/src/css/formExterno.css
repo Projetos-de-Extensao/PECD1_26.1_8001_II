@@ -14,7 +14,7 @@
 /* ========== INPUTS E SELECTS ========== */
 .campo-select-wrapper { margin-bottom: 1rem; }
 .campo-select-wrapper label, .campo label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--cor-secundaria); margin-bottom: 0.3rem; text-transform: uppercase; }
-.campo-select-wrapper select, .campo input { width: 100%; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem; transition: all 0.2s ease; }
+.campo-select-wrapper select, .campo input { width: 100%; min-width: 0; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem; transition: all 0.2s ease; }
 .campo-select-wrapper select:focus, .campo input:focus { border-color: var(--cor-primaria); box-shadow: 0 0 0 3px rgba(245, 172, 0, 0.1); outline: none; }
 .form-oculto { display: none; }
 .form-rows { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem; }
@@ -29,4 +29,11 @@
 /* ========== RESPONSIVIDADE EXTERNO ========== */
 @media (max-width: 1024px) {
   .form-rows { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .titulo-form { font-size: 1.25rem; }
+  .subtitulo-form { font-size: 0.85rem; }
+  .acoes { flex-direction: column; }
+  .acoes .btn { width: 100%; }
 }

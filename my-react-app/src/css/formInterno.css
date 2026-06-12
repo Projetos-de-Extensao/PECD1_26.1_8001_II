@@ -22,7 +22,7 @@
 .mini-tela h3 { font-size: 1rem; color: var(--cor-secundaria); margin-bottom: 0.8rem; }
 
 .detalhes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
-.detalhe { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 0.6rem; }
+.detalhe { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 0.6rem; min-width: 0; }
 .rotulo { display: block; font-size: 0.7rem; color: #666; font-weight: 700; margin-bottom: 0.25rem; }
 .valor { display: block; font-weight: 800; color: var(--cor-secundaria); font-size: 0.9rem; }
 .status { min-height: 1rem; margin: 0.5rem 0 1rem; font-size: 0.9rem; }
@@ -30,4 +30,12 @@
 /* ========== RESPONSIVIDADE INTERNO ========== */
 @media (max-width: 1024px) {
   .detalhes { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .titulo-form { font-size: 1.25rem; }
+  .subtitulo-form { font-size: 0.85rem; }
+  .acoes { flex-direction: column; }
+  .acoes .btn { width: 100%; }
+  #videoScanner { max-height: 200px; }
 }
