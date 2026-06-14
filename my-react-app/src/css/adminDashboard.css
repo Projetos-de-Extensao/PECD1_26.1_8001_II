@@ -653,6 +653,14 @@
 
 .iframe-comprovante { width: 100%; height: 100%; border: none; }
 
+.preview-comprovante-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0f172a;
+  display: block;
+}
+
 .modal-footer-admin {
   padding: 1.2rem 1.5rem;
   display: flex;

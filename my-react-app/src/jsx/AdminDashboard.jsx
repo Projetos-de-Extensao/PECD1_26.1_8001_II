@@ -1,7 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import '../css/index.css';
 import '../css/adminDashboard.css';
-import { apiFetch, apiJson } from '../api';
+import { API_BASE, apiFetch, apiJson } from '../api';
+
+function montarArquivoUpload(arquivo) {
+  const url = arquivo.startsWith('http')
+    ? arquivo
+    : `${API_BASE}${arquivo.startsWith('/') ? arquivo : `/${arquivo}`}`;
+  const nome = decodeURIComponent(url.split('/').pop()?.split('?')[0] || 'comprovante');
+  const extensao = nome.split('.').pop()?.toLowerCase();
+  const tipo = ['png', 'jpg', 'jpeg'].includes(extensao) ? 'imagem' : 'pdf';
+
+  return { url, nome, tipo };
+}
 
 export default function AdminDashboard() {
   // Controle de qual aba está ativa na tela
@@ -154,7 +165,7 @@ export default function AdminDashboard() {
               horas: item.horas,
               status: statusFormatado,
               motivo: item.observacao,
-              arquivo: item.arquivo ? { url: item.arquivo, nome: 'comprovante.pdf' } : null
+              arquivo: item.arquivo ? montarArquivoUpload(item.arquivo) : null
             };
           });
           setSolicitacoes(formatado.reverse()); // As solicitações mais recentes aparecem primeiro
@@ -776,7 +787,11 @@ export default function AdminDashboard() {
                     onChange={(e) => setFiltroNomeEvento(e.target.value)}
                     style={{ flex: 2 }}
                   />
-              
+                  <select value={filtroTipoEvento} onChange={(e) => setFiltroTipoEvento(e.target.value)}>
+                    <option value="">Todos os Tipos</option>
+                    <option value="Interno">Interno</option>
+                    <option value="Externo">Externo</option>
+                  </select>
                   <select value={filtroStatusEvento} onChange={(e) => setFiltroStatusEvento(e.target.value)}>
                     <option value="ativos">Eventos ativos</option>
                     <option value="inativos">Eventos inativos</option>
@@ -845,16 +860,24 @@ export default function AdminDashboard() {
               <button className="btn-fechar-admin" onClick={() => setComprovanteSelecionado(null)}>✖</button>
             </div>
             <div className="modal-body-admin">
-              <iframe 
-                src={comprovanteSelecionado.arquivo.dataUrl || comprovanteSelecionado.arquivo.url} 
-                title={`Anexo de ${comprovanteSelecionado.aluno}`}
-                className="iframe-comprovante"
-              ></iframe>
+              {comprovanteSelecionado.arquivo.tipo === 'imagem' ? (
+                <img
+                  src={comprovanteSelecionado.arquivo.url}
+                  alt={`Comprovante de ${comprovanteSelecionado.aluno}`}
+                  className="preview-comprovante-imagem"
+                />
+              ) : (
+                <iframe
+                  src={comprovanteSelecionado.arquivo.url}
+                  title={`Anexo de ${comprovanteSelecionado.aluno}`}
+                  className="iframe-comprovante"
+                ></iframe>
+              )}
             </div>
             <div className="modal-footer-admin">
               <a 
-                href={comprovanteSelecionado.arquivo.dataUrl || comprovanteSelecionado.arquivo.url} 
-                download={comprovanteSelecionado.arquivo.nome || 'comprovante.pdf'}
+                href={comprovanteSelecionado.arquivo.url} 
+                download={comprovanteSelecionado.arquivo.nome}
                 className="btn btn-principal"
               >
                 📥 Baixar Arquivo
