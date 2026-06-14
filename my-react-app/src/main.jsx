@@ -11,6 +11,7 @@ import HomePage from './pages/HomePage.jsx'
 import Navbar from './jsx/Navbar.jsx'
 import Footer from './jsx/Footer.jsx'
 import AdminPage from './pages/AdminPage.jsx'
+import CadastroAlunosPage from './pages/CadastroPage.jsx'
 
 // ==========================================
 // 1. CRIANDO OS GUARDIÕES DE ROTA
@@ -58,8 +59,8 @@ function RotaAdmin({ children }) {
 function AppLayout() {
   const location = useLocation()
 
-  const hideNavOn = ['/', '/login']
-  const hideFooterOn = ['/', '/login']
+  const hideNavOn = ['/', '/login', '/cadastro']
+  const hideFooterOn = ['/', '/login', '/cadastro']
 
   return (
     <>
@@ -69,6 +70,7 @@ function AppLayout() {
         {/* Rotas Públicas (Qualquer um acessa) */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/cadastro" element={<CadastroAlunosPage />} />
 
         {/* Rotas Privadas Padrão (Exigem Login) */}
         <Route 
@@ -89,6 +91,7 @@ function AppLayout() {
           path="/admin" 
           element={ <RotaAdmin><AdminPage /></RotaAdmin> } 
         />
+
       </Routes>
 
       {!hideFooterOn.includes(location.pathname) && <Footer />}
