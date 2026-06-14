@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import '../css/index.css';
 import '../css/adminDashboard.css';
 import { apiFetch, apiJson } from '../api';
@@ -11,7 +11,6 @@ export default function AdminDashboard() {
   const [solicitacoes, setSolicitacoes] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [alunos, setAlunos] = useState([]);
-  const [metricas, setMetricas] = useState({});
   const [atividades, setAtividades] = useState([]);
   const [novaAtividade, setNovaAtividade] = useState({ categoria: '', nome: '', tipo: 'Interna', horas: '' });
 
@@ -170,7 +169,7 @@ export default function AdminDashboard() {
   }, []);
 
   // Recalcula as métricas dinamicamente no JS sempre que as listas mudarem
-  useEffect(() => {
+  const metricas = useMemo(() => {
     const totalAlunos = alunos.length;
     const totalSolicitacoes = solicitacoes.length;
     const atendidas = solicitacoes.filter(s => s.status !== 'Pendente').length;
@@ -178,9 +177,7 @@ export default function AdminDashboard() {
     const internas = solicitacoes.filter(s => s.tipo === 'Interna').length;
     const externas = solicitacoes.filter(s => s.tipo === 'Externa').length;
 
-    setMetricas({
-      totalAlunos, totalSolicitacoes, atendidas, aguardando, internas, externas
-    });
+    return { totalAlunos, totalSolicitacoes, atendidas, aguardando, internas, externas };
   }, [alunos, solicitacoes]);
 
   // Funções para lidar com as ações do avaliador
@@ -221,9 +218,29 @@ export default function AdminDashboard() {
     }
   }
 
-  function handleRemoverEvento(id) {
-    if(window.confirm('Tem certeza que deseja remover este evento?')) {
+  async function handleRemoverEvento(id) {
+    if (!window.confirm('Tem certeza que deseja desativar este evento?')) {
+      return;
+    }
+
+    try {
+      const resp = await apiFetch('/api/eventos/desativar/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_evento: id }),
+      });
+
+      const dados = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        alert(dados.mensagem || 'Erro ao desativar evento no servidor.');
+        return;
+      }
+
       setEventos(prev => prev.filter(e => e.id !== id));
+    } catch (err) {
+      console.error('Erro ao desativar evento:', err);
+      alert('Erro de conexao ao desativar evento.');
     }
   }
 
@@ -754,7 +771,13 @@ export default function AdminDashboard() {
                         <button className="btn btn-secundario btn-gerar-qr" style={{ flex: 1, padding: '0.5rem' }} onClick={() => setQrCodeSelecionado(evento)}>
                           QR Code
                         </button>
-                        <button className="btn-acao btn-perigo" style={{ padding: '0.5rem 1rem' }} onClick={() => handleRemoverEvento(evento.id)}>
+                        <button
+                          className="btn-acao btn-perigo"
+                          style={{ padding: '0.5rem 1rem' }}
+                          onClick={() => handleRemoverEvento(evento.id)}
+                          title="Desativar evento"
+                          aria-label={`Desativar evento ${evento.nome}`}
+                        >
                           🗑️
                         </button>
                       </div>
