@@ -260,6 +260,27 @@
   min-width: 0;
 }
 
+.status-evento {
+  align-self: flex-start;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.status-evento.ativo {
+  background: rgba(31, 139, 76, 0.1);
+  color: #1f8b4c;
+  border: 1px solid rgba(31, 139, 76, 0.25);
+}
+
+.status-evento.inativo {
+  background: rgba(179, 38, 30, 0.1);
+  color: #b3261e;
+  border: 1px solid rgba(179, 38, 30, 0.25);
+}
+
 @media (max-width: 768px) {
   .admin-menu-lateral {
     display: grid;
@@ -370,6 +391,17 @@
 
 .btn-perigo { background: transparent; border: 1px solid #b3261e; color: #b3261e; }
 .btn-perigo:hover { background: #b3261e; color: #fff; }
+
+.btn-ativar-evento {
+  background: #1f8b4c;
+  color: #fff;
+  border: 1px solid #1f8b4c;
+}
+
+.btn-ativar-evento:hover {
+  background: #176a3a;
+  color: #fff;
+}
 
 /* Formulário Inline (Atividades) */
 .form-admin-inline {

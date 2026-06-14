@@ -37,6 +37,7 @@ export default function AdminDashboard() {
   const [filtroBuscaAluno, setFiltroBuscaAluno] = useState('');
   const [filtroNomeEvento, setFiltroNomeEvento] = useState('');
   const [filtroTipoEvento, setFiltroTipoEvento] = useState('');
+  const [filtroStatusEvento, setFiltroStatusEvento] = useState('ativos');
 
   // Estado do Modal de Comprovante
   const [comprovanteSelecionado, setComprovanteSelecionado] = useState(null);
@@ -72,7 +73,7 @@ export default function AdminDashboard() {
     // Busca real de Eventos na API do Django
     async function buscarEventos() {
       try {
-        const dados = await apiJson('/api/eventos/lista/');
+        const dados = await apiJson('/api/eventos/lista/?ativo=todos');
         {
           const formatado = dados.map(item => ({
             id: item.id_evento,
@@ -85,7 +86,8 @@ export default function AdminDashboard() {
             categoria: item.categoria_nome || item.categoria,
             cursoAlvo: item.curso_alvo,
             palestrante: item.palestrante,
-            unidade: item.unidade
+            unidade: item.unidade,
+            ativo: item.ativo
           }));
           setEventos(formatado);
         }
@@ -237,14 +239,37 @@ export default function AdminDashboard() {
         return;
       }
 
-      setEventos(prev => prev.filter(e => e.id !== id));
+      setEventos(prev => prev.map(e => e.id === id ? { ...e, ativo: false } : e));
     } catch (err) {
       console.error('Erro ao desativar evento:', err);
       alert('Erro de conexao ao desativar evento.');
     }
   }
 
-  // Funções para gerenciar Tipos de Atividades
+  // Funcoes para gerenciar Eventos
+  async function handleAtivarEvento(id) {
+    try {
+      const resp = await apiFetch('/api/eventos/ativar/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_evento: id }),
+      });
+
+      const dados = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        alert(dados.mensagem || 'Erro ao ativar evento no servidor.');
+        return;
+      }
+
+      setEventos(prev => prev.map(e => e.id === id ? { ...e, ativo: true } : e));
+    } catch (err) {
+      console.error('Erro ao ativar evento:', err);
+      alert('Erro de conexao ao ativar evento.');
+    }
+  }
+
+  // Funcoes para gerenciar Tipos de Atividades
   async function handleAdicionarAtividade(e) {
     e.preventDefault();
     if (!novaAtividade.nome || !novaAtividade.categoria || !novaAtividade.horas) {
@@ -329,7 +354,7 @@ export default function AdminDashboard() {
         const catSelecionada = atividades.find(a => String(a.id) === String(novoEvento.categoria));
         
         setEventos(prev => [{
-          id: data.id_evento, ...novoEvento, categoria: catSelecionada ? catSelecionada.nome : '', data: novoEvento.data.split('-').reverse().join('/')
+          id: data.id_evento, ...novoEvento, categoria: catSelecionada ? catSelecionada.nome : '', data: novoEvento.data.split('-').reverse().join('/'), ativo: true
         }, ...prev]);
         
         // Limpa o formulário e esconde
@@ -366,7 +391,10 @@ export default function AdminDashboard() {
   const eventosFiltrados = eventos.filter(evento => {
     const matchNome = filtroNomeEvento === '' || evento.nome.toLowerCase().includes(filtroNomeEvento.toLowerCase());
     const matchTipo = filtroTipoEvento === '' || evento.tipo === filtroTipoEvento;
-    return matchNome && matchTipo;
+    const matchStatus = filtroStatusEvento === 'todos' ||
+      (filtroStatusEvento === 'ativos' && evento.ativo) ||
+      (filtroStatusEvento === 'inativos' && !evento.ativo);
+    return matchNome && matchTipo && matchStatus;
   });
 
   return (
@@ -748,16 +776,20 @@ export default function AdminDashboard() {
                     onChange={(e) => setFiltroNomeEvento(e.target.value)}
                     style={{ flex: 2 }}
                   />
-                  <select value={filtroTipoEvento} onChange={(e) => setFiltroTipoEvento(e.target.value)}>
-                    <option value="">Todos os Tipos</option>
-                    <option value="Interno">Interno</option>
-                    <option value="Externo">Externo</option>
+              
+                  <select value={filtroStatusEvento} onChange={(e) => setFiltroStatusEvento(e.target.value)}>
+                    <option value="ativos">Eventos ativos</option>
+                    <option value="inativos">Eventos inativos</option>
+                    <option value="todos">Todos os status</option>
                   </select>
                 </div>
 
                 <div className="grid-dados">
                   {eventosFiltrados.map((evento) => (
                     <div key={evento.id} className="card-evento">
+                      <span className={`status-evento ${evento.ativo ? 'ativo' : 'inativo'}`}>
+                        {evento.ativo ? 'Ativo' : 'Inativo'}
+                      </span>
                       <strong>{evento.nome}</strong>
                       <div className="valor-info">Categoria: {evento.categoria || '-'}</div>
                       <div className="valor-info">Data/Hora: {evento.data} {evento.hora ? `às ${evento.hora}` : ''}</div>
@@ -768,6 +800,8 @@ export default function AdminDashboard() {
                       {evento.unidade && <div className="valor-info">Unidade: {evento.unidade}</div>}
                       <div className="valor-info">Horas AAC: {evento.horas}h</div>
                       <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
+                        {evento.ativo ? (
+                          <>
                         <button className="btn btn-secundario btn-gerar-qr" style={{ flex: 1, padding: '0.5rem' }} onClick={() => setQrCodeSelecionado(evento)}>
                           QR Code
                         </button>
@@ -780,6 +814,16 @@ export default function AdminDashboard() {
                         >
                           🗑️
                         </button>
+                          </>
+                        ) : (
+                          <button
+                            className="btn-acao btn-ativar-evento"
+                            style={{ flex: 1, padding: '0.5rem 1rem' }}
+                            onClick={() => handleAtivarEvento(evento.id)}
+                          >
+                            Ativar evento
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
