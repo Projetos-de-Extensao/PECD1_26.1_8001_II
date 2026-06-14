@@ -65,14 +65,20 @@
 
 @media (min-width: 1024px) {
   .layout-dual {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
-    align-items: start;
-    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    max-width: 980px;
+    margin: 0 auto;
   }
 
   .coluna-historico {
     margin-bottom: 0;
+  }
+
+  .coluna-formularios,
+  .coluna-historico {
+    width: 100%;
   }
 }
 

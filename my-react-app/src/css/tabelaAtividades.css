@@ -1,4 +1,4 @@
-.atividades-container { margin-top: 2rem; }
+.atividades-container { margin-top: 0; }
 .titulo-secao { font-size: 1.4rem; color: var(--cor-primaria); margin: 0 0 1.2rem; font-weight: 800; }
 .tabela-wrapper { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 16px; overflow-x: auto; overflow-y: hidden; box-shadow: 0 10px 26px rgba(0, 37, 85, 0.08); -webkit-overflow-scrolling: touch; }
 .tabela-atividades { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.95rem; }
@@ -16,6 +16,16 @@
 .data { color: #5d6c86; font-size: 0.93rem; }
 .horas { font-weight: 700; color: var(--cor-secundaria); text-align: center; }
 .status { font-weight: 700; font-size: 0.9rem; text-align: center; color: #1f8b4c; display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
+
+@media (min-width: 1024px) {
+  .filtros-dashboard {
+    align-items: center;
+  }
+
+  .tabela-atividades {
+    min-width: 760px;
+  }
+}
 
 @media (max-width: 768px) {
   .atividades-container { margin-top: 1.25rem; }
