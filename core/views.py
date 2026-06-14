@@ -296,7 +296,15 @@ class EventosViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_eventos(self, request):
-        serializer = self.get_serializer(self.get_queryset().filter(ativo=True), many=True)
+        status_ativo = request.query_params.get('ativo', 'true').lower()
+        eventos = self.get_queryset()
+
+        if status_ativo in ['false', '0', 'inativo', 'inativos']:
+            eventos = eventos.filter(ativo=False)
+        elif status_ativo not in ['todos', 'all']:
+            eventos = eventos.filter(ativo=True)
+
+        serializer = self.get_serializer(eventos, many=True)
         return Response(serializer.data)
 
 
