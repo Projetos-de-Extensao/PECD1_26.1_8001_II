@@ -126,9 +126,9 @@ function Login() {
         // Redireciona para o dashboard de forma fluida e sem recarregar a página
         navigate('/home'); 
       } else {
-        const mensagem = resposta.status === 401
+        const mensagem = [400, 401].includes(resposta.status)
           ? 'E-mail ou senha incorretos.'
-          : dados.mensagem || 'Nao foi possivel entrar. Tente novamente.';
+          : dados.mensagem || 'A senha ou email está incorreto. Tente novamente.';
         setErro(mensagem);
       }
     } catch (erro) {
@@ -194,7 +194,7 @@ function Login() {
           </div>
 
           {erro && (
-            <p id="erro-login" className="erro erro-login" role="alert">
+            <p id="erro-login" className="login-alerta-erro" role="alert">
               {erro}
             </p>
           )}
