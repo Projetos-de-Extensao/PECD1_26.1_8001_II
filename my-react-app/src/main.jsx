@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
 import './css/index.css'
+import './api'
 import LoginPage from './pages/LoginPage.jsx'
 import PerfilPage from './pages/PerfilPage.jsx'
 import SolicitacoesPage from './pages/SolicitacoesPage.jsx'
@@ -18,9 +19,10 @@ import AdminPage from './pages/AdminPage.jsx'
 // Guardião Padrão: Só deixa passar se estiver logado (Aluno ou Admin)
 function RotaPrivada({ children }) {
   const usuarioLogado = localStorage.getItem('usuario');
+  const token = localStorage.getItem('token');
   
   // Se não tem nada no localStorage, chuta de volta pra tela de login
-  if (!usuarioLogado) {
+  if (!usuarioLogado || !token) {
     return <Navigate to="/login" replace />; 
   }
   
@@ -31,8 +33,9 @@ function RotaPrivada({ children }) {
 // Guardião Master: Só deixa passar se estiver logado E for funcionário
 function RotaAdmin({ children }) {
   const usuarioSalvo = localStorage.getItem('usuario');
+  const token = localStorage.getItem('token');
   
-  if (!usuarioSalvo) {
+  if (!usuarioSalvo || !token) {
     return <Navigate to="/login" replace />;
   }
 
