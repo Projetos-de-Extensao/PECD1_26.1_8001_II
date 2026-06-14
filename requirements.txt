@@ -89,6 +89,7 @@ tomli==2.2.1
 tornado==6.5.1
 traitlets==5.14.3
 typing_extensions==4.14.0
+uritemplate==4.2.0
 urllib3==2.4.0
 watchdog==6.0.0
 wcwidth==0.2.13
