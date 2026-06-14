@@ -116,7 +116,7 @@ function Login() {
         body: JSON.stringify({ email, senha }),
       });
 
-      const dados = await resposta.json();
+      const dados = await resposta.json().catch(() => ({}));
 
       if (resposta.ok) {
         console.log('Login efetuado com sucesso!', dados.usuario);
@@ -126,7 +126,10 @@ function Login() {
         // Redireciona para o dashboard de forma fluida e sem recarregar a página
         navigate('/home'); 
       } else {
-        setErro(dados.mensagem || 'Credenciais inválidas.');
+        const mensagem = resposta.status === 401
+          ? 'E-mail ou senha incorretos.'
+          : dados.mensagem || 'Nao foi possivel entrar. Tente novamente.';
+        setErro(mensagem);
       }
     } catch (erro) {
       console.error('Falha na comunicação com a API:', erro);
@@ -153,20 +156,48 @@ function Login() {
 
           <div className="campo">
             <label htmlFor="email">E-mail de Acesso</label>
-            <input type="text" id="email" placeholder="aluno@ibmec.edu.br ou prof@ibmec.br" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="text"
+              id="email"
+              placeholder="aluno@ibmec.edu.br ou prof@ibmec.br"
+              value={email}
+              className={erro ? 'com-erro' : ''}
+              aria-invalid={erro ? 'true' : 'false'}
+              aria-describedby={erro ? 'erro-login' : undefined}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (erro) setErro('');
+              }}
+            />
           </div>
 
           <div className="campo">
             <label htmlFor="senha">Senha</label>
             <div className="grupo-senha">
-              <input type={mostrarSenha ? "text" : "password"} id="senha" placeholder="••••••••" value={senha} onChange={(e) => setSenha(e.target.value)} />
+              <input
+                type={mostrarSenha ? "text" : "password"}
+                id="senha"
+                placeholder="********"
+                value={senha}
+                className={erro ? 'com-erro' : ''}
+                aria-invalid={erro ? 'true' : 'false'}
+                aria-describedby={erro ? 'erro-login' : undefined}
+                onChange={(e) => {
+                  setSenha(e.target.value);
+                  if (erro) setErro('');
+                }}
+              />
               <button type="button" id="botaoSenha" onClick={() => setMostrarSenha(!mostrarSenha)}>
                 {mostrarSenha ? 'Ocultar' : 'Mostrar'}
               </button>
             </div>
           </div>
 
-          {erro && <p className="erro" style={{color: '#b3261e', marginTop: '0.5rem', fontSize: '0.85rem'}}>{erro}</p>}
+          {erro && (
+            <p id="erro-login" className="erro erro-login" role="alert">
+              {erro}
+            </p>
+          )}
 
           <div className="opcoes">
             <label className="lembrar">
