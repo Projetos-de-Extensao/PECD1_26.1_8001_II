@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import jsQR from 'jsqr'; 
 import '../css/FormInterno.css';
 import Comprovante from './Comprovante.jsx';
+import { apiFetch } from '../api';
 
 export default function FormInterno({ ativo }) {
   const videoRef = useRef(null);
@@ -133,12 +134,10 @@ export default function FormInterno({ ativo }) {
       }
       const usuarioLogado = JSON.parse(usuarioSalvo);
 
-      const resposta = await fetch('http://localhost:8000/api/solicitacoes/criar-interna/', {
+      const resposta = await apiFetch('/api/solicitacoes/criar-interna/', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'X-Usuario-Matricula': usuarioLogado.matricula
-        },
+          'Content-Type': 'application/json',},
         body: JSON.stringify({
           evento_id: dadosQr.idEvento
         }), 
@@ -214,3 +213,4 @@ export default function FormInterno({ ativo }) {
     </div>
   );
 }
+

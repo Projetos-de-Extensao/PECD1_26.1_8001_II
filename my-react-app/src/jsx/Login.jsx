@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/login.css'
 import '../css/index.css';
+import { API_BASE } from '../api';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -25,7 +26,7 @@ function Login() {
 
     try {
       // Descobre o IP automaticamente (seja localhost ou 192.168...)
-      const urlBackend = `http://${window.location.hostname}:8000/api/usuarios/login/`;
+      const urlBackend = `${API_BASE}/api/usuarios/login/`;
       const resposta = await fetch(urlBackend, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,6 +38,7 @@ function Login() {
       if (resposta.ok) {
         console.log('Login efetuado com sucesso!', dados.usuario);
         localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+        localStorage.setItem('token', dados.token);
         
         // Redireciona para o dashboard de forma fluida e sem recarregar a página
         navigate('/home'); 

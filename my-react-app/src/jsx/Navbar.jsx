@@ -37,6 +37,8 @@ export default function Navbar({ onLogout } = {}) {
 
   function handleLogout(e) {
     e.preventDefault()
+    localStorage.removeItem('token')
+    localStorage.removeItem('usuario')
     if (typeof onLogout === 'function') onLogout()
     navigate('/login', { replace: true })
   }

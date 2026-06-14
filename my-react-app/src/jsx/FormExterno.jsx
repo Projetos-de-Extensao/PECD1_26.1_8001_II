@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../css/FormExterno.css';
+import { apiFetch, apiJson } from '../api';
 import Comprovante from './Comprovante.jsx'; // Importa o componente de comprovante para mostrar o resultado da solicitação externa
 
 export default function FormExterno({ ativo }) {
@@ -22,11 +23,7 @@ export default function FormExterno({ ativo }) {
   useEffect(() => {
     async function carregarCategorias() {
       try {
-        const resposta = await fetch('http://localhost:8000/api/categorias/lista/');
-        
-        if (!resposta.ok) throw new Error('Falha ao carregar categorias');
-        
-        const dados = await resposta.json();
+        const dados = await apiJson('/api/categorias/lista/');
         
         // Filtro mais flexível: cobre várias formas que o banco (SQLite/Postgres) pode
         // retornar a coluna "tipo" para atividades externas (false, 0, 'False', ou 'Externa')
@@ -115,11 +112,8 @@ export default function FormExterno({ ativo }) {
       // O FormData captura todos os inputs com atributo 'name' dentro do formRef
       const pacoteDados = new FormData(formRef.current);
       
-      const resposta = await fetch('http://localhost:8000/api/solicitacoes/criar-externa/', {
+      const resposta = await apiFetch('/api/solicitacoes/criar-externa/', {
         method: 'POST',
-        headers: {
-          'X-Usuario-Matricula': usuarioLogado.matricula
-        },
         body: pacoteDados,
       });
 
@@ -240,3 +234,4 @@ export default function FormExterno({ ativo }) {
     </div>
   );
 }
+

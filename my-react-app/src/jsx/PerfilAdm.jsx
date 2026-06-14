@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/perfil.css';
 import '../css/index.css';
+import { apiFetch, apiJson } from '../api';
 
 const CAMPOS_PERFIL = [
   { label: 'Nome Completo', chave: 'nomeCompleto' },
@@ -36,22 +37,7 @@ function PerfilAdm() {
           return;
         }
 
-        const adminLogado = JSON.parse(usuarioSalvo);
-
-        const resposta = await fetch('http://localhost:8000/api/usuarios/meus-dados/', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Usuario-Matricula': adminLogado.matricula
-          }
-        });
-
-        if (!resposta.ok) {
-          setAdmin(ADMIN_ZERADO);
-          return;
-        }
-
-        const dados = await resposta.json().catch(() => null);
+        const dados = await apiJson('/api/usuarios/meus-dados/');
 
         if (!dados || typeof dados !== 'object' || Object.keys(dados).length === 0) {
           setAdmin(ADMIN_ZERADO);
@@ -131,14 +117,10 @@ function PerfilAdm() {
     setEnviando(true);
 
     try {
-      const usuarioSalvo = localStorage.getItem('usuario');
-      const matricula = usuarioSalvo ? JSON.parse(usuarioSalvo).matricula : '';
-
-      const resp = await fetch('http://localhost:8000/api/usuarios/mudar-senha/', {
+      const resp = await apiFetch('/api/usuarios/mudar-senha/', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'X-Usuario-Matricula': matricula
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ senhaAtual, senhaNova }),
       });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import '../css/tabelaAtividades.css'
+import { apiJson } from '../api'
 
 export default function AppAtividades() {
   const [listaAtividades, setListaAtividades] = useState([])
@@ -8,25 +9,7 @@ export default function AppAtividades() {
   useEffect(() => {
     async function buscarDadosDaApi() {
       try {
-        const usuarioSalvo = localStorage.getItem('usuario');
-        if (!usuarioSalvo) {
-          throw new Error('Usuário não autenticado');
-        }
-        const usuarioLogado = JSON.parse(usuarioSalvo);
-
-        const resp = await fetch('http://localhost:8000/api/solicitacoes/lista/', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Usuario-Matricula': usuarioLogado.matricula
-          }
-        }); 
-        
-        if (!resp.ok) {
-          throw new Error('Erro ao buscar atividades')
-        }
-
-        const dados = await resp.json();
+        const dados = await apiJson('/api/solicitacoes/lista/');
 
         // Traduzindo os nomes dos campos do banco de dados (Django) para o que a tela (React) espera
         const dadosFormatados = dados.map(item => {
@@ -34,6 +17,7 @@ export default function AppAtividades() {
           let statusFormatado = 'Pendente';
           if (item.status === 'Aprovada') statusFormatado = 'Aprovado';
           if (item.status === 'Rejeitada') statusFormatado = 'Recusado';
+          if (item.status === 'Ajuste solicitado') statusFormatado = 'Ajuste solicitado';
 
           return {
             id: item.id_solicitacao,
@@ -217,3 +201,4 @@ function TabelaAtividades({ atividades = [] }) {
     </main>
   )
 }
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/dashboardGeral.css';
+import { apiJson } from '../api';
 
 function DashboardGeral() {
   // 1. Declaração dos Estados
@@ -15,23 +16,7 @@ function DashboardGeral() {
     async function buscarDadosDashboard() {
       setCarregando(true);
       try {
-        const usuarioSalvo = localStorage.getItem('usuario');
-        if (!usuarioSalvo) {
-          throw new Error('Usuário não autenticado');
-        }
-        const usuarioLogado = JSON.parse(usuarioSalvo);
-
-        const resp = await fetch('http://localhost:8000/api/usuarios/horas-totais/', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Usuario-Matricula': usuarioLogado.matricula
-          }
-        }); 
-        
-        if (!resp.ok) throw new Error('Falha na API');
-
-        const dados = await resp.json();
+        const dados = await apiJson('/api/usuarios/horas-totais/');
         
         setHoras({
           total: { atual: dados.horas_totais || 0, meta: dados.meta_total || 120 },
@@ -217,3 +202,4 @@ function DashboardGeral() {
 }
 
 export default DashboardGeral;
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/index.css';
 import '../css/adminDashboard.css';
+import { apiFetch, apiJson } from '../api';
 
 export default function AdminDashboard() {
   // Controle de qual aba está ativa na tela
@@ -50,9 +51,8 @@ export default function AdminDashboard() {
     // Busca real de Tipos de Atividades na API do Django
     async function buscarCategorias() {
       try {
-        const resp = await fetch('http://localhost:8000/api/categorias/');
-        if (resp.ok) {
-          const dados = await resp.json();
+        const dados = await apiJson('/api/categorias/lista/');
+        {
           
           // Traduzimos o JSON do Banco para o formato que a Tabela e o Select usam
           const formatado = dados.map(item => ({
@@ -73,9 +73,8 @@ export default function AdminDashboard() {
     // Busca real de Eventos na API do Django
     async function buscarEventos() {
       try {
-        const resp = await fetch('http://localhost:8000/api/eventos/lista/');
-        if (resp.ok) {
-          const dados = await resp.json();
+        const dados = await apiJson('/api/eventos/lista/');
+        {
           const formatado = dados.map(item => ({
             id: item.id_evento,
             nome: item.nome,
@@ -99,9 +98,8 @@ export default function AdminDashboard() {
     // Busca real de Alunos na API do Django
     async function buscarAlunos() {
       try {
-        const resp = await fetch('http://localhost:8000/api/usuarios/lista/');
-        if (resp.ok) {
-          const dados = await resp.json();
+        const dados = await apiJson('/api/usuarios/lista/');
+        {
           const formatado = dados.map(item => {
             // Replica a lógica de metas do backend baseada no curso
             const cursoNome = (item.curso || '').toLowerCase();
@@ -136,20 +134,20 @@ export default function AdminDashboard() {
       try {
         // Utilizamos a rota padrão /api/solicitacoes/ porque ela retorna TODAS as requisições pro Admin.
         // (A rota /api/solicitacoes/lista/ devolveria apenas as da matrícula logada).
-        const resp = await fetch('http://localhost:8000/api/solicitacoes/');
-        if (resp.ok) {
-          const dados = await resp.json();
+        const dados = await apiJson('/api/solicitacoes/admin/');
+        {
           const formatado = dados.map(item => {
             // Traduz os status do Backend pro que a Interface Gráfica espera
             let statusFormatado = 'Pendente';
             if (item.status === 'Aprovada') statusFormatado = 'Aprovado';
             if (item.status === 'Rejeitada') statusFormatado = 'Recusado';
+            if (item.status === 'Ajuste solicitado') statusFormatado = 'Ajuste solicitado';
 
             return {
               id: item.id_solicitacao,
-              aluno: item.aluno || 'Aluno', // O django retorna a PK (Matrícula) como ForeignKey
+              aluno: item.aluno_nome || item.aluno || 'Aluno', // O django retorna a PK (Matrícula) como ForeignKey
               matricula: item.aluno, 
-              categoria: item.categoria || 'Geral',
+              categoria: item.categoria_nome || item.categoria || 'Geral',
               tipo: item.tipo,
               atividade: item.nome_atividade,
               horas: item.horas,
@@ -188,7 +186,7 @@ export default function AdminDashboard() {
   // Funções para lidar com as ações do avaliador
   async function handleAprovar(id) {
     try {
-      const resp = await fetch('http://localhost:8000/api/solicitacoes/aprovar/', {
+      const resp = await apiFetch('/api/solicitacoes/aprovar/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_solicitacao: id })
@@ -207,7 +205,7 @@ export default function AdminDashboard() {
     const motivo = prompt('Qual o motivo da recusa?');
     if (motivo) {
       try {
-        const resp = await fetch('http://localhost:8000/api/solicitacoes/rejeitar/', {
+        const resp = await apiFetch('/api/solicitacoes/rejeitar/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id_solicitacao: id, motivo })
@@ -246,7 +244,7 @@ export default function AdminDashboard() {
     };
 
     try {
-      const resp = await fetch('http://localhost:8000/api/categorias/criar/', {
+      const resp = await apiFetch('/api/categorias/criar/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -277,7 +275,7 @@ export default function AdminDashboard() {
   async function handleRemoverAtividade(id) {
     if (window.confirm('Tem certeza que deseja remover este tipo de atividade?')) {
       try {
-        const resp = await fetch(`http://localhost:8000/api/categorias/${id}/`, {
+        const resp = await apiFetch(`/api/categorias/${id}/`, {
           method: 'DELETE'
         });
         
@@ -301,7 +299,7 @@ export default function AdminDashboard() {
     }
     
     try {
-      const resp = await fetch('http://localhost:8000/api/eventos/criar/', {
+      const resp = await apiFetch('/api/eventos/criar/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoEvento)
@@ -853,3 +851,4 @@ export default function AdminDashboard() {
     </main>
   );
 }
+
