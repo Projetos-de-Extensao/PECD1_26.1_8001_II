@@ -1,191 +1,156 @@
-from urllib import request
-
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.db.models import Sum
 import uuid
 
-from .models import Usuario, Categoria, Solicitacao, Eventos
-from .serilizers import EventosSerializer, UsuarioSerializer, CategoriaSerializer, SolicitacaoSerializer
+from django.contrib.auth.hashers import check_password, make_password
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+from .authentication import gerar_token
+from .models import Categoria, Eventos, Solicitacao, Usuario
+from .permissions import IsFuncionario
+from .serilizers import CategoriaSerializer, EventosSerializer, SolicitacaoSerializer, UsuarioSerializer
+from .services import (
+    STATUS_APROVADA,
+    STATUS_PENDENTE,
+    aprovar_solicitacao,
+    metas_do_curso,
+    rejeitar_solicitacao,
+    solicitar_ajuste,
+    totais_aprovados,
+)
+
+
+def erro(mensagem, status_code=status.HTTP_400_BAD_REQUEST):
+    return Response({'mensagem': mensagem}, status=status_code)
 
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all().order_by('matricula')
     serializer_class = UsuarioSerializer
-    permission_classes = [AllowAny]
 
-    # Endpoint: POST /api/usuarios/login/
-    @action(detail=False, methods=['post'], url_path='login')
+    def get_permissions(self):
+        if self.action in ['login', 'criar_usuario']:
+            return [AllowAny()]
+        if self.action in ['list', 'retrieve', 'lista_alunos', 'criar_funcionario', 'desativar_usuario', 'ativar_usuario']:
+            return [IsFuncionario()]
+        return [IsAuthenticated()]
+
+    @action(detail=False, methods=['post'], url_path='login', permission_classes=[AllowAny])
     def login(self, request):
         email = request.data.get('email')
         senha = request.data.get('senha')
 
         if not email or not senha:
-            return Response({"mensagem": "Email e senha são obrigatórios."}, status=400)
+            return erro('Email e senha sao obrigatorios.')
 
-        try:
-            usuario = Usuario.objects.get(email=email)
-            # : Em um ambiente de produção, as senhas devem ser verificadas com hash (ex: check_password)
-            if usuario.senha == senha:
-                serializer = self.get_serializer(usuario)
-                return Response({
-                    "mensagem": "Login realizado com sucesso!",
-                    "usuario": serializer.data
-                }, status=200)
-            else:
-                return Response({"mensagem": "Credenciais inválidas."}, status=401)
-        except Usuario.DoesNotExist:
-            return Response({"mensagem": "Credenciais inválidas."}, status=401)
+        usuario = Usuario.objects.filter(email=email, ativo=True).first()
+        if not usuario:
+            return erro('Credenciais invalidas.', status.HTTP_401_UNAUTHORIZED)
 
-    # Endpoint: GET /api/usuarios/meus-dados/
+        senha_ok = check_password(senha, usuario.senha)
+        if not senha_ok and usuario.senha == senha:
+            usuario.senha = make_password(senha)
+            usuario.save(update_fields=['senha'])
+            senha_ok = True
+
+        if not senha_ok:
+            return erro('Credenciais invalidas.', status.HTTP_401_UNAUTHORIZED)
+
+        serializer = self.get_serializer(usuario)
+        return Response({
+            'mensagem': 'Login realizado com sucesso!',
+            'token': gerar_token(usuario),
+            'token_type': 'Bearer',
+            'expires_in': 1800,
+            'usuario': serializer.data,
+        })
+
     @action(detail=False, methods=['get'], url_path='meus-dados')
     def meus_dados(self, request):
-        # Pega a matrícula enviada pelo frontend através dos Headers
-        matricula = request.headers.get('X-Usuario-Matricula')
-        
-        if not matricula:
-            return Response({"mensagem": "Usuário não autenticado. Matrícula não fornecida."}, status=401)
-
-        try:
-            usuario = Usuario.objects.get(matricula=matricula)
-        except Usuario.DoesNotExist:
-            return Response({"mensagem": "Usuário não encontrado."}, status=404)
-
+        usuario = request.user
         nomes = usuario.nome.split()
-        iniciais = ""
-        if len(nomes) > 0:
-            iniciais += nomes[0][0].upper()
-            if len(nomes) > 1:
-                iniciais += nomes[-1][0].upper()
-        else:
-            iniciais = "U"
+        iniciais = ''.join([parte[0].upper() for parte in (nomes[:1] + nomes[-1:]) if parte])[:2] or 'U'
 
-        dados = {
-            "iniciais": iniciais,
-            "nome": nomes[0] if nomes else "",
-            "nomeCompleto": usuario.nome,
-            "matricula": usuario.matricula,
-            "email": usuario.email,
-            "curso": usuario.curso,
-            "anoEntrada": usuario.ano_entrada,
-            "periodo": usuario.periodo,
-        }
-        return Response(dados)
+        return Response({
+            'iniciais': iniciais,
+            'nome': nomes[0] if nomes else '',
+            'nomeCompleto': usuario.nome,
+            'matricula': usuario.matricula,
+            'email': usuario.email,
+            'curso': usuario.curso,
+            'anoEntrada': usuario.ano_entrada,
+            'periodo': usuario.periodo,
+            'is_funcionario': usuario.is_funcionario,
+        })
 
-    # Endpoint: POST /api/usuarios/mudar-senha/
     @action(detail=False, methods=['post'], url_path='mudar-senha')
     def mudar_senha(self, request):
-        matricula = request.headers.get('X-Usuario-Matricula')
-        
-        if not matricula:
-            return Response({"mensagem": "Usuário não autenticado."}, status=401)
-
-        try:
-            usuario = Usuario.objects.get(matricula=matricula)
-        except Usuario.DoesNotExist:
-            return Response({"mensagem": "Usuário não encontrado."}, status=404)
-
+        usuario = request.user
         senha_atual = request.data.get('senhaAtual')
         senha_nova = request.data.get('senhaNova')
 
-        if usuario.senha != senha_atual:
-            return Response({"mensagem": "Senha atual incorreta."}, status=400)
-        
-        usuario.senha = senha_nova
-        usuario.save()
-        return Response({"mensagem": "Senha alterada com sucesso!"})
-    
-    # Endpoint: GET /api/usuarios/horas-totais/
+        if not senha_atual or not senha_nova:
+            return erro('Senha atual e nova senha sao obrigatorias.')
+
+        if not check_password(senha_atual, usuario.senha):
+            return erro('Senha atual incorreta.')
+
+        usuario.senha = make_password(senha_nova)
+        usuario.save(update_fields=['senha'])
+        return Response({'mensagem': 'Senha alterada com sucesso!'})
+
     @action(detail=False, methods=['get'], url_path='horas-totais')
     def horas_totais(self, request):
-        matricula = request.headers.get('X-Usuario-Matricula')
-        
-        if not matricula:
-            return Response({"mensagem": "Usuário não autenticado."}, status=401)
-
-        try:
-            usuario = Usuario.objects.get(matricula=matricula)
-        except Usuario.DoesNotExist:
-            return Response({"mensagem": "Usuário não encontrado."}, status=404)
-            
-        # Soma as horas aprovadas separando por Internas e Externas
-        total_internas = Solicitacao.objects.filter(aluno=usuario, status='Aprovada', tipo='Interna').aggregate(total=Sum('horas'))['total'] or 0
-        total_externas = Solicitacao.objects.filter(aluno=usuario, status='Aprovada', tipo='Externa').aggregate(total=Sum('horas'))['total'] or 0
-        total_horas = total_internas + total_externas
-        
-        # Atualiza os dados no modelo do usuário e salva no banco
-        usuario.horas_internas = total_internas
-        usuario.horas_externas = total_externas
-        usuario.horas_computadas = total_horas
-        usuario.horas_totais = total_horas
-        usuario.save()
-
-        # Lógica de metas baseada no curso do aluno
-        curso_nome = usuario.curso.lower() if usuario.curso else ""
-        if "engenharia" in curso_nome or "computação" in curso_nome or "sistemas" in curso_nome:
-            meta_total, meta_int, meta_ext = 240, 120, 120
-        elif "direito" in curso_nome:
-            meta_total, meta_int, meta_ext = 300, 150, 150
-        else:
-            meta_total, meta_int, meta_ext = 120, 60, 60  # Meta padrão
+        usuario = request.user
+        total_horas, total_internas, total_externas = totais_aprovados(usuario)
+        meta_total, meta_int, meta_ext = metas_do_curso(usuario.curso)
 
         return Response({
-            "horas_totais": usuario.horas_totais,
-            "horas_computadas": usuario.horas_computadas,
-            "horas_internas": usuario.horas_internas,
-            "horas_externas": usuario.horas_externas,
-            "meta_total": meta_total,
-            "meta_internas": meta_int,
-            "meta_externas": meta_ext
+            'horas_totais': total_horas,
+            'horas_computadas': total_horas,
+            'horas_internas': total_internas,
+            'horas_externas': total_externas,
+            'meta_total': meta_total,
+            'meta_internas': meta_int,
+            'meta_externas': meta_ext,
         })
 
-    # Endpoint: GET /api/usuarios/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_alunos(self, request):
-        # pega todos os usuários 
         usuarios = Usuario.objects.all().order_by('matricula')
-        serializer = self.get_serializer(usuarios, many=True)
+        page = self.paginate_queryset(usuarios)
+        serializer = self.get_serializer(page or usuarios, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
-        
-    # Endpoint: POST /api/usuarios/desativar/
+
     @action(detail=False, methods=['post'], url_path='desativar')
     def desativar_usuario(self, request):
-        matricula = request.data.get('X-Usuario-Matricula')
-     
+        matricula = request.data.get('matricula')
         if not matricula:
-            return Response({"mensagem": "Usuário não autenticado."}, status=401)
-        
-        try:
-            usuario = Usuario.objects.get(matricula=matricula)
-            usuario.ativo = False
-            usuario.save()
-            return Response({"mensagem": "Usuário desativado com sucesso!"})
-        
-        except Usuario.DoesNotExist:    
-            return Response({"mensagem": "Usuário não encontrado."}, status=404)
+            return erro('Matricula e obrigatoria.')
+        usuario = Usuario.objects.filter(matricula=matricula).first()
+        if not usuario:
+            return erro('Usuario nao encontrado.', status.HTTP_404_NOT_FOUND)
+        usuario.ativo = False
+        usuario.save(update_fields=['ativo'])
+        return Response({'mensagem': 'Usuario desativado com sucesso!'})
 
-    # Endpoint: POST /api/usuarios/ativar/
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar_usuario(self, request):
-        matricula = request.data.get('X-Usuario-Matricula')
-
+        matricula = request.data.get('matricula')
         if not matricula:
-            return Response({"mensagem": "Usuário não autenticado."}, status=401)
-        try:
-            usuario = Usuario.objects.get(matricula=matricula)
-            usuario.ativo = True
-            usuario.save()
-            return Response({"mensagem": "Usuário ativado com sucesso!"})
-        except Usuario.DoesNotExist:    
-            return Response({"mensagem": "Usuário não encontrado."}, status=404)
+            return erro('Matricula e obrigatoria.')
+        usuario = Usuario.objects.filter(matricula=matricula).first()
+        if not usuario:
+            return erro('Usuario nao encontrado.', status.HTTP_404_NOT_FOUND)
+        usuario.ativo = True
+        usuario.save(update_fields=['ativo'])
+        return Response({'mensagem': 'Usuario ativado com sucesso!'})
 
-    # Endpoint: POST /api/usuarios/criar/
-    @action(detail=False, methods=['post'], url_path='criar')
+    @action(detail=False, methods=['post'], url_path='criar', permission_classes=[AllowAny])
     def criar_usuario(self, request):
-        
         dados_usuario = {
             'matricula': request.data.get('matricula'),
             'nome': request.data.get('nome'),
@@ -193,265 +158,245 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             'senha': request.data.get('senha'),
             'curso': request.data.get('curso'),
             'ano_entrada': request.data.get('anoEntrada', '2026'),
-            'periodo': request.data.get('periodo', '2º Período'),
+            'periodo': request.data.get('periodo', '2o Periodo'),
             'ativo': True,
-            'is_funcionario': False
+            'is_funcionario': False,
         }
-
         serializer = self.get_serializer(data=dados_usuario)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # Endpoint: POST /api/usuarios/criar-funcionario/
     @action(detail=False, methods=['post'], url_path='criar-funcionario')
     def criar_funcionario(self, request):
-        nome = request.data.get('nome')
-        email = request.data.get('email')
-        senha = request.data.get('senha')
-
-        if not nome or not email or not senha:
-            return Response({"mensagem": "Nome, e-mail e senha são obrigatórios."}, status=400)
-
-        # Gera uma matrícula única e automática para o funcionário (pois é a Chave Primária do banco)
-        matricula_gerada = f"FUNC-{uuid.uuid4().hex[:8].upper()}"
-
         dados_funcionario = {
-            'matricula': matricula_gerada,
-            'nome': nome,
-            'email': email,
-            'senha': senha,
+            'matricula': f"FUNC-{uuid.uuid4().hex[:8].upper()}",
+            'nome': request.data.get('nome'),
+            'email': request.data.get('email'),
+            'senha': request.data.get('senha'),
             'curso': 'Administrativo',
             'is_funcionario': True,
-            'ativo': True
+            'ativo': True,
         }
-
         serializer = self.get_serializer(data=dados_funcionario)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all().order_by('id_categoria')
     serializer_class = CategoriaSerializer
-    permission_classes = [AllowAny]
 
-    # Endpoint: POST /api/categorias/criar/
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'lista']:
+            return [IsAuthenticated()]
+        return [IsFuncionario()]
+
     @action(detail=False, methods=['post'], url_path='criar')
     def criar_categoria(self, request):
-        # Extraindo os campos exatos que o seu Model espera
-        dados_categoria = {
+        serializer = self.get_serializer(data={
             'atividade': request.data.get('atividade'),
             'categoria': request.data.get('categoria'),
-            'tipo': request.data.get('tipo'),  
+            'tipo': request.data.get('tipo'),
             'horas': request.data.get('horas'),
-            'ativo': request.data.get('ativo', True)  # Padrão para ativo se não for fornecido
-        }
+            'ativo': request.data.get('ativo', True),
+        })
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        serializer = self.get_serializer(data=dados_categoria)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-    
-    # Endpoint: GET /api/categorias/desativar/
     @action(detail=False, methods=['post'], url_path='desativar')
     def desativar(self, request):
-        categoria_id = request.data.get('id_categoria')
-        if not categoria_id:
-            return Response({"mensagem": "ID da categoria é obrigatório."}, status=400)
-        try:
-            categoria = Categoria.objects.get(id_categoria=categoria_id)
-            categoria.ativo = False
-            categoria.save()
-        except Categoria.DoesNotExist:
-            return Response({"mensagem": "Categoria não encontrada."}, status=404)
-        return Response({"mensagem": "Categoria desativada com sucesso!"})  
-         
-    # Endpoint: GET /api/categorias/ativar/
+        categoria = self.get_queryset().filter(id_categoria=request.data.get('id_categoria')).first()
+        if not categoria:
+            return erro('Categoria nao encontrada.', status.HTTP_404_NOT_FOUND)
+        categoria.ativo = False
+        categoria.save(update_fields=['ativo'])
+        return Response({'mensagem': 'Categoria desativada com sucesso!'})
+
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar(self, request):
-        categoria_id = request.data.get('id_categoria')
-        if not categoria_id:
-            return Response({"mensagem": "ID da categoria é obrigatório."}, status=400)
-        try:
-            categoria = Categoria.objects.get(id_categoria=categoria_id)
-            categoria.ativo = True
-            categoria.save()
-        except Categoria.DoesNotExist:
-            return Response({"mensagem": "Categoria não encontrada."}, status=404)
-        return Response({"mensagem": "Categoria ativada com sucesso!"})  
-    
-    # Endpoint: GET /api/categorias/lista/
+        categoria = self.get_queryset().filter(id_categoria=request.data.get('id_categoria')).first()
+        if not categoria:
+            return erro('Categoria nao encontrada.', status.HTTP_404_NOT_FOUND)
+        categoria.ativo = True
+        categoria.save(update_fields=['ativo'])
+        return Response({'mensagem': 'Categoria ativada com sucesso!'})
+
     @action(detail=False, methods=['get'], url_path='lista')
     def lista(self, request):
-        categorias = Categoria.objects.all().order_by('id_categoria')
-        serializer = self.get_serializer(categorias, many=True)
+        serializer = self.get_serializer(self.get_queryset().filter(ativo=True), many=True)
         return Response(serializer.data)
 
-class EventosViewSet(viewsets.ModelViewSet):
-    queryset = Eventos.objects.all().order_by('id_evento')
-    serializer_class = EventosSerializer
-    permission_classes = [AllowAny]
 
-    # Endpoint: GET /api/eventos/criar/
+class EventosViewSet(viewsets.ModelViewSet):
+    queryset = Eventos.objects.select_related('categoria').all().order_by('id_evento')
+    serializer_class = EventosSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'lista_eventos']:
+            return [IsAuthenticated()]
+        return [IsFuncionario()]
+
     @action(detail=False, methods=['post'], url_path='criar')
     def criar_evento(self, request):
-        dados_evento = {
+        serializer = self.get_serializer(data={
             'nome': request.data.get('nome'),
             'categoria': request.data.get('categoria'),
             'data': request.data.get('data'),
             'hora': request.data.get('hora'),
             'horas': request.data.get('horas'),
-            'curso_alvo': request.data.get('curso_alvo'),
+            'curso_alvo': request.data.get('curso_alvo') or request.data.get('cursoAlvo'),
             'palestrante': request.data.get('palestrante'),
             'unidade': request.data.get('unidade'),
-            'ativo': True
-        }
+            'ativo': True,
+        })
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        serializer = self.get_serializer(data=dados_evento)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-    # Endpoint: GET /api/eventos/desativar/
     @action(detail=False, methods=['post'], url_path='desativar')
     def desativar_evento(self, request):
-        evento_id = request.data.get('id_evento')
-        if not evento_id:
-            return Response({"mensagem": "ID do evento é obrigatório."}, status=400)
-        try:
-            evento = Eventos.objects.get(id_evento=evento_id)
-            evento.ativo = False
-            evento.save()
-        except Eventos.DoesNotExist:
-            return Response({"mensagem": "Evento não encontrado."}, status=404)
-        return Response({"mensagem": "Evento desativado com sucesso!"})
+        evento = self.get_queryset().filter(id_evento=request.data.get('id_evento')).first()
+        if not evento:
+            return erro('Evento nao encontrado.', status.HTTP_404_NOT_FOUND)
+        evento.ativo = False
+        evento.save(update_fields=['ativo'])
+        return Response({'mensagem': 'Evento desativado com sucesso!'})
 
-    # Endpoint: GET /api/eventos/ativar/
     @action(detail=False, methods=['post'], url_path='ativar')
     def ativar_evento(self, request):
-        evento_id = request.data.get('id_evento')
-        if not evento_id:
-            return Response({"mensagem": "ID do evento é obrigatório."}, status=400)
-        try:
-            evento = Eventos.objects.get(id_evento=evento_id)
-            evento.ativo = True
-            evento.save()
-        except Eventos.DoesNotExist:
-            return Response({"mensagem": "Evento não encontrado."}, status=404)
-        return Response({"mensagem": "Evento ativado com sucesso!"})
+        evento = self.get_queryset().filter(id_evento=request.data.get('id_evento')).first()
+        if not evento:
+            return erro('Evento nao encontrado.', status.HTTP_404_NOT_FOUND)
+        evento.ativo = True
+        evento.save(update_fields=['ativo'])
+        return Response({'mensagem': 'Evento ativado com sucesso!'})
 
-    # Endpoint: GET /api/eventos/lista/
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_eventos(self, request):
-        eventos = Eventos.objects.all().order_by('id_evento')
-        serializer = self.get_serializer(eventos, many=True)
+        serializer = self.get_serializer(self.get_queryset().filter(ativo=True), many=True)
         return Response(serializer.data)
-    
-class SolicitacaoViewSet(viewsets.ModelViewSet):
-    queryset = Solicitacao.objects.all().order_by('id_solicitacao')
-    serializer_class = SolicitacaoSerializer
-    permission_classes = [AllowAny]
 
-    # Endpoint: POST /api/solicitacoes/criar-externa/
+
+class SolicitacaoViewSet(viewsets.ModelViewSet):
+    queryset = Solicitacao.objects.select_related('aluno', 'categoria', 'evento', 'avaliado_por').all()
+    serializer_class = SolicitacaoSerializer
+
+    def get_queryset(self):
+        qs = Solicitacao.objects.select_related('aluno', 'categoria', 'evento', 'avaliado_por').order_by('-id_solicitacao')
+        usuario = self.request.user
+        if usuario and usuario.is_authenticated and usuario.is_funcionario:
+            return qs
+        return qs.filter(aluno=usuario)
+
+    def get_permissions(self):
+        if self.action in ['aprovar_solicitacao', 'rejeitar_solicitacao', 'solicitar_ajuste_solicitacao', 'admin']:
+            return [IsFuncionario()]
+        return [IsAuthenticated()]
+
+    def _aplicar_filtros_admin(self, qs):
+        aluno = self.request.query_params.get('aluno')
+        tipo = self.request.query_params.get('tipo')
+        status_param = self.request.query_params.get('status')
+        data_inicio = self.request.query_params.get('data_inicio')
+        data_fim = self.request.query_params.get('data_fim')
+
+        if aluno:
+            qs = qs.filter(aluno__nome__icontains=aluno) | qs.filter(aluno__matricula__icontains=aluno)
+        if tipo:
+            qs = qs.filter(tipo=tipo)
+        if status_param:
+            qs = qs.filter(status=status_param)
+        if data_inicio:
+            qs = qs.filter(data__gte=data_inicio)
+        if data_fim:
+            qs = qs.filter(data__lte=data_fim)
+        return qs.order_by('-id_solicitacao')
+
+    @action(detail=False, methods=['get'], url_path='admin')
+    def admin(self, request):
+        qs = self._aplicar_filtros_admin(self.get_queryset())
+        page = self.paginate_queryset(qs)
+        serializer = self.get_serializer(page or qs, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['post'], url_path='criar-externa')
     def criar_externa(self, request):
         dados = request.data.copy()
+        dados['aluno'] = request.user.matricula
         dados['tipo'] = 'Externa'
-        dados['status'] = 'Pendente'
-        
-        matricula = request.headers.get('X-Usuario-Matricula')
-        if matricula:
-            dados['aluno'] = matricula
+        dados['status'] = STATUS_PENDENTE
 
         serializer = self.get_serializer(data=dados)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # Endpoint: POST /api/solicitacoes/criar-interna/ (VIA QR CODE)
     @action(detail=False, methods=['post'], url_path='criar-interna')
     def criar_interna(self, request):
         evento_id = request.data.get('evento_id')
-        matricula = request.headers.get('X-Usuario-Matricula')
-        
-        usuario = None
-        if matricula:
-            usuario = Usuario.objects.filter(matricula=matricula).first()
+        if not evento_id:
+            return erro('ID do Evento e obrigatorio.')
 
-        if not evento_id or not usuario:
-            return Response({"mensagem": "ID do Evento ou Usuário não informados."}, status=400)
+        evento = Eventos.objects.select_related('categoria').filter(id_evento=evento_id, ativo=True).first()
+        if not evento:
+            return erro('Evento nao encontrado no sistema.', status.HTTP_404_NOT_FOUND)
 
-        try:
-            evento = Eventos.objects.get(id_evento=evento_id)
-        except Eventos.DoesNotExist:
-            return Response({"mensagem": "Evento não encontrado no sistema."}, status=404)
+        if Solicitacao.objects.filter(aluno=request.user, evento=evento).exists():
+            return erro('Voce ja registrou presenca neste evento!')
 
-        # Validação contra fraudes: Aluno não pode bipar o mesmo QR Code duas vezes
-        if Solicitacao.objects.filter(aluno=usuario, evento=evento).exists():
-            return Response({"mensagem": "Você já registrou presença neste evento!"}, status=400)
+        categoria_obj = evento.categoria or Categoria.objects.filter(ativo=True).first()
+        if not categoria_obj:
+            return erro('Evento sem categoria valida.')
 
-        # Pega a Categoria que está salva no Evento (ou usa a primeira como fallback)
-        categoria_obj = evento.categoria or Categoria.objects.first()
-
-        # Cria a solicitação pré-aprovada com os dados puxados diretamente do Evento
         solicitacao = Solicitacao.objects.create(
-            aluno=usuario, evento=evento, categoria=categoria_obj,
-            data=evento.data, horas=evento.horas, tipo='Interna',
-            nome_atividade=evento.nome, status='Aprovada'
+            aluno=request.user,
+            evento=evento,
+            categoria=categoria_obj,
+            data=evento.data,
+            horas=evento.horas,
+            tipo='Interna',
+            nome_atividade=evento.nome,
+            status=STATUS_APROVADA,
         )
+        return Response(self.get_serializer(solicitacao).data, status=status.HTTP_201_CREATED)
 
-        serializer = self.get_serializer(solicitacao)
-        return Response(serializer.data, status=201)
-
-    # Endpoint: POST /api/solicitacoes/aprovar/
     @action(detail=False, methods=['post'], url_path='aprovar')
     def aprovar_solicitacao(self, request):
-        id_solicitacao = request.data.get('id_solicitacao')
-        if not id_solicitacao:
-            return Response({"mensagem": "ID da solicitação é obrigatório."}, status=400)
-        try:
-            solicitacao = Solicitacao.objects.get(id_solicitacao=id_solicitacao)
-            solicitacao.status = 'Aprovada'
-            solicitacao.save()
-        except Solicitacao.DoesNotExist:
-            return Response({"mensagem": "Solicitação não encontrada."}, status=404)
-        return Response({"mensagem": "Solicitação aprovada com sucesso!"})
-    
-    # Endpoint: POST /api/solicitacoes/rejeitar/
+        solicitacao = self.get_queryset().filter(id_solicitacao=request.data.get('id_solicitacao')).first()
+        if not solicitacao:
+            return erro('Solicitacao nao encontrada.', status.HTTP_404_NOT_FOUND)
+        aprovar_solicitacao(solicitacao, request.user)
+        return Response({'mensagem': 'Solicitacao aprovada com sucesso!'})
+
     @action(detail=False, methods=['post'], url_path='rejeitar')
     def rejeitar_solicitacao(self, request):
-        id_solicitacao = request.data.get('id_solicitacao')
-        motivo = request.data.get('motivo', 'Sem motivo informado')
-        if not id_solicitacao:
-            return Response({"mensagem": "ID da solicitação é obrigatório."}, status=400)
-        try:
-            solicitacao = Solicitacao.objects.get(id_solicitacao=id_solicitacao)
-            solicitacao.status = 'Rejeitada'
-            solicitacao.observacao = motivo
-            solicitacao.save()
-        except Solicitacao.DoesNotExist:
-            return Response({"mensagem": "Solicitação não encontrada."}, status=404)
-        return Response({"mensagem": "Solicitação rejeitada com sucesso!"})
+        solicitacao = self.get_queryset().filter(id_solicitacao=request.data.get('id_solicitacao')).first()
+        if not solicitacao:
+            return erro('Solicitacao nao encontrada.', status.HTTP_404_NOT_FOUND)
+        rejeitar_solicitacao(solicitacao, request.user, request.data.get('motivo'))
+        return Response({'mensagem': 'Solicitacao rejeitada com sucesso!'})
 
-    # Endpoint: GET /api/solicitacoes/lista/
+    @action(detail=False, methods=['post'], url_path='solicitar-ajuste')
+    def solicitar_ajuste_solicitacao(self, request):
+        solicitacao = self.get_queryset().filter(id_solicitacao=request.data.get('id_solicitacao')).first()
+        if not solicitacao:
+            return erro('Solicitacao nao encontrada.', status.HTTP_404_NOT_FOUND)
+        solicitar_ajuste(solicitacao, request.user, request.data.get('motivo'))
+        return Response({'mensagem': 'Ajuste solicitado com sucesso!'})
+
     @action(detail=False, methods=['get'], url_path='lista')
     def lista_solicitacoes(self, request):
-        matricula = request.headers.get('X-Usuario-Matricula')
-        
-        if not matricula:
-            return Response({"mensagem": "Usuário não autenticado."}, status=401)
-
-        try:
-            usuario = Usuario.objects.get(matricula=matricula)
-        except Usuario.DoesNotExist:
-            return Response({"mensagem": "Usuário não encontrado."}, status=404)
-
-        solicitacoes = Solicitacao.objects.filter(aluno=usuario).order_by('-id_solicitacao')
-        serializer = self.get_serializer(solicitacoes, many=True)
+        qs = self.get_queryset().filter(aluno=request.user)
+        status_param = request.query_params.get('status')
+        tipo = request.query_params.get('tipo')
+        if status_param:
+            qs = qs.filter(status=status_param)
+        if tipo:
+            qs = qs.filter(tipo=tipo)
+        serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
