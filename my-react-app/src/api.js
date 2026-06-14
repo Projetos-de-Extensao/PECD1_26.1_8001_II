@@ -9,12 +9,20 @@ export function getUsuarioLogado() {
   return usuario ? JSON.parse(usuario) : null;
 }
 
+function isPublicApiPath(url) {
+  return [
+    '/api/usuarios/login/',
+    '/api/usuarios/criar/',
+    '/api/usuarios/recuperar-senha/',
+  ].some((path) => url.includes(path));
+}
+
 export async function apiFetch(path, options = {}) {
   const token = getAuthToken();
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
   const headers = new Headers(options.headers || {});
 
-  if (token && !headers.has('Authorization')) {
+  if (token && !isPublicApiPath(url) && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${token}`);
   }
 
@@ -43,7 +51,7 @@ window.fetch = (input, options = {}) => {
   const isApiCall = url.includes('/api/') || url.startsWith(`${API_BASE}/api/`);
   const token = getAuthToken();
 
-  if (!isApiCall || !token) {
+  if (!isApiCall || !token || isPublicApiPath(url)) {
     return originalFetch(input, options);
   }
 
