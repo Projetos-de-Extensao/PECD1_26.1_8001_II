@@ -300,6 +300,139 @@ h1 {
   min-width: 0;
 }
 
+.modal-recuperacao {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 18, 45, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.modal-recuperacao__card {
+  width: min(100%, 460px);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+.modal-recuperacao__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.4rem;
+  border-bottom: 1px solid #e6ebf2;
+}
+
+.modal-recuperacao__header h2 {
+  margin: 0;
+  color: #002555;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.modal-recuperacao__header button {
+  width: 36px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: #f3f6fa;
+  color: #475569;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-recuperacao__form {
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem;
+}
+
+.modal-recuperacao__form label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.modal-recuperacao__form span {
+  color: #002555;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.modal-recuperacao__form input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border: 1.5px solid #d5dce7;
+  border-radius: 8px;
+  color: #10233f;
+  outline: none;
+}
+
+.modal-recuperacao__form input:focus {
+  border-color: #f5ac00;
+  box-shadow: 0 0 0 4px rgba(245, 172, 0, 0.12);
+}
+
+.modal-recuperacao__mensagem {
+  padding: 0.85rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.modal-recuperacao__mensagem--sucesso {
+  background: rgba(31, 139, 76, 0.1);
+  color: #1f8b4c;
+  border: 1px solid rgba(31, 139, 76, 0.2);
+}
+
+.modal-recuperacao__mensagem--erro {
+  background: rgba(179, 38, 30, 0.08);
+  color: #b3261e;
+  border: 1px solid rgba(179, 38, 30, 0.18);
+}
+
+.modal-recuperacao__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.btn-modal-secundario,
+.btn-modal-principal {
+  min-height: 44px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-modal-secundario {
+  border: 1px solid #d5dce7;
+  background: #ffffff;
+  color: #002555;
+}
+
+.btn-modal-principal {
+  border: 0;
+  background: #002555;
+  color: #ffffff;
+}
+
+.btn-modal-secundario:disabled,
+.btn-modal-principal:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
   body {
     align-items: flex-start;
@@ -321,5 +454,14 @@ h1 {
 
   #botaoSenha {
     height: 40px;
+  }
+
+  .modal-recuperacao__acoes {
+    flex-direction: column;
+  }
+
+  .btn-modal-secundario,
+  .btn-modal-principal {
+    width: 100%;
   }
 }

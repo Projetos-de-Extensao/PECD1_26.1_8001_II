@@ -11,7 +11,90 @@ function Login() {
   const [lembrar, setLembrar] = useState(false);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
+  const [modalSenhaAberto, setModalSenhaAberto] = useState(false);
+  const [recuperacao, setRecuperacao] = useState({
+    email: '',
+    matricula: '',
+    senhaNova: '',
+    senhaConfirm: '',
+  });
+  const [msgRecuperacao, setMsgRecuperacao] = useState({ tipo: '', texto: '' });
+  const [enviandoRecuperacao, setEnviandoRecuperacao] = useState(false);
   const navigate = useNavigate();
+
+  function atualizarRecuperacao(campo, valor) {
+    setRecuperacao((atual) => ({
+      ...atual,
+      [campo]: valor,
+    }));
+  }
+
+  function abrirModalSenha(e) {
+    e.preventDefault();
+    setRecuperacao({
+      email,
+      matricula: '',
+      senhaNova: '',
+      senhaConfirm: '',
+    });
+    setMsgRecuperacao({ tipo: '', texto: '' });
+    setModalSenhaAberto(true);
+  }
+
+  function fecharModalSenha() {
+    setModalSenhaAberto(false);
+    setMsgRecuperacao({ tipo: '', texto: '' });
+    setEnviandoRecuperacao(false);
+  }
+
+  async function handleRecuperarSenha(e) {
+    e.preventDefault();
+    setMsgRecuperacao({ tipo: '', texto: '' });
+
+    if (!recuperacao.email || !recuperacao.matricula || !recuperacao.senhaNova || !recuperacao.senhaConfirm) {
+      setMsgRecuperacao({ tipo: 'erro', texto: 'Preencha todos os campos.' });
+      return;
+    }
+
+    if (recuperacao.senhaNova.length < 8) {
+      setMsgRecuperacao({ tipo: 'erro', texto: 'A nova senha deve ter pelo menos 8 caracteres.' });
+      return;
+    }
+
+    if (recuperacao.senhaNova !== recuperacao.senhaConfirm) {
+      setMsgRecuperacao({ tipo: 'erro', texto: 'As senhas não conferem.' });
+      return;
+    }
+
+    setEnviandoRecuperacao(true);
+
+    try {
+      const resposta = await fetch(`${API_BASE}/api/usuarios/recuperar-senha/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: recuperacao.email,
+          matricula: recuperacao.matricula,
+          senhaNova: recuperacao.senhaNova,
+        }),
+      });
+
+      const dados = await resposta.json().catch(() => ({}));
+
+      if (!resposta.ok) {
+        setMsgRecuperacao({ tipo: 'erro', texto: dados.mensagem || 'Não foi possível redefinir a senha.' });
+        return;
+      }
+
+      setSenha('');
+      setMsgRecuperacao({ tipo: 'sucesso', texto: dados.mensagem || 'Senha redefinida com sucesso.' });
+      setTimeout(fecharModalSenha, 1400);
+    } catch {
+      setMsgRecuperacao({ tipo: 'erro', texto: 'Erro de conexão com o servidor.' });
+    } finally {
+      setEnviandoRecuperacao(false);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault(); // Impede o reload da página
@@ -90,7 +173,7 @@ function Login() {
               <input type="checkbox" id="lembrar" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} />
               Lembrar de mim
             </label>
-            <a href="#">Esqueci minha senha</a>
+            <a href="/recuperar-senha" onClick={abrirModalSenha}>Esqueci minha senha</a>
           </div>
 
 
@@ -107,6 +190,74 @@ function Login() {
 
       </article>
     </section>
+
+    {modalSenhaAberto && (
+      <div className="modal-recuperacao" onClick={fecharModalSenha}>
+        <div className="modal-recuperacao__card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-recuperacao__header">
+            <h2>Redefinir senha</h2>
+            <button type="button" onClick={fecharModalSenha} aria-label="Fechar">×</button>
+          </div>
+
+          <form className="modal-recuperacao__form" onSubmit={handleRecuperarSenha} noValidate>
+            <label>
+              <span>E-mail de acesso</span>
+              <input
+                type="email"
+                value={recuperacao.email}
+                onChange={(e) => atualizarRecuperacao('email', e.target.value)}
+                placeholder="seu.email@ibmec.edu.br"
+              />
+            </label>
+
+            <label>
+              <span>Matrícula</span>
+              <input
+                type="text"
+                value={recuperacao.matricula}
+                onChange={(e) => atualizarRecuperacao('matricula', e.target.value)}
+                placeholder="Sua matrícula"
+              />
+            </label>
+
+            <label>
+              <span>Nova senha</span>
+              <input
+                type="password"
+                value={recuperacao.senhaNova}
+                onChange={(e) => atualizarRecuperacao('senhaNova', e.target.value)}
+                placeholder="Mínimo 8 caracteres"
+              />
+            </label>
+
+            <label>
+              <span>Confirmar nova senha</span>
+              <input
+                type="password"
+                value={recuperacao.senhaConfirm}
+                onChange={(e) => atualizarRecuperacao('senhaConfirm', e.target.value)}
+                placeholder="Repita a nova senha"
+              />
+            </label>
+
+            {msgRecuperacao.texto && (
+              <div className={`modal-recuperacao__mensagem modal-recuperacao__mensagem--${msgRecuperacao.tipo}`}>
+                {msgRecuperacao.texto}
+              </div>
+            )}
+
+            <div className="modal-recuperacao__acoes">
+              <button type="button" className="btn-modal-secundario" onClick={fecharModalSenha} disabled={enviandoRecuperacao}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-modal-principal" disabled={enviandoRecuperacao}>
+                {enviandoRecuperacao ? 'Salvando...' : 'Salvar nova senha'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
     </>
   );
 }
