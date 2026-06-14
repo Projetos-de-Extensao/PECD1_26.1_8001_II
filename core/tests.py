@@ -69,6 +69,23 @@ class ApiSecurityTests(TestCase):
         usuario = Usuario.objects.get(matricula='20260003')
         self.assertTrue(check_password('Senha123', usuario.senha))
 
+    def test_recuperar_senha_sem_login_altera_senha(self):
+        resp = self.client.post('/api/usuarios/recuperar-senha/', {
+            'email': self.aluno.email,
+            'matricula': self.aluno.matricula,
+            'senhaNova': 'NovaSenha123',
+        }, format='json')
+
+        self.assertEqual(resp.status_code, 200)
+        self.aluno.refresh_from_db()
+        self.assertTrue(check_password('NovaSenha123', self.aluno.senha))
+
+        login = self.client.post('/api/usuarios/login/', {
+            'email': self.aluno.email,
+            'senha': 'NovaSenha123',
+        }, format='json')
+        self.assertEqual(login.status_code, 200)
+
     def test_aluno_nao_acessa_lista_administrativa(self):
         self.autenticar(self.aluno)
 
