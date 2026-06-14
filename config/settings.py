@@ -17,11 +17,33 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def carregar_env(caminho):
+    if not caminho.exists():
+        return
+
+    for linha in caminho.read_text(encoding='utf-8').splitlines():
+        linha = linha.strip()
+        if not linha or linha.startswith('#') or '=' not in linha:
+            continue
+
+        chave, valor = linha.split('=', 1)
+        chave = chave.strip()
+        valor = valor.strip().strip('"').strip("'")
+        if not os.environ.get(chave):
+            os.environ[chave] = valor
+
+
+carregar_env(BASE_DIR / 'pord.env')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-only-change-me')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+
+if not SECRET_KEY:
+    raise RuntimeError('DJANGO_SECRET_KEY nao foi configurada no ambiente ou em pord.env.')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
