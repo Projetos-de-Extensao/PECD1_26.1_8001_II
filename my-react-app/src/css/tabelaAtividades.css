@@ -1,0 +1,135 @@
+.atividades-container { margin-top: 2rem; }
+.titulo-secao { font-size: 1.4rem; color: var(--cor-primaria); margin: 0 0 1.2rem; font-weight: 800; }
+.tabela-wrapper { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 16px; overflow-x: auto; overflow-y: hidden; box-shadow: 0 10px 26px rgba(0, 37, 85, 0.08); -webkit-overflow-scrolling: touch; }
+.tabela-atividades { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.95rem; }
+.tabela-atividades thead { background: #f5f5f5; border-bottom: 2px solid #e0e0e0; }
+.tabela-atividades th { padding: 1rem 0.9rem; text-align: left; font-weight: 700; color: var(--cor-secundaria); font-size: 0.85rem; letter-spacing: 0.5px; text-transform: uppercase; }
+.tabela-atividades tbody tr { border-bottom: 1px solid #f0f0f0; transition: background-color 0.12s ease; }
+.tabela-atividades tbody tr:hover { background-color: #fafafa; }
+.tabela-atividades td { padding: 0.95rem 0.9rem; color: #333; }
+
+.tipo-badge { display: inline-block; padding: 0.35rem 0.65rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-align: center; min-width: 75px; }
+.tipo-badge.interno-badge { background: linear-gradient(135deg, rgba(245, 172, 0, 0.12), rgba(245, 172, 0, 0.06)); color: #b38600; border: 1px solid rgba(245, 172, 0, 0.18); }
+.tipo-badge.externo-badge { background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.06)); color: #5a5dbf; border: 1px solid rgba(99, 102, 241, 0.18); }
+
+.nome-atividade { font-weight: 600; color: var(--cor-secundaria); max-width: 280px; }
+.data { color: #5d6c86; font-size: 0.93rem; }
+.horas { font-weight: 700; color: var(--cor-secundaria); text-align: center; }
+.status { font-weight: 700; font-size: 0.9rem; text-align: center; color: #1f8b4c; display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
+
+@media (max-width: 768px) {
+  .atividades-container { margin-top: 1.25rem; }
+  .titulo-secao { font-size: 1.15rem; }
+  .tabela-atividades { font-size: 0.88rem; }
+  .tabela-atividades th, .tabela-atividades td { padding: 0.75rem 0.6rem; }
+  .nome-atividade { max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tipo-badge { min-width: 65px; font-size: 0.75rem; }
+}
+
+@media (max-width: 480px) {
+  .atividades-container {
+    margin-top: 0;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .titulo-secao {
+    font-size: 1.05rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .filtros-dashboard {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+
+  .filtros-dashboard .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .tabela-wrapper {
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .tabela-atividades,
+  .tabela-atividades tbody,
+  .tabela-atividades tr,
+  .tabela-atividades td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tabela-atividades {
+    font-size: 0.88rem;
+  }
+
+  .tabela-atividades thead {
+    display: none;
+  }
+
+  .tabela-atividades tr {
+    margin-bottom: 0.9rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 37, 85, 0.08);
+    overflow: hidden;
+  }
+
+  .tabela-atividades td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.8rem 0.9rem;
+    border-bottom: 1px solid #eef2f7;
+    text-align: right;
+  }
+
+  .tabela-atividades td:last-child {
+    border-bottom: none;
+  }
+
+  .tabela-atividades td::before {
+    flex: 0 0 42%;
+    color: var(--cor-secundaria);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .tabela-atividades td:nth-child(1)::before { content: "Tipo"; }
+  .tabela-atividades td:nth-child(2)::before { content: "Atividade"; }
+  .tabela-atividades td:nth-child(3)::before { content: "Data"; }
+  .tabela-atividades td:nth-child(4)::before { content: "Horas"; }
+  .tabela-atividades td:nth-child(5)::before { content: "Status"; }
+
+  .tabela-atividades td[colspan] {
+    display: block;
+    text-align: center !important;
+  }
+
+  .tabela-atividades td[colspan]::before {
+    content: none;
+  }
+
+  .nome-atividade {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .status {
+    justify-content: flex-end;
+    text-align: right;
+  }
+}

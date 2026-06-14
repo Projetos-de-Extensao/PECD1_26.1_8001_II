@@ -1,0 +1,39 @@
+/* ========== TÍTULOS E CONTAINERS ========== */
+.painel-envio { padding: 0; }
+.titulo-form { font-size: 1.5rem; color: var(--cor-secundaria); margin-bottom: 0.3rem; font-weight: 800; }
+.subtitulo-form { font-size: 0.9rem; color: #666; margin-bottom: 1.2rem; }
+
+/* ========== BOTÕES ========== */
+.acoes { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.btn { border: none; padding: 0.7rem 1.3rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.9rem; }
+.btn-principal { background: linear-gradient(135deg, var(--cor-secundaria), #003d7a); color: #fff; }
+.btn-principal:hover { filter: brightness(1.05); }
+.btn-secundario { background: transparent; border: 1px solid #ddd; color: var(--cor-secundaria); }
+.btn-secundario:hover { background: #f9f9f9; }
+
+/* ========== INPUTS E SELECTS ========== */
+.campo-select-wrapper { margin-bottom: 1rem; }
+.campo-select-wrapper label, .campo label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--cor-secundaria); margin-bottom: 0.3rem; text-transform: uppercase; }
+.campo-select-wrapper select, .campo input { width: 100%; min-width: 0; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem; transition: all 0.2s ease; }
+.campo-select-wrapper select:focus, .campo input:focus { border-color: var(--cor-primaria); box-shadow: 0 0 0 3px rgba(245, 172, 0, 0.1); outline: none; }
+.form-oculto { display: none; }
+.form-rows { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem; }
+.campo { display: block; }
+.arquivo-info { color: var(--cor-secundaria); font-size: 0.8rem; margin-top: 0.3rem; font-weight: 600; }
+
+/* ========== MENSAGENS DE FEEDBACK ========== */
+#mensagem { margin-top: 1rem; padding: 0.7rem; border-radius: 8px; display: none; font-weight: 700; }
+#mensagem.success { display: block; color: #1f8b4c; background: rgba(31, 139, 76, 0.08); border: 1px solid rgba(31, 139, 76, 0.15); }
+#mensagem.error { display: block; color: #b3261e; background: rgba(179, 38, 30, 0.06); border: 1px solid rgba(179, 38, 30, 0.12); }
+
+/* ========== RESPONSIVIDADE EXTERNO ========== */
+@media (max-width: 1024px) {
+  .form-rows { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .titulo-form { font-size: 1.25rem; }
+  .subtitulo-form { font-size: 0.85rem; }
+  .acoes { flex-direction: column; }
+  .acoes .btn { width: 100%; }
+}

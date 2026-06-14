@@ -1,0 +1,279 @@
+.mural-container {
+  margin: 2rem auto 0 auto;
+  width: 100%;
+  max-width: 900px;
+  padding: 0 1.5rem;
+  animation: fadeIn 0.5s ease-out;
+  min-width: 0;
+}
+
+.mural-header {
+  margin-bottom: 1.2rem;
+}
+
+.mural-header h2 {
+  color: #ffffff;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+}
+
+.mural-header p {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+}
+
+/* Estrutura Base do Carrossel */
+.carrossel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 15px 40px rgba(0, 37, 85, 0.15);
+  background-color: var(--cor-fundo);
+}
+
+.carrossel-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Cada Evento (Slide) */
+.carrossel-slide {
+  min-width: 100%;
+  padding: 3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  min-height: 520px;
+}
+
+.slide-conteudo {
+  width: min(100%, 800px);
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  /* Efeito Glassmorphism (Vidro Fosco) */
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-width: 0;
+}
+
+.badge-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.badge-item {
+  padding: 0.4rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.badge-interno {
+  background: rgba(245, 172, 0, 0.2);
+  color: #F5AC00;
+  border: 1px solid rgba(245, 172, 0, 0.3);
+}
+
+.badge-externo {
+  background: rgba(167, 139, 250, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.badge-categoria {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.slide-conteudo h3 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.slide-infos {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.grid-detalhes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.card-detalhe {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.icone-detalhe {
+  padding: 0.5rem;
+  border-radius: 10px;
+  font-size: 1.1rem;
+}
+.icone-detalhe.roxo { background: rgba(167, 139, 250, 0.2); }
+.icone-detalhe.azul { background: rgba(56, 189, 248, 0.2); }
+.icone-detalhe.laranja { background: rgba(245, 172, 0, 0.2); }
+
+.texto-detalhe {
+  display: flex;
+  flex-direction: column;
+}
+
+.texto-detalhe .rotulo {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.texto-detalhe .valor {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn-inscrever {
+  background: linear-gradient(135deg, var(--cor-primaria, #F5AC00) 0%, #ff8800 100%);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 6px 20px rgba(245, 172, 0, 0.3);
+}
+
+.btn-inscrever:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(245, 172, 0, 0.5);
+  filter: brightness(1.1);
+}
+
+/* Controles (Setas e Bolinhas) */
+.btn-controle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-controle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.btn-controle.prev { left: 20px; }
+.btn-controle.next { right: 20px; }
+
+.carrossel-indicadores {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.indicador { 
+  width: 12px; 
+  height: 12px; 
+  border-radius: 50%; 
+  background: rgba(255, 255, 255, 0.3); 
+  cursor: pointer; 
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+}
+
+.indicador.ativo { 
+  background: #fff; 
+  transform: scale(1.5); 
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .mural-header h2 { font-size: 1.7rem; }
+  .mural-header p { font-size: 0.95rem; }
+  .slide-conteudo { padding: 2rem 1.5rem; }
+  .slide-conteudo h3 { font-size: 1.8rem; }
+  .carrossel-slide { padding: 4rem 1rem; }
+  .slide-conteudo { padding: 1.5rem 1rem; }
+  .slide-conteudo h3 { font-size: 1.5rem; }
+  .carrossel-slide { padding: 2.5rem 1rem; }
+  .slide-infos { flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .grid-detalhes { 
+    grid-template-columns: 1fr; 
+    gap: 0.8rem; 
+    margin-bottom: 2rem; 
+  }
+  .btn-controle { width: 40px; height: 40px; font-size: 1.2rem; }
+  .btn-inscrever { padding: 0.8rem 2rem; font-size: 1rem; }
+  .mural-container { padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+  .mural-container { padding: 0 0.75rem; }
+  .carrossel { border-radius: 16px; }
+  .carrossel-slide { min-height: 560px; padding: 3.5rem 0.75rem; }
+  .slide-conteudo { padding: 1.5rem 1rem; border-radius: 14px; }
+  .slide-conteudo h3 { font-size: 1.45rem; }
+  .badge-grupo { gap: 0.5rem; }
+  .badge-item { font-size: 0.7rem; padding: 0.35rem 0.75rem; }
+  .card-detalhe { padding: 0.8rem; }
+  .btn-controle { top: auto; bottom: 18px; transform: none; }
+  .btn-controle:hover { transform: scale(1.05); }
+  .btn-controle.prev { left: 16px; }
+  .btn-controle.next { right: 16px; }
+  .carrossel-indicadores { bottom: 31px; }
+}
