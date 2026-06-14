@@ -73,7 +73,7 @@ function TabelaAtividades({ atividades = [] }) {
   return (
     <main className="container-principal">
       <section className="atividades-container">
-        <h2 className="titulo-secao">Solicitações de Atividades Complementares</h2>
+        <h2 className="titulo-secao">Atividades Complementares</h2>
 
         {/* BARRA DE FILTROS DE STATUS */}
         <div className="filtros-dashboard" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
