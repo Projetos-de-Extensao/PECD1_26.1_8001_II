@@ -30,7 +30,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     serializer_class = UsuarioSerializer
 
     def get_permissions(self):
-        if self.action in ['login', 'criar_usuario']:
+        if self.action in ['login', 'criar_usuario', 'recuperar_senha']:
             return [AllowAny()]
         if self.action in ['list', 'retrieve', 'lista_alunos', 'criar_funcionario', 'desativar_usuario', 'ativar_usuario']:
             return [IsFuncionario()]
@@ -99,6 +99,26 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         usuario.senha = make_password(senha_nova)
         usuario.save(update_fields=['senha'])
         return Response({'mensagem': 'Senha alterada com sucesso!'})
+
+    @action(detail=False, methods=['post'], url_path='recuperar-senha', permission_classes=[AllowAny])
+    def recuperar_senha(self, request):
+        email = request.data.get('email')
+        matricula = request.data.get('matricula')
+        senha_nova = request.data.get('senhaNova')
+
+        if not email or not matricula or not senha_nova:
+            return erro('Email, matricula e nova senha sao obrigatorios.')
+
+        if len(senha_nova) < 8:
+            return erro('A nova senha deve ter pelo menos 8 caracteres.')
+
+        usuario = Usuario.objects.filter(email=email, matricula=matricula, ativo=True).first()
+        if not usuario:
+            return erro('Dados nao conferem.', status.HTTP_404_NOT_FOUND)
+
+        usuario.senha = make_password(senha_nova)
+        usuario.save(update_fields=['senha'])
+        return Response({'mensagem': 'Senha redefinida com sucesso!'})
 
     @action(detail=False, methods=['get'], url_path='horas-totais')
     def horas_totais(self, request):
