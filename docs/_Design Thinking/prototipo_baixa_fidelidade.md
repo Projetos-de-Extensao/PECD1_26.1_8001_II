@@ -1,214 +1,428 @@
 ---
 id: prototipo
-title: Protótipo de Baixa Fidelidade
+title: Prototipo de Baixa Fidelidade
 ---
 
-## Introdução
+# Prototipo de Baixa Fidelidade
 
-<<<<<<< HEAD
-<p align = "justify">
-A criação de um protótipo de alta fidelidade ajuda a equipe de desenvolvimento a alcançar um nível de detalhamento mais completo, identificar funcionalidades, avaliar a usabilidade e também serve como base para o gerenciamento do projeto, pois com esse protótipo é possível estimar quanto tempo será necessário para executar cada funcionalidade.
+## Introducao
 
-=======
-<p align="justify">
-O protótipo de baixa fidelidade auxilia a equipe a visualizar o fluxo básico da aplicação AAC sistema. Este protótipo apresenta as 8 principais telas do sistema com autenticação, perfil e os fluxos distintos para atividades internas e externas.
->>>>>>> 318eb3913bb7114018aaa06c88b4a4633b0fe522
-</p>
+O prototipo de baixa fidelidade apresenta a estrutura atual do Portal AAC depois da implementacao realizada no projeto. O objetivo e representar as telas principais de forma simples, sem detalhamento visual de alta fidelidade, para documentar fluxo, hierarquia de informacao e acoes esperadas.
+
+Esta versao acompanha o que existe hoje na aplicacao React e na API Django REST:
+
+- login com mensagem de erro;
+- cadastro publico de aluno;
+- recuperacao de senha antes do login;
+- dashboard do aluno;
+- solicitacoes internas e externas;
+- historico de atividades;
+- perfil e troca de senha;
+- painel administrativo para funcionarios;
+- documentacao da API com Swagger/Redoc.
 
 ## Metodologia
 
-<p align="justify">
-Após análise do Brainstorm e AHT, foram identificadas as 8 telas principais do sistema. O protótipo foi desenvolvido com PlantUML Salt para manter clareza e simplicidade na comunicação entre membros da equipe.
-</p>
+Os prototipos foram atualizados a partir das rotas e componentes implementados no frontend:
 
-## Protótipo de Baixa Fidelidade - Versão 1.0
+- `/login`
+- `/cadastro`
+- `/home`
+- `/solicitacoes`
+- `/perfil`
+- `/admin`
+
+Tambem foram considerados os principais endpoints do backend, como login, cadastro, recuperacao de senha, criacao de solicitacoes, validacao administrativa, categorias, eventos e schema OpenAPI.
+
+Os desenhos abaixo seguem o estilo de baixa fidelidade usando PlantUML Salt, com foco em blocos, campos, botoes e fluxo.
+
+## Versao 2.0 - Prototipo Atualizado
 
 ### Tela 1: Login
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema
-BEM-VINDO
+<b>Portal AAC - Login
 ==
-Email Educacional:
-"                        "
+[ IBMEC ]
+
+Entrar
+Acesse o portal AAC
+
+E-mail de acesso:
+" aluno@ibmec.edu.br ou prof@ibmec.br "
+
 Senha:
-"******** "
-[Entrar]
-[Esqueceu a senha?]
+" ******** " [Mostrar]
+
+{^"Mensagem de erro"
+E-mail ou senha incorretos.
+}
+
+[ ] Lembrar de mim      [Esqueci minha senha]
+
+[ Entrar ]
+
+Nao tem uma conta? [Cadastre-se]
 }
 @endsalt
 ```
 
-### Tela 2: Perfil do Aluno
+### Tela 2: Recuperar Senha Antes do Login
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Perfil do Aluno
+<b>Redefinir senha
 ==
-{^"Dados Pessoais"
-👤 João Silva
-RA: 20211234567
-Curso: Engenharia
-Período: 6º
-Email: joao@i...
+E-mail de acesso:
+" aluno@ibmec.edu.br "
+
+Matricula:
+" 20260001 "
+
+Nova senha:
+" ******** "
+
+Confirmar nova senha:
+" ******** "
+
+{^"Validacoes"
+* todos os campos obrigatorios
+* senha minima de 8 caracteres
+* email + matricula devem conferir
 }
-{^"Meta de AAC"
-Total: 120 horas
-Concluído: 80h
-Faltando: 40h
-Status: ✓ No prazo
-}
-{^"Últimas Atividades"
-* Palestra CASA
-* Curso Udemy
-* Monitoria
-}
-[Editar] | [Sair]
+
+[Cancelar] [Salvar nova senha]
 }
 @endsalt
 ```
 
-### Tela 3: Seleção de Tipo de Atividade
+### Tela 3: Cadastro de Aluno
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Registrar Atividade
+<b>Cadastro de Aluno
 ==
-Escolha o tipo:
-() Atividade Interna
-() Atividade Externa
-==
-[Voltar]
+Nome completo:
+" Gabriel Caruzo "
+
+Matricula:
+" 20260001 "
+
+E-mail institucional:
+" aluno@ibmec.edu.br "
+
+Curso:
+" Engenharia / Direito / Outros "
+
+Ano de entrada:
+" 2026 "
+
+Periodo:
+" 2o Periodo "
+
+Senha:
+" ******** "
+
+{^"Regra"
+is_funcionario = false
+}
+
+[Criar conta] [Voltar ao login]
 }
 @endsalt
 ```
 
-### Tela 4: Fluxo Interno - Escanear QR Code
+### Tela 4: Home / Dashboard do Aluno
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Atividade Interna
+<b>Portal AAC - Home
 ==
-{^"Escanear QR Code"
-[  📱 Câmera Ativa  ]
-Aproxime o QR Code da tela
+{^"Resumo de Horas"
+Total: 80 / 120h
+Internas: 50 / 60h
+Externas: 30 / 60h
 }
-[Cancelar]
+
+{^"Progresso"
+[########--] 67%
+}
+
+{^"Mural de Eventos"
+* Palestra de Extensao - 2h
+* Workshop de Carreira - 3h
+* Evento Institucional - 4h
+}
+
+[Ver solicitacoes] [Perfil]
 }
 @endsalt
 ```
 
-### Tela 5: Fluxo Interno - Confirmação
+### Tela 5: Solicitacoes - Escolha do Fluxo
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Confirmação Interna
+<b>Solicitacoes AAC
 ==
-{^"Dados Extraídos"
-Evento: CASA
-Tipo: Palestras
-Data: 05/04/2026
-Hora: 14:30
-Carga: 2 horas
-Eixo: Extensão
+{^"Atividade Interna"
+Registrar presenca em evento institucional.
+[Abrir fluxo interno]
 }
-[Confirmar] | [Cancelar]
+
+{^"Atividade Externa"
+Enviar comprovante de curso, palestra, voluntariado etc.
+[Abrir formulario externo]
+}
+
+{^"Historico"
+Status | Tipo | Data | Horas
+Pendente | Externa | 10/06 | 20h
+Aprovada | Interna | 11/06 | 2h
+}
 }
 @endsalt
 ```
 
-### Tela 6: Fluxo Externo - Upload Comprovante
+### Tela 6: Atividade Interna
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Atividade Externa
+<b>Registrar Atividade Interna
 ==
-Tipo: | ^Curso^
-Entidade Emissora: | "Udemy                  "
-Carga Horária (h): | "20   "
-Data da Atividade: | "01/04/2026"
-{^"Comprovante"
-[Selecionar Arquivo]
-📎 certificado.pdf (2.3 MB)
+{^"Codigo do Evento"
+" EVT-2026-001 "
+[Buscar evento]
 }
-[Enviar] | [Cancelar]
+
+{^"Dados do Evento"
+Nome: Workshop de Carreira
+Data: 14/06/2026
+Horas: 3h
+Categoria: Evento Institucional
+}
+
+{^"Regra"
+Se o evento existir e estiver ativo,
+a atividade entra como Aprovada.
+}
+
+[Confirmar presenca] [Cancelar]
 }
 @endsalt
 ```
 
-### Tela 7: Fluxo Externo - Comprovante de Envio
+### Tela 7: Atividade Externa
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Enviado com Sucesso
+<b>Enviar Atividade Externa
 ==
-{^"Status"
-✓ Atividade Enviada
-ID: #AAC-2026-001547
-Data: 07/04/2026 15:45
+Categoria:
+^ Curso / Palestra / Monitoria ^
+
+Nome da atividade:
+" Curso de Python "
+
+Data:
+" 14/06/2026 "
+
+Horas:
+" 20 "
+
+Comprovante:
+[Selecionar arquivo]
+certificado.pdf
+
+{^"Validacoes"
+PDF, PNG, JPG ou JPEG
+Limite: 5 MB
+Status inicial: Pendente
 }
-{^"Detalhes"
-Tipo: Curso
-Entidade: Udemy
-Carga: 20 horas
-Arquivo: certificado
-}
-{^"Validação"
-⏳ Aguardando análise
-(até 5 dias úteis)
-}
-[Novo] | [Voltar]
+
+[Enviar solicitacao] [Limpar]
 }
 @endsalt
 ```
 
-### Tela 8: Dashboard de Horas
+### Tela 8: Historico de Solicitacoes
+
 ```plantuml
 @startsalt
 {+
-<b>AAC sistema - Seu Progresso
+<b>Historico de Atividades
 ==
-{^"Total de Horas"
-80 / 120 horas
-████████░░ 67%
+Filtro status:
+^ Todos / Pendente / Aprovada / Rejeitada / Ajuste ^
+
+Filtro tipo:
+^ Todos / Interna / Externa ^
+
+{^"Lista"
+Nome | Tipo | Horas | Status
+Workshop | Interna | 3h | Aprovada
+Curso Python | Externa | 20h | Pendente
+Voluntariado | Externa | 10h | Ajuste solicitado
 }
-{^"Horas Internas (QR Code)"
-50h / 60h
-████████░ 83%
-}
-{^"Horas Externas (Comprovantes)"
-30h / 60h
-██████░░░ 50%
-}
-[Ver Histórico]
+
+[Atualizar]
 }
 @endsalt
 ```
 
-<p align="justify">
-Na primeira versão do protótipo utilizamos a ferramenta <a href="https://m2.material.io/design/color/the-color-system.html#color-theme-creation">Material Design Color Tool</a> para auxiliar na criação da paleta de cores do aplicativo. Definimos as cores base, mas as cores definidas para algumas telas específicas ainda não foram decididas.
-</p>
+### Tela 9: Perfil do Usuario
 
-## Versão 2.0
+```plantuml
+@startsalt
+{+
+<b>Perfil
+==
+{^"Meus Dados"
+Nome completo
+Matricula
+E-mail
+Curso
+Ano de entrada
+Periodo
+}
 
+{^"Trocar Senha"
+Senha atual:
+" ******** "
+Nova senha:
+" ******** "
+[Salvar nova senha]
+}
 
-## Conclusão
+[Sair]
+}
+@endsalt
+```
 
-<p align="justify">
-A partir da elaboração do protótipo foi possível ter uma noção inicial da interface do usuário, definindo fluxo, paleta de cores, botões, app bars e diversas outras funcionalidades.
-</p>
+### Tela 10: Painel Administrativo
 
-## Referências
+```plantuml
+@startsalt
+{+
+<b>Painel Administrativo
+==
+[Base de Alunos] [Fila de Validacao] [Categorias] [Eventos] [Funcionarios]
 
-> Material Design Color Tool. Disponível em: https://m2.material.io/design/color/the-color-system.html#color-theme-creation
+{^"Filtros da Fila"
+Aluno: " nome ou matricula "
+Tipo: ^Todos / Interna / Externa^
+Status: ^Pendente / Aprovada / Rejeitada / Ajuste^
+Data inicio: " __/__/____ "
+Data fim: " __/__/____ "
+}
 
-> PMI. Um guia do conhecimento em gerenciamento de projetos. Guia PMBOK® 5a. ed. EUA: Project Management Institute, 2013.
+{^"Solicitacao selecionada"
+Aluno: Gabriel
+Atividade: Curso Python
+Horas: 20h
+Comprovante: certificado.pdf
+}
 
-> Figma. Disponível em: https://www.figma.com
+[Aprovar] [Rejeitar] [Solicitar ajuste]
+}
+@endsalt
+```
+
+### Tela 11: Administracao de Categorias e Eventos
+
+```plantuml
+@startsalt
+{+
+<b>Administracao
+==
+{^"Criar Categoria"
+Atividade: " Palestra "
+Categoria: " Eventos "
+Tipo: ^Interna / Externa^
+Limite de horas: " 60 "
+[Salvar categoria]
+}
+
+{^"Criar Evento"
+Nome: " Workshop "
+Categoria: ^Evento Institucional^
+Data: " 14/06/2026 "
+Hora: " 19:00 "
+Horas: " 3 "
+[Salvar evento]
+}
+}
+@endsalt
+```
+
+### Tela 12: Documentacao da API
+
+```plantuml
+@startsalt
+{+
+<b>Documentacao Tecnica
+==
+Rotas disponiveis:
+
+[ /api/schema/ ]  Schema OpenAPI
+[ /api/docs/   ]  Swagger UI
+[ /api/redoc/  ]  Redoc
+
+{^"Uso"
+Visualizar endpoints
+Testar contratos da API
+Apoiar integracao frontend/backend
+}
+}
+@endsalt
+```
+
+## Fluxo Geral Atual
+
+```plantuml
+@startsalt
+{+
+Login
+  |
+  +-- Cadastro de aluno
+  |
+  +-- Recuperar senha
+  |
+  +-- Aluno autenticado
+  |      |
+  |      +-- Home / Dashboard
+  |      +-- Solicitacoes
+  |      |      +-- Atividade interna
+  |      |      +-- Atividade externa
+  |      |      +-- Historico
+  |      +-- Perfil
+  |
+  +-- Funcionario autenticado
+         |
+         +-- Painel administrativo
+         +-- Validar solicitacoes
+         +-- Gerenciar categorias
+         +-- Gerenciar eventos
+         +-- Cadastrar funcionarios
+}
+@endsalt
+```
+
+## Conclusao
+
+O prototipo atualizado representa a aplicacao implementada atualmente. A nova versao deixa explicito que o sistema possui duas jornadas principais: a jornada do aluno, focada no envio e acompanhamento de atividades, e a jornada do funcionario, focada na validacao e administracao do processo.
 
 ## Autor(es)
 
-| Data     | Versão | Descrição                            | Autor(es)                                                                            |
-| -------- | ------- | -------------------------------------- | ------------------------------------------------------------------------------------ |
-| 07/04/26 | 1.0     | Criação do documento                 | Gabriel Caruzo                                                                       |
+| Data | Versao | Descricao | Autor(es) |
+| --- | --- | --- | --- |
+| 07/04/26 | 1.0 | Criacao do documento inicial | Gabriel Caruzo |
+| 14/06/26 | 2.0 | Atualizacao conforme implementacao atual do Portal AAC | Gabriel Caruzo |
