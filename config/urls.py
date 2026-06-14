@@ -18,9 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.permissions import AllowAny
+from rest_framework.schemas import get_schema_view
+
+schema_view = get_schema_view(
+    title="Portal AAC API",
+    description="API para autenticacao, solicitacoes, categorias, eventos e administracao.",
+    version="1.0.0",
+    permission_classes=[AllowAny],
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/schema/', schema_view, name='openapi-schema'),
     path('api/', include('core.urls')),
 ]
 
