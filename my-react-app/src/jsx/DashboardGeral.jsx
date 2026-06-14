@@ -69,23 +69,23 @@ function DashboardGeral() {
         <section className="dashboard-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
           {/* PAINEL GLASSMORPHISM */}
-          <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+          <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 4vw, 3rem)' }}>
             
             {/* TOPO: PROGRESSO GERAL E DONUT */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="dashboard-resumo" style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'center', justifyContent: 'space-between' }}>
               
               {/* INFORMAÇÕES GERAIS */}
-              <div style={{ flex: '1 1 280px' }}>
-                <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.5rem', color: '#fff' }}>Seu Progresso AAC</h2>
-                <p style={{ color: '#cbd5e1', fontSize: '1.1rem', marginBottom: '2rem' }}>
+              <div className="dashboard-texto" style={{ flex: '1 1 280px' }}>
+                <h2 style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: '800', marginBottom: '0.5rem', color: '#fff' }}>Seu Progresso AAC</h2>
+                <p style={{ color: '#cbd5e1', fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: '2rem' }}>
                   Acompanhe a distribuição das suas horas complementares e fique de olho na sua meta para a formatura.
                 </p>
                 
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'flex-end' }}>
+                <div className="dashboard-total-card" style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(1rem, 4vw, 2rem)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="dashboard-total-linha" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'flex-end' }}>
                     <span style={{ fontSize: '1.2rem', color: '#cbd5e1', fontWeight: '600' }}>Total Acumulado</span>
                     <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#fff', lineHeight: '1' }}>{horas.total.atual}</span>
+                      <span style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: '800', color: '#fff', lineHeight: '1' }}>{horas.total.atual}</span>
                       <span style={{ fontSize: '1.2rem', color: '#94a3b8' }}> / {horas.total.meta}h</span>
                     </div>
                   </div>
@@ -108,8 +108,8 @@ function DashboardGeral() {
               </div>
 
               {/* GRÁFICO DONUT */}
-              <div style={{ flex: '0 1 300px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ position: 'relative', width: '220px', height: '220px' }}>
+              <div className="dashboard-donut-area" style={{ flex: '0 1 300px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div className="dashboard-donut" style={{ position: 'relative', width: 'clamp(160px, 55vw, 220px)', height: 'clamp(160px, 55vw, 220px)' }}>
                   <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
                     <circle cx="50" cy="50" r={RAIO} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
                     
@@ -121,12 +121,12 @@ function DashboardGeral() {
                   </svg>
                   {/* Texto no centro do Donut */}
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#fff', lineHeight: '1' }}>{horas.total.atual}</span>
+                    <span style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: '800', color: '#fff', lineHeight: '1' }}>{horas.total.atual}</span>
                     <span style={{ fontSize: '0.9rem', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '1px' }}>Horas</span>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1.5rem' }}>
+                <div className="dashboard-legenda" style={{ display: 'flex', gap: '1.5rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#F5AC00', display: 'inline-block' }}></span>
                     <span style={{ color: '#cbd5e1', fontSize: '0.95rem' }}>Internas</span>
@@ -140,10 +140,10 @@ function DashboardGeral() {
             </div>
 
             {/* PARTE INFERIOR: CARDS DETALHADOS */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+            <div className="dashboard-cards-horas" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 'clamp(1rem, 4vw, 2rem)' }}>
               
               {/* CARD INTERNAS */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="dashboard-card-hora" style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(1rem, 4vw, 2rem)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{ background: 'rgba(245, 172, 0, 0.2)', padding: '0.8rem', borderRadius: '12px' }}>
@@ -168,7 +168,7 @@ function DashboardGeral() {
               </div>
 
               {/* CARD EXTERNAS */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="dashboard-card-hora" style={{ background: 'rgba(255,255,255,0.05)', padding: 'clamp(1rem, 4vw, 2rem)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{ background: 'rgba(167, 139, 250, 0.2)', padding: '0.8rem', borderRadius: '12px' }}>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../css/login.css'
 import '../css/index.css';
 import { API_BASE } from '../api';
@@ -55,7 +55,7 @@ function Login() {
 
   return (
     <>
-    <section className="pagina">
+    <section className="pagina login-page">
       <article className="cartao">
 
         <div className="logo">
@@ -93,9 +93,15 @@ function Login() {
             <a href="#">Esqueci minha senha</a>
           </div>
 
+
+
           <button type="submit" id="botaoEntrar" disabled={carregando}>
             {carregando ? 'Entrando...' : 'Entrar'}
           </button>
+
+          <div className="cadastro">
+            <p>Não tem uma conta? <Link to="/cadastro">Cadastre-se</Link></p>
+          </div>
 
         </form>
 

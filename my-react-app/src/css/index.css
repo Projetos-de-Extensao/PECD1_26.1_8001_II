@@ -15,6 +15,12 @@
   box-sizing: border-box; 
 }
 
+*,
+*::before,
+*::after {
+  min-width: 0;
+}
+
 html { 
   scroll-behavior: smooth; 
   overflow-x: hidden; /* <-- Adicione isto para travar a tela horizontalmente */
@@ -118,6 +124,31 @@ input,
 select,
 textarea {
   font: inherit;
+  max-width: 100%;
+}
+
+table {
+  max-width: 100%;
+}
+
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+strong,
+td,
+th,
+label {
+  overflow-wrap: anywhere;
+}
+
+button {
+  min-height: 44px;
 }
 
 @media (max-width: 480px) {
