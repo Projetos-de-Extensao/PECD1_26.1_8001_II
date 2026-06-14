@@ -14,13 +14,19 @@ const FORM_INICIAL = {
 };
 
 const CURSOS = [
-  'Administração',
-  'Ciências Econômicas',
-  'Ciência da Computação',
-  'Direito',
-  'Engenharia de Computação',
-  'Engenharia de Produção',
-  'Sistemas de Informação',
+    'administração',
+    'análise e desenvolvimento de sistemas',
+    'arquitetura e urbanismo',
+    'ciência de dados e inteligência artificial',
+    'engenharia de software',
+    'Ciências Contábeis',
+    'Ciências Econômicas',
+    'Comunicação Social - Publicidade e Propaganda',
+    'Direito',
+    'Engenharia da Computação',
+    'Engenharia de Produção',
+    'Engenharia de Software',
+    'Relações Internacionais',
 ];
 
 const PERIODOS = [

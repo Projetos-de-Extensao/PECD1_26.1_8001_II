@@ -23,13 +23,31 @@ MIME_PERMITIDOS = {'application/pdf', 'image/png', 'image/jpeg'}
 
 def metas_do_curso(curso):
     curso_nome = (curso or '').lower()
-    if 'engenharia' in curso_nome or 'computacao' in curso_nome or 'computação' in curso_nome or 'sistemas' in curso_nome:
+
+    cursos_240 = {
+        'administração',
+        'análise e desenvolvimento de sistemas',
+        'arquitetura e urbanismo',
+        'ciência de dados e inteligência artificial',
+        'engenharia de software',
+        'Ciências Contábeis',
+        'Ciências Econômicas',
+        'Comunicação Social - Publicidade e Propaganda',
+        'Direito',
+        'Engenharia da Computação',
+        'Engenharia de Produção',
+        'Engenharia de Software',
+        'Relações Internacionais',
+
+    }
+
+    if curso_nome in cursos_240:
         return 240, 120, 120
-    if 'direito' in curso_nome:
+
+    if curso_nome == 'direito':
         return 300, 150, 150
+
     return 120, 60, 60
-
-
 def totais_aprovados(usuario):
     agregados = Solicitacao.objects.filter(aluno=usuario, status=STATUS_APROVADA).values('tipo').annotate(total=Sum('horas'))
     por_tipo = {item['tipo']: item['total'] or 0 for item in agregados}
