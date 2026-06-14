@@ -117,7 +117,6 @@ export default function MuralEventos() {
                   )}
                 </div>
                 
-                <button className="btn-inscrever">Garantir Minha Vaga</button>
               </div>
             </div>
           ))}
