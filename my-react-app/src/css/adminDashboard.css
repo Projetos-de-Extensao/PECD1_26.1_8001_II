@@ -300,6 +300,26 @@
   }
 }
 
+.admin-menu-lateral .menu-btn {
+  background-color: #ffffff;
+  color: var(--cor-secundaria, #002555);
+  border-color: #d8e0ea;
+  box-shadow: 0 6px 18px rgba(0, 37, 85, 0.08);
+}
+
+.admin-menu-lateral .menu-btn:hover {
+  background-color: #f8fafc;
+  color: var(--cor-secundaria, #002555);
+}
+
+.admin-menu-lateral .menu-btn.ativo {
+  background-color: #ffffff;
+  border-top-color: var(--cor-primaria, #F5AC00);
+  border-bottom-color: #ffffff;
+  color: var(--cor-secundaria, #002555);
+  box-shadow: 0 8px 22px rgba(0, 37, 85, 0.12);
+}
+
 .card-evento:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 37, 85, 0.08);

@@ -380,7 +380,7 @@ export default function AdminDashboard() {
               <span className="valor-metrica" style={{ color: '#F5AC00' }}>{metricas.aguardando}</span>
             </div>
             <div className="card-metrica" style={{ borderLeftColor: '#0056b3' }}>
-              <span className="titulo-metrica">Reg. Internos (QR)</span>
+              <span className="titulo-metrica">Reg. Internos</span>
               <span className="valor-metrica" style={{ color: '#0056b3' }}>{metricas.internas}</span>
             </div>
             <div className="card-metrica" style={{ borderLeftColor: '#6f42c1' }}>
