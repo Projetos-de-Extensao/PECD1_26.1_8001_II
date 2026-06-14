@@ -1,36 +1,22 @@
----
-hide:
-    - navigation
-    - toc
-    - template: home.html
----
+# Portal AAC
 
-### Grupos
+O Portal AAC e uma aplicacao para controle de Atividades Academicas Complementares. O sistema permite que alunos registrem atividades internas e externas, acompanhem horas computadas e consultem o historico de solicitacoes. Funcionarios podem validar comprovantes, administrar categorias, eventos e usuarios.
 
-<div class="grid cards" style="grid-template-columns: repeat(2, 1fr); background: var(--md-default-bg-color);" markdown>
--   :material-github:{ .lg .right } __PECDI_26.1_8001_II__
+## Estrutura da Aplicacao
 
-    ---
+- Backend em Django REST Framework.
+- Frontend em React com Vite.
+- API protegida por token Bearer.
+- Banco local SQLite para desenvolvimento.
+- Documentacao publicada com MkDocs Material.
 
-    Nome, Nome, Nome, Nome
+## Links Principais
 
-    [:octicons-arrow-right-24: Repositório](https://github.com/Projetos-de-Extensao/PECDI_26.1_8001_II)
+- Frontend local: `http://localhost:5173/`
+- Backend local: `http://127.0.0.1:8000/`
+- Schema OpenAPI: `http://127.0.0.1:8000/api/schema/`
 
+## Onde Comecar
 
-!!! warning "Projeto Front-End"
-
-    Disciplina que apresenta os passos para a construção de Projeto Front-End.
-
-    **Linguagens**: HTML, CSS e Javascript
-
-    **Tecnologias**:
-
-    * Visual Studio Code
-    * Github
-
-    As APs deverão ser enviadas no Github e publicadas no github pages.
-
-
-
-
-
+- Para entender o que foi implementado, acesse **Transicao > Documentacao da Implementacao**.
+- Para aprender a usar o sistema, acesse **Transicao > Manual do Usuario**.

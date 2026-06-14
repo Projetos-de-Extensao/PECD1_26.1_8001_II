@@ -1,59 +1,38 @@
----
-repo_url: https://github.com/jonh-carvalho/PECD1_26.1_8001_II
-site_author: Jonh Carvalho
-site_name: PECD1_26.1_8001_II
-copyright: Copyright ©️ 2026, jonh-carvalho / 2026, Jonh Carvalho
+repo_url: https://github.com/Projetos-de-Extensao/PECD1_26.1_8001_II
+site_author: Grupo PECD1_26.1_8001_II
+site_name: Portal AAC
+copyright: Copyright 2026, Grupo PECD1_26.1_8001_II
 
 extra_css:
   - css/extra.css
 
 markdown_extensions:
-  # Tooltips
   - abbr
-  # Admonitions
   - admonition
-  # Annotations, Buttons, Grids, Icons & Emojis, Images, Tooltips
   - attr_list
-  # Footnotes
   - footnotes
-  # Annotations, Grids, Images
   - md_in_html
-  # Images
   - pymdownx.blocks.caption
-  # Formatting
   - pymdownx.caret
-  # Formatting
   - pymdownx.critic
-  # Admonitions
   - pymdownx.details
-  # Icons & Emojis
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji ''
       emoji_generator: !!python/name:material.extensions.emoji.to_svg ''
-  # Code Blocks
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  # Code Blocks
   - pymdownx.inlinehilite
-  # Formatting
   - pymdownx.keys
-  # Formatting
   - pymdownx.mark
-  # Code Blocks, Tooltips
   - pymdownx.snippets
-  # Admonitions, Annotations, Code Blocks, Content Tabs
   - pymdownx.superfences
-  # Content Tabs
   - pymdownx.tabbed:
       alternate_style: true
-  # Lists
   - pymdownx.tasklist:
       custom_checkbox: true
-  # Formatting
   - pymdownx.tilde
-  # Data Tables
   - tables
   - toc:
       permalink: true
@@ -64,6 +43,7 @@ plugins:
   - search
 
 theme:
+  name: material
   features:
     - content.code.copy
     - navigation.indexes
@@ -83,9 +63,8 @@ theme:
     code: Roboto Mono
   icon:
     repo: fontawesome/brands/github
-    logo: simple/React
+    logo: simple/react
     favicon: simple/react
-  name: material
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
@@ -106,17 +85,18 @@ theme:
         icon: material/toggle-switch-off
         name: Switch to system preference
 
-#nav: 
- # - Home: index.md
-  #- Disciplina:
-   #   -  Aulas: Disciplina/Aulas.md
-    #  -  Github: github.md
-     # -  Mkdocs: mkdocs.md
-      #-  CodeSpace: Codespace.md 
-  #- React: 
-   #   -  Introdução: React/01_Intro.md
-    #  -  Componentes: React/Componentes.md
-     # -  Hooks: React/Hooks.md
-      #-  Context API: React/ContextAPI.md
-      #-  React Router: React/ReactRouter.md
-      #-  Redux: React/Redux.md
+nav:
+  - Home: index.md
+  - Transicao:
+      - Documentacao da Implementacao: Transicao/documentacao_implementacao.md
+      - Manual do Usuario: Transicao/manual_usuario.md
+  - Design Thinking:
+      - Brainstorm: _Design Thinking/Brainstorm.md
+      - Historias de Usuario: _Design Thinking/historiasdeusuario.md
+      - Analise de Tarefas: _Design Thinking/analise_de_tarefas.md
+      - 5W2H: _Design Thinking/5w2h.md
+      - Mapa Mental: _Design Thinking/mapa_mental.md
+      - Pesquisa: _Design Thinking/pesquisa.md
+      - Prototipo de Baixa Fidelidade: _Design Thinking/prototipo_baixa_fidelidade.md
+  - Sprint Planning:
+      - Sprint: _Sprint Planning/sprint.md
