@@ -1,7 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../css/FormExterno.css';
 import { apiFetch, apiJson } from '../api';
 import Comprovante from './Comprovante.jsx'; // Importa o componente de comprovante para mostrar o resultado da solicitação externa
+
+function extrairMensagemErro(dados) {
+  if (!dados) return 'Erro ao salvar solicitacao. Tente novamente.';
+  if (typeof dados === 'string') return dados;
+  if (dados.mensagem || dados.detail) return dados.mensagem || dados.detail;
+
+  const primeiroErro = Object.entries(dados)[0];
+  if (!primeiroErro) return 'Erro ao salvar solicitacao. Tente novamente.';
+
+  const [campo, mensagens] = primeiroErro;
+  const texto = Array.isArray(mensagens) ? mensagens.join(' ') : String(mensagens);
+  return `${campo}: ${texto}`;
+}
 
 export default function FormExterno({ ativo }) {
   // Estados para gerenciar as categorias vindas do Banco de Dados
@@ -93,7 +106,29 @@ export default function FormExterno({ ativo }) {
   async function handleEnviarExterno(e) {
     e.preventDefault();
     
+    // 1. Busque o dado diretamente do localStorage aqui dentro
+    const usuarioRaw = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
+
+    if (!usuarioRaw || !token) {
+      setMensagemEnvio('Erro: Usuário não autenticado.');
+      return;
+    }
+
+  // 2. Agora o JSON.parse funcionará corretamente
+  const usuarioLogado = JSON.parse(usuarioRaw);
+
+    if (!form?.reportValidity()) {
+      setMensagemEnvio('Preencha todos os campos obrigatorios antes de enviar.');
+      return;
+    }
+    
     // Validação básica
+    if (!categoria) {
+      setMensagemEnvio('Selecione uma categoria antes de enviar.');
+      return;
+    }
+
     if (!arquivoInfo) {
       setMensagemEnvio('⚠ Por favor, anexe o PDF do certificado.');
       return;
@@ -103,8 +138,8 @@ export default function FormExterno({ ativo }) {
     setIsEnviando(true);
 
     try {
-      const usuarioSalvo = localStorage.getItem('usuario');
-      if (!usuarioSalvo) {
+      const tokenSalvo = localStorage.getItem('token');
+      if (!tokenSalvo) {
         throw new Error('Usuário não autenticado. Faça login novamente.');
       }
       const usuarioLogado = JSON.parse(usuarioSalvo);
