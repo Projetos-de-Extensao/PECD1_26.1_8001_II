@@ -90,6 +90,7 @@ nav:
   - Transicao:
       - Documentacao da Implementacao: Transicao/documentacao_implementacao.md
       - Manual do Usuario: Transicao/manual_usuario.md
+      - Issues e Projects: Transicao/issues_projects.md
   - Design Thinking:
       - Brainstorm: _Design Thinking/Brainstorm.md
       - Historias de Usuario: _Design Thinking/historiasdeusuario.md
