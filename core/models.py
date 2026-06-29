@@ -76,6 +76,7 @@ class Eventos(models.Model):
     curso_alvo = models.CharField(max_length=150, null=True, blank=True)
     palestrante = models.CharField(max_length=150, null=True, blank=True)
     unidade = models.CharField(max_length=100, null=True, blank=True)
+    local = models.CharField(max_length=150, null=True, blank=True)
     ativo = models.BooleanField(default=True)  # Para controle de eventos ativos/inativos
 
 

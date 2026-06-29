@@ -40,7 +40,7 @@ carregar_env(BASE_DIR / 'pord.env')
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-secret-key-for-dev-only-change-me')
 
 if not SECRET_KEY:
     raise RuntimeError('DJANGO_SECRET_KEY nao foi configurada no ambiente ou em pord.env.')
